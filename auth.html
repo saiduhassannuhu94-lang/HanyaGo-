@@ -1,0 +1,958 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#087f5b">
+  <title>Sign In | HanyaGo</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <style>
+    :root {
+      --green: #087f5b;
+      --green-dark: #066447;
+      --navy: #10243a;
+      --gold: #f4b942;
+      --ink: #172b3d;
+      --muted: #6e7e8d;
+      --line: #e3eaf0;
+      --white: #ffffff;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: "DM Sans", sans-serif;
+      color: var(--ink);
+      background: #f3f7f6;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    button,
+    input {
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    .shell {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 0.92fr 1.08fr;
+      max-width: 1500px;
+      margin: auto;
+      background: white;
+    }
+
+    .visual {
+      position: relative;
+      overflow: hidden;
+      min-height: 100vh;
+      padding: 36px clamp(28px, 5vw, 72px);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      color: white;
+      background:
+        linear-gradient(155deg, rgba(6,43,37,.91), rgba(7,91,65,.82), rgba(16,36,58,.91)),
+        url("https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1500&q=85")
+        center/cover;
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 11px;
+      width: max-content;
+      font-family: Manrope, sans-serif;
+      font-size: 26px;
+      font-weight: 800;
+      letter-spacing: -1px;
+    }
+
+    .brand-mark {
+      width: 40px;
+      height: 40px;
+      display: grid;
+      place-items: center;
+      border-radius: 12px;
+      background: var(--gold);
+      color: var(--navy);
+      font-size: 23px;
+    }
+
+    .brand-name span {
+      color: #c9f0df;
+    }
+
+    .visual-copy {
+      max-width: 500px;
+      margin: 65px 0;
+      animation: enter .8s ease both;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      padding: 9px 13px;
+      border: 1px solid #ffffff45;
+      background: #ffffff12;
+      border-radius: 30px;
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .dot {
+      width: 8px;
+      height: 8px;
+      background: #83e6b6;
+      border-radius: 50%;
+      animation: pulse 1.8s infinite;
+    }
+
+    h1 {
+      font-family: Manrope, sans-serif;
+      font-size: clamp(38px, 4.5vw, 62px);
+      line-height: 1.1;
+      letter-spacing: -2px;
+      margin: 25px 0 18px;
+    }
+
+    h1 span {
+      color: #f4c85f;
+    }
+
+    .visual-copy p {
+      color: #e0eee9;
+      font-size: 16px;
+      line-height: 1.8;
+      max-width: 430px;
+    }
+
+    .benefits {
+      display: grid;
+      gap: 15px;
+      margin-top: 32px;
+    }
+
+    .benefit {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 14px;
+    }
+
+    .check {
+      width: 26px;
+      height: 26px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      background: #ffffff20;
+      color: #f9d47d;
+    }
+
+    .visual-foot {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      color: #d2e4dd;
+      font-size: 12px;
+    }
+
+    .main {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 42px clamp(24px, 5vw, 76px);
+    }
+
+    .form-wrap {
+      width: 100%;
+      max-width: 460px;
+      animation: enter .65s ease both;
+    }
+
+    .back-home {
+      display: inline-block;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 30px;
+    }
+
+    .back-home:hover {
+      color: var(--green);
+    }
+
+    .heading {
+      margin-bottom: 25px;
+    }
+
+    .heading h2 {
+      font-family: Manrope, sans-serif;
+      font-size: 32px;
+      letter-spacing: -1px;
+      color: var(--navy);
+      margin: 0 0 8px;
+    }
+
+    .heading p {
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.7;
+      margin: 0;
+    }
+
+    .mode {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 5px;
+      padding: 5px;
+      margin-bottom: 23px;
+      background: #f0f4f2;
+      border-radius: 13px;
+    }
+
+    .mode button {
+      border: none;
+      padding: 12px;
+      border-radius: 9px;
+      background: transparent;
+      color: #61716e;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .mode button.active {
+      background: white;
+      color: var(--green-dark);
+      box-shadow: 0 2px 8px #122a2412;
+    }
+
+    .roles {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-bottom: 22px;
+    }
+
+    .role {
+      position: relative;
+    }
+
+    .role input {
+      position: absolute;
+      opacity: 0;
+    }
+
+    .role label {
+      min-height: 82px;
+      padding: 10px 4px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 7px;
+      text-align: center;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      color: #536575;
+      font-size: 11px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .role input:checked + label {
+      border-color: var(--green);
+      background: #effaf5;
+      color: var(--green-dark);
+      box-shadow: inset 0 0 0 1px var(--green);
+    }
+
+    .role-icon {
+      font-size: 22px;
+    }
+
+    .fields {
+      display: grid;
+      gap: 16px;
+    }
+
+    .field label,
+    .role-label {
+      display: block;
+      margin-bottom: 8px;
+      color: #405264;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .field input {
+      width: 100%;
+      height: 49px;
+      padding: 0 14px;
+      border: 1px solid #dbe4e8;
+      border-radius: 10px;
+      outline: none;
+      background: white;
+      color: var(--ink);
+      transition: .2s;
+    }
+
+    .field input:focus {
+      border-color: var(--green);
+      box-shadow: 0 0 0 3px #087f5b16;
+    }
+
+    .input-wrap {
+      position: relative;
+    }
+
+    .password-input {
+      padding-right: 70px !important;
+    }
+
+    .show-password {
+      position: absolute;
+      top: 50%;
+      right: 10px;
+      transform: translateY(-50%);
+      border: none;
+      background: transparent;
+      color: var(--green-dark);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      font-size: 12px;
+    }
+
+    .remember {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      color: var(--muted);
+    }
+
+    .remember input {
+      accent-color: var(--green);
+    }
+
+    .text-link {
+      color: var(--green-dark);
+      font-weight: 700;
+    }
+
+    .submit {
+      width: 100%;
+      min-height: 51px;
+      margin-top: 6px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+      border: none;
+      border-radius: 10px;
+      background: var(--green);
+      color: white;
+      font-weight: 800;
+      box-shadow: 0 8px 18px #087f5b25;
+      transition: .2s;
+    }
+
+    .submit:hover {
+      background: var(--green-dark);
+      transform: translateY(-1px);
+    }
+
+    .submit:disabled {
+      opacity: .65;
+      cursor: wait;
+    }
+
+    .message {
+      display: none;
+      padding: 12px 13px;
+      margin-bottom: 16px;
+      border-radius: 10px;
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .message.show {
+      display: block;
+      animation: enter .25s ease both;
+    }
+
+    .message.error {
+      background: #fff1f0;
+      color: #9c241b;
+      border: 1px solid #ffd5d2;
+    }
+
+    .message.success {
+      background: #eaf8f0;
+      color: #176443;
+      border: 1px solid #c8ecd8;
+    }
+
+    .message.info {
+      background: #eef5ff;
+      color: #234f86;
+      border: 1px solid #d4e5ff;
+    }
+
+    .terms {
+      margin-top: 17px;
+      color: #87939c;
+      font-size: 11px;
+      line-height: 1.7;
+      text-align: center;
+    }
+
+    .terms a {
+      color: #526d68;
+      text-decoration: underline;
+    }
+
+    .switch-note {
+      margin-top: 22px;
+      text-align: center;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .switch-note button {
+      border: none;
+      background: transparent;
+      color: var(--green-dark);
+      font-weight: 800;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    @keyframes enter {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes pulse {
+      50% { box-shadow: 0 0 0 7px #83e6b600; }
+    }
+
+    @media (max-width: 900px) {
+      .shell {
+        grid-template-columns: .8fr 1.2fr;
+      }
+
+      .visual {
+        padding: 28px;
+      }
+
+      .main {
+        padding: 35px 25px;
+      }
+    }
+
+    @media (max-width: 700px) {
+      .shell {
+        display: block;
+      }
+
+      .visual {
+        display: none;
+      }
+
+      .main {
+        min-height: 100vh;
+        padding: 26px 20px 35px;
+      }
+
+      .form-wrap {
+        max-width: 480px;
+        margin: auto;
+      }
+
+      .heading h2 {
+        font-size: 29px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: .01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: .01ms !important;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="shell">
+
+    <aside class="visual">
+      <a class="brand" href="index.html">
+        <span class="brand-mark">H</span>
+        <span class="brand-name">Hanya<span>Go</span></span>
+      </a>
+
+      <div class="visual-copy">
+        <span class="eyebrow"><span class="dot"></span> Your next journey starts here</span>
+
+        <h1>Move with ease.<br><span>Arrive with peace.</span></h1>
+
+        <p>
+          One account for your travel plans. Create your HanyaGo profile
+          to keep your journey details in one place.
+        </p>
+
+        <div class="benefits">
+          <div class="benefit"><span class="check">✓</span> Manage your journey details in one place</div>
+          <div class="benefit"><span class="check">✓</span> Choose the account type that fits your role</div>
+          <div class="benefit"><span class="check">✓</span> Secure account sign-in</div>
+        </div>
+      </div>
+
+      <div class="visual-foot">
+        <span>© <span id="year"></span> HanyaGo</span>
+        <span>⌑ Secure account access</span>
+      </div>
+    </aside>
+
+    <main class="main">
+      <div class="form-wrap">
+
+        <a class="back-home" href="index.html">← Back to HanyaGo home</a>
+
+        <div class="heading">
+          <h2 id="title">Welcome back</h2>
+          <p id="subtitle">Sign in to continue with HanyaGo.</p>
+        </div>
+
+        <div id="message" class="message" role="status" aria-live="polite"></div>
+
+        <div class="mode">
+          <button type="button" id="loginTab" class="active">Sign in</button>
+          <button type="button" id="signupTab">Create account</button>
+        </div>
+
+        <form id="authForm" novalidate>
+
+          <div id="roleGroup" class="hidden">
+            <span class="role-label">I want to join HanyaGo as</span>
+
+            <div class="roles">
+              <div class="role">
+                <input type="radio" name="role" id="passenger" value="passenger" checked>
+                <label for="passenger">
+                  <span class="role-icon">🧳</span>
+                  Passenger
+                </label>
+              </div>
+
+              <div class="role">
+                <input type="radio" name="role" id="driver" value="driver">
+                <label for="driver">
+                  <span class="role-icon">🚘</span>
+                  Driver
+                </label>
+              </div>
+
+              <div class="role">
+                <input type="radio" name="role" id="operator" value="operator">
+                <label for="operator">
+                  <span class="role-icon">🚌</span>
+                  Transport operator
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <div class="fields">
+
+            <div class="field hidden" id="nameField">
+              <label for="fullName">Full name</label>
+              <input id="fullName" autocomplete="name" placeholder="Enter your full name" maxlength="100">
+            </div>
+
+            <div class="field hidden" id="phoneField">
+              <label for="phone">Phone number</label>
+              <input id="phone" type="tel" autocomplete="tel" placeholder="e.g. 08012345678" maxlength="24">
+            </div>
+
+            <div class="field">
+              <label for="email">Email address</label>
+              <input id="email" type="email" autocomplete="email" placeholder="you@example.com" required maxlength="254">
+            </div>
+
+            <div class="field">
+              <label for="password">Password</label>
+              <div class="input-wrap">
+                <input id="password" class="password-input" type="password" autocomplete="current-password" placeholder="Enter your password" required minlength="8">
+                <button type="button" class="show-password" id="togglePassword">Show</button>
+              </div>
+            </div>
+
+            <div class="field hidden" id="confirmField">
+              <label for="confirmPassword">Confirm password</label>
+              <div class="input-wrap">
+                <input id="confirmPassword" class="password-input" type="password" autocomplete="new-password" placeholder="Re-enter your password" minlength="8">
+                <button type="button" class="show-password" id="toggleConfirm">Show</button>
+              </div>
+            </div>
+
+            <div class="row" id="loginOptions">
+              <label class="remember">
+                <input type="checkbox" id="remember">
+                Keep me signed in
+              </label>
+
+              <a href="#" class="text-link" id="forgotLink">Forgot password?</a>
+            </div>
+
+            <button class="submit" id="submitButton" type="submit">
+              <span id="submitText">Sign in</span>
+              <span aria-hidden="true">→</span>
+            </button>
+
+          </div>
+        </form>
+
+        <p class="terms" id="terms">
+          By continuing, you agree to HanyaGo’s
+          <a href="#" id="termsLink">Terms of Service</a>
+          and
+          <a href="#" id="privacyLink">Privacy Policy</a>.
+        </p>
+
+        <p class="switch-note" id="switchNote">
+          New to HanyaGo?
+          <button type="button" id="switchButton">Create an account</button>
+        </p>
+
+      </div>
+    </main>
+  </div>
+
+  <script>
+    /*
+      HANYAGO SUPABASE CONFIGURATION
+
+      Replace the two placeholders below with your Supabase project values.
+
+      Use the publishable key or legacy anon key only.
+      NEVER put the service_role key in frontend JavaScript.
+    */
+
+    const SUPABASE_URL = "YOUR_SUPABASE_PROJECT_URL";
+    const SUPABASE_ANON_KEY = "YOUR_SUPABASE_PUBLISHABLE_OR_ANON_KEY";
+
+    const configured =
+      SUPABASE_URL.startsWith("https://") &&
+      !SUPABASE_URL.includes("YOUR_SUPABASE") &&
+      SUPABASE_ANON_KEY.length > 20 &&
+      !SUPABASE_ANON_KEY.includes("YOUR_SUPABASE");
+
+    const supabaseClient = configured
+      ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+          auth: {
+            persistSession: true,
+            autoRefreshToken: true,
+            detectSessionInUrl: true
+          }
+        })
+      : null;
+
+    const $ = id => document.getElementById(id);
+    let mode = "login";
+    let busy = false;
+
+    $("year").textContent = new Date().getFullYear();
+
+    function showMessage(text, type = "info") {
+      const box = $("message");
+      box.textContent = text;
+      box.className = "message show " + type;
+    }
+
+    function clearMessage() {
+      $("message").textContent = "";
+      $("message").className = "message";
+    }
+
+    function setMode(nextMode) {
+      mode = nextMode;
+      const login = mode === "login";
+
+      clearMessage();
+
+      $("loginTab").classList.toggle("active", login);
+      $("signupTab").classList.toggle("active", !login);
+
+      $("title").textContent = login
+        ? "Welcome back"
+        : "Create your account";
+
+      $("subtitle").textContent = login
+        ? "Sign in to continue with HanyaGo."
+        : "A few details and you’ll be ready to get started.";
+
+      $("roleGroup").classList.toggle("hidden", login);
+      $("nameField").classList.toggle("hidden", login);
+      $("phoneField").classList.toggle("hidden", login);
+      $("confirmField").classList.toggle("hidden", login);
+      $("loginOptions").classList.toggle("hidden", !login);
+      $("terms").classList.toggle("hidden", login);
+
+      $("password").autocomplete = login
+        ? "current-password"
+        : "new-password";
+
+      $("submitText").textContent = login
+        ? "Sign in"
+        : "Create account";
+
+      $("switchNote").innerHTML = login
+        ? 'New to HanyaGo? <button type="button" id="switchButton">Create an account</button>'
+        : 'Already have an account? <button type="button" id="switchButton">Sign in</button>';
+
+      $("switchButton").addEventListener("click", () => {
+        setMode(login ? "signup" : "login");
+      });
+    }
+
+    $("loginTab").addEventListener("click", () => setMode("login"));
+    $("signupTab").addEventListener("click", () => setMode("signup"));
+
+    $("switchButton").addEventListener("click", () => setMode("signup"));
+
+    function setupPasswordToggle(buttonId, inputId) {
+      $(buttonId).addEventListener("click", () => {
+        const input = $(inputId);
+        const visible = input.type === "password";
+
+        input.type = visible ? "text" : "password";
+        $(buttonId).textContent = visible ? "Hide" : "Show";
+      });
+    }
+
+    setupPasswordToggle("togglePassword", "password");
+    setupPasswordToggle("toggleConfirm", "confirmPassword");
+
+    $("forgotLink").addEventListener("click", async event => {
+      event.preventDefault();
+
+      const email = $("email").value.trim();
+
+      if (!email) {
+        showMessage(
+          "Enter your email address first, then select Forgot password again.",
+          "info"
+        );
+        $("email").focus();
+        return;
+      }
+
+      if (!supabaseClient) {
+        showMessage(
+          "Password recovery will work after Supabase is configured.",
+          "error"
+        );
+        return;
+      }
+
+      try {
+        const { error } =
+          await supabaseClient.auth.resetPasswordForEmail(email, {
+            redirectTo: window.location.origin + window.location.pathname
+          });
+
+        if (error) throw error;
+
+        showMessage(
+          "If an account exists for this email, a password reset link will be sent. Check your inbox and spam folder.",
+          "success"
+        );
+      } catch (error) {
+        showMessage(
+          error.message || "Could not start password recovery.",
+          "error"
+        );
+      }
+    });
+
+    $("authForm").addEventListener("submit", async event => {
+      event.preventDefault();
+
+      if (busy) return;
+
+      clearMessage();
+
+      const email = $("email").value.trim();
+      const password = $("password").value;
+      const fullName = $("fullName").value.trim();
+      const phone = $("phone").value.trim();
+      const role =
+        document.querySelector('input[name="role"]:checked')?.value ||
+        "passenger";
+
+      if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        showMessage("Please enter a valid email address.", "error");
+        $("email").focus();
+        return;
+      }
+
+      if (password.length < 8) {
+        showMessage(
+          "Your password must contain at least 8 characters.",
+          "error"
+        );
+        $("password").focus();
+        return;
+      }
+
+      if (mode === "signup") {
+        if (fullName.length < 2) {
+          showMessage("Please enter your full name.", "error");
+          $("fullName").focus();
+          return;
+        }
+
+        if (password !== $("confirmPassword").value) {
+          showMessage(
+            "The passwords do not match. Please check them.",
+            "error"
+          );
+          $("confirmPassword").focus();
+          return;
+        }
+
+        if (phone && phone.replace(/\D/g, "").length < 7) {
+          showMessage(
+            "Please check your phone number or leave it blank.",
+            "error"
+          );
+          $("phone").focus();
+          return;
+        }
+      }
+
+      if (!supabaseClient) {
+        showMessage(
+          "Supabase is not connected yet. Configure SUPABASE_URL and SUPABASE_ANON_KEY in this file. No account data has been sent.",
+          "error"
+        );
+        return;
+      }
+
+      busy = true;
+      $("submitButton").disabled = true;
+      $("submitText").textContent =
+        mode === "login" ? "Signing in..." : "Creating account...";
+
+      try {
+        if (mode === "login") {
+          const { error } =
+            await supabaseClient.auth.signInWithPassword({
+              email,
+              password
+            });
+
+          if (error) throw error;
+
+          showMessage(
+            "You are signed in. Your account session is active on this device.",
+            "success"
+          );
+        } else {
+          const { data, error } = await supabaseClient.auth.signUp({
+            email,
+            password,
+            options: {
+              data: {
+                full_name: fullName,
+                phone: phone || null,
+                role
+              },
+              emailRedirectTo:
+                window.location.origin + window.location.pathname
+            }
+          });
+
+          if (error) throw error;
+
+          if (data.session) {
+            showMessage(
+              "Your account has been created. Role-based permissions and profile tables must be configured before protected services are enabled.",
+              "success"
+            );
+          } else {
+            showMessage(
+              "Account request received. Check your email for the confirmation link before signing in.",
+              "success"
+            );
+          }
+
+          $("authForm").reset();
+          $("passenger").checked = true;
+        }
+      } catch (error) {
+        const raw = String(error?.message || "");
+
+        let message = raw || "Something went wrong. Please try again.";
+
+        if (/invalid login credentials/i.test(raw)) {
+          message = "The email or password is incorrect. Check your details or reset your password.";
+        } else if (/already registered|user already registered/i.test(raw)) {
+          message = "An account may already exist for this email. Try signing in or resetting your password.";
+        } else if (/email not confirmed/i.test(raw)) {
+          message = "Please confirm your email using the link sent to your inbox.";
+        }
+
+        showMessage(message, "error");
+      } finally {
+        busy = false;
+        $("submitButton").disabled = false;
+        $("submitText").textContent =
+          mode === "login" ? "Sign in" : "Create account";
+      }
+    });
+
+    ["termsLink", "privacyLink"].forEach(id => {
+      $(id).addEventListener("click", event => {
+        event.preventDefault();
+        showMessage(
+          "The Terms of Service and Privacy Policy pages still need to be published before launch.",
+          "info"
+        );
+      });
+    });
+  </script>
+</body>
+                            </html>
