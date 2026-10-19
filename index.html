@@ -1,1 +1,1341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="HanyaGo makes booking your next journey simple, convenient and reliable.">
+  <title>HanyaGo | Your Journey, Made Simple</title>
 
+  <style>
+    :root {
+      --navy: #10243a;
+      --green: #087f5b;
+      --gold: #f4b942;
+      --light: #f5f8fa;
+      --white: #ffffff;
+      --text: #243447;
+      --muted: #667788;
+      --border: #e3eaf0;
+      --shadow: 0 12px 35px rgba(16, 36, 58, 0.09);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      color: var(--text);
+      background: var(--white);
+      line-height: 1.6;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    button,
+    input,
+    select {
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    .container {
+      width: min(1120px, 92%);
+      margin: auto;
+    }
+
+    /* Navigation */
+
+    header {
+      background: var(--white);
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .navbar {
+      min-height: 76px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .logo {
+      font-size: 28px;
+      font-weight: 800;
+      color: var(--navy);
+      letter-spacing: -1px;
+    }
+
+    .logo span {
+      color: var(--green);
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 28px;
+    }
+
+    .nav-links a {
+      font-size: 14px;
+      font-weight: 600;
+      transition: color 0.2s;
+    }
+
+    .nav-links a:hover {
+      color: var(--green);
+    }
+
+    .nav-cta {
+      background: var(--green);
+      color: var(--white);
+      padding: 11px 20px;
+      border-radius: 9px;
+    }
+
+    .menu-toggle {
+      display: none;
+      border: none;
+      background: transparent;
+      font-size: 27px;
+      color: var(--navy);
+    }
+
+    /* Hero */
+
+    .hero {
+      background:
+        radial-gradient(circle at 85% 15%, rgba(244,185,66,.18), transparent 28%),
+        linear-gradient(135deg, #f5faf8, #f4f7fb);
+      padding: 76px 0 80px;
+      overflow: hidden;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      align-items: center;
+      gap: 50px;
+    }
+
+    .eyebrow {
+      display: inline-block;
+      color: var(--green);
+      background: #e3f5ee;
+      padding: 7px 13px;
+      border-radius: 30px;
+      font-size: 12px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 20px;
+    }
+
+    .hero h1 {
+      font-size: clamp(38px, 5vw, 62px);
+      line-height: 1.1;
+      color: var(--navy);
+      letter-spacing: -2px;
+      margin-bottom: 20px;
+    }
+
+    .hero h1 span {
+      color: var(--green);
+    }
+
+    .hero p {
+      max-width: 510px;
+      color: var(--muted);
+      font-size: 17px;
+      margin-bottom: 28px;
+    }
+
+    .hero-actions {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 14px;
+    }
+
+    .btn {
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+      border: none;
+      border-radius: 10px;
+      padding: 14px 22px;
+      font-weight: 700;
+      transition: transform 0.2s, background 0.2s;
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+    }
+
+    .btn-primary {
+      background: var(--green);
+      color: var(--white);
+    }
+
+    .btn-primary:hover {
+      background: #06694b;
+    }
+
+    .btn-secondary {
+      background: var(--white);
+      color: var(--navy);
+      border: 1px solid var(--border);
+    }
+
+    .hero-note {
+      margin-top: 25px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    /* Trip preview */
+
+    .trip-visual {
+      min-height: 390px;
+      background: var(--navy);
+      border-radius: 26px;
+      padding: 26px;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .trip-visual::before,
+    .trip-visual::after {
+      content: "";
+      position: absolute;
+      border-radius: 50%;
+      border: 1px solid rgba(255,255,255,.12);
+    }
+
+    .trip-visual::before {
+      width: 300px;
+      height: 300px;
+      right: -100px;
+      top: -100px;
+    }
+
+    .trip-visual::after {
+      width: 230px;
+      height: 230px;
+      left: -90px;
+      bottom: -100px;
+    }
+
+    .route-card {
+      width: 100%;
+      max-width: 360px;
+      background: var(--white);
+      border-radius: 18px;
+      padding: 24px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .route-card h3 {
+      font-size: 19px;
+      color: var(--navy);
+      margin-bottom: 5px;
+    }
+
+    .route-card > p {
+      font-size: 13px;
+      margin-bottom: 24px;
+    }
+
+    .route-point {
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+      margin-bottom: 20px;
+    }
+
+    .route-icon {
+      width: 13px;
+      height: 13px;
+      border-radius: 50%;
+      background: var(--green);
+      margin-top: 6px;
+      flex-shrink: 0;
+    }
+
+    .route-point.destination .route-icon {
+      background: var(--gold);
+      border-radius: 3px;
+    }
+
+    .route-point small {
+      display: block;
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .route-point strong {
+      display: block;
+      color: var(--navy);
+      font-size: 15px;
+    }
+
+    .route-line {
+      width: 2px;
+      height: 20px;
+      background: #d9e4e8;
+      margin: -15px 0 0 5px;
+    }
+
+    .trip-badge {
+      background: #fff5dc;
+      color: #875d05;
+      padding: 10px 13px;
+      border-radius: 9px;
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      font-weight: 700;
+      margin-top: 18px;
+    }
+
+    /* General sections */
+
+    section {
+      padding: 76px 0;
+    }
+
+    .section-heading {
+      text-align: center;
+      max-width: 650px;
+      margin: 0 auto 42px;
+    }
+
+    .section-heading .eyebrow {
+      margin-bottom: 12px;
+    }
+
+    .section-heading h2 {
+      font-size: clamp(28px, 4vw, 40px);
+      line-height: 1.2;
+      color: var(--navy);
+      margin-bottom: 14px;
+    }
+
+    .section-heading p {
+      color: var(--muted);
+      font-size: 15px;
+    }
+
+    /* Booking */
+
+    .booking-section {
+      background: var(--white);
+    }
+
+    .booking-box {
+      max-width: 940px;
+      margin: auto;
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 30px;
+      box-shadow: var(--shadow);
+    }
+
+    .booking-box h3 {
+      color: var(--navy);
+      font-size: 22px;
+      margin-bottom: 5px;
+    }
+
+    .booking-box > p {
+      color: var(--muted);
+      font-size: 14px;
+      margin-bottom: 25px;
+    }
+
+    .booking-form {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .form-group label {
+      color: var(--navy);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .form-group input,
+    .form-group select {
+      width: 100%;
+      min-height: 48px;
+      border: 1px solid #dce5eb;
+      border-radius: 9px;
+      padding: 12px;
+      outline: none;
+      background: var(--white);
+      color: var(--text);
+    }
+
+    .form-group input:focus,
+    .form-group select:focus {
+      border-color: var(--green);
+      box-shadow: 0 0 0 3px rgba(8,127,91,.1);
+    }
+
+    .full-width {
+      grid-column: 1 / -1;
+    }
+
+    .booking-form button {
+      width: 100%;
+      margin-top: 4px;
+    }
+
+    .form-message {
+      display: none;
+      margin-top: 20px;
+      padding: 16px;
+      border-radius: 10px;
+      background: #e3f5ee;
+      color: #075c41;
+      font-size: 14px;
+    }
+
+    /* Ride options */
+
+    .rides-section {
+      background: var(--light);
+    }
+
+    .ride-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 22px;
+    }
+
+    .ride-card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      padding: 27px;
+      border-radius: 17px;
+      transition: transform .2s, box-shadow .2s;
+    }
+
+    .ride-card:hover {
+      transform: translateY(-5px);
+      box-shadow: var(--shadow);
+    }
+
+    .ride-icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 58px;
+      height: 58px;
+      background: #e3f5ee;
+      border-radius: 15px;
+      font-size: 27px;
+      margin-bottom: 20px;
+    }
+
+    .ride-card:nth-child(2) .ride-icon {
+      background: #fff3d6;
+    }
+
+    .ride-card:nth-child(3) .ride-icon {
+      background: #e7edff;
+    }
+
+    .ride-card h3 {
+      color: var(--navy);
+      font-size: 19px;
+      margin-bottom: 9px;
+    }
+
+    .ride-card p {
+      color: var(--muted);
+      font-size: 14px;
+      margin-bottom: 18px;
+    }
+
+    .ride-card a {
+      color: var(--green);
+      font-weight: 700;
+      font-size: 14px;
+    }
+
+    /* How it works */
+
+    .steps-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 30px;
+    }
+
+    .step {
+      text-align: center;
+      padding: 10px;
+    }
+
+    .step-number {
+      width: 58px;
+      height: 58px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--green);
+      color: var(--white);
+      font-size: 21px;
+      font-weight: 800;
+      margin: 0 auto 20px;
+    }
+
+    .step h3 {
+      color: var(--navy);
+      margin-bottom: 10px;
+    }
+
+    .step p {
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    /* Call to action */
+
+    .cta-section {
+      padding-top: 10px;
+    }
+
+    .cta-box {
+      background: var(--navy);
+      border-radius: 22px;
+      padding: 48px 30px;
+      text-align: center;
+      color: var(--white);
+    }
+
+    .cta-box h2 {
+      font-size: clamp(27px, 4vw, 38px);
+      margin-bottom: 12px;
+    }
+
+    .cta-box p {
+      color: #d1dce6;
+      max-width: 550px;
+      margin: 0 auto 25px;
+      font-size: 15px;
+    }
+
+    .cta-box .btn {
+      background: var(--gold);
+      color: var(--navy);
+    }
+
+    /* FAQ */
+
+    .faq-section {
+      background: var(--light);
+    }
+
+    .faq-list {
+      max-width: 760px;
+      margin: auto;
+    }
+
+    .faq-item {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 11px;
+      margin-bottom: 13px;
+      overflow: hidden;
+    }
+
+    .faq-question {
+      width: 100%;
+      background: transparent;
+      border: none;
+      text-align: left;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 15px;
+      padding: 20px;
+      color: var(--navy);
+      font-weight: 700;
+    }
+
+    .faq-answer {
+      display: none;
+      padding: 0 20px 20px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .faq-item.active .faq-answer {
+      display: block;
+    }
+
+    .faq-item.active .faq-symbol {
+      transform: rotate(45deg);
+    }
+
+    .faq-symbol {
+      font-size: 22px;
+      transition: transform .2s;
+    }
+
+    /* Footer */
+
+    footer {
+      background: #0b1928;
+      color: var(--white);
+      padding: 48px 0 20px;
+    }
+
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr;
+      gap: 35px;
+      padding-bottom: 35px;
+    }
+
+    .footer-brand .logo {
+      color: var(--white);
+      display: inline-block;
+      margin-bottom: 12px;
+    }
+
+    .footer-brand p {
+      color: #b9c6d3;
+      max-width: 340px;
+      font-size: 14px;
+    }
+
+    .footer-column h4 {
+      margin-bottom: 15px;
+      font-size: 15px;
+    }
+
+    .footer-column a {
+      display: block;
+      color: #b9c6d3;
+      font-size: 14px;
+      margin-bottom: 10px;
+    }
+
+    .footer-column a:hover {
+      color: var(--gold);
+    }
+
+    .footer-bottom {
+      border-top: 1px solid rgba(255,255,255,.12);
+      padding-top: 20px;
+      display: flex;
+      justify-content: space-between;
+      gap: 15px;
+      flex-wrap: wrap;
+      color: #aebdca;
+      font-size: 12px;
+    }
+
+    .prototype-note {
+      color: #d9e6ed;
+      font-size: 11px;
+      margin-top: 10px;
+    }
+
+    /* Responsive design */
+
+    @media (max-width: 850px) {
+      .hero-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .hero-content {
+        text-align: center;
+      }
+
+      .hero-content > p {
+        margin-left: auto;
+        margin-right: auto;
+      }
+
+      .hero-actions {
+        justify-content: center;
+      }
+
+      .trip-visual {
+        min-height: 350px;
+      }
+
+      .ride-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .ride-card:last-child {
+        grid-column: 1 / -1;
+      }
+    }
+
+    @media (max-width: 650px) {
+      .navbar {
+        min-height: 68px;
+      }
+
+      .logo {
+        font-size: 25px;
+      }
+
+      .menu-toggle {
+        display: block;
+      }
+
+      .nav-links {
+        display: none;
+        position: absolute;
+        top: 68px;
+        left: 0;
+        right: 0;
+        background: var(--white);
+        padding: 22px 5%;
+        border-bottom: 1px solid var(--border);
+        flex-direction: column;
+        align-items: stretch;
+        gap: 18px;
+      }
+
+      .nav-links.active {
+        display: flex;
+      }
+
+      .nav-cta {
+        text-align: center;
+      }
+
+      .hero {
+        padding: 55px 0;
+      }
+
+      .hero h1 {
+        letter-spacing: -1px;
+      }
+
+      section {
+        padding: 58px 0;
+      }
+
+      .booking-box {
+        padding: 22px 17px;
+      }
+
+      .booking-form {
+        grid-template-columns: 1fr;
+      }
+
+      .full-width {
+        grid-column: auto;
+      }
+
+      .ride-grid,
+      .steps-grid,
+      .footer-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .ride-card:last-child {
+        grid-column: auto;
+      }
+
+      .footer-grid {
+        gap: 28px;
+      }
+
+      .trip-visual {
+        padding: 18px;
+        min-height: 330px;
+      }
+
+      .route-card {
+        padding: 20px;
+      }
+
+      .cta-box {
+        padding: 38px 20px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Navigation -->
+  <header>
+    <div class="container navbar">
+      <a href="#home" class="logo">Hanya<span>Go</span></a>
+
+      <button
+        class="menu-toggle"
+        id="menuToggle"
+        aria-label="Open navigation menu"
+        aria-expanded="false"
+      >
+        ☰
+      </button>
+
+      <nav class="nav-links" id="navLinks">
+        <a href="#home">Home</a>
+        <a href="#booking">Book a Ride</a>
+        <a href="#rides">Ride Options</a>
+        <a href="#how-it-works">How It Works</a>
+        <a href="#faq">FAQs</a>
+        <a href="#booking" class="nav-cta">Get Started</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+
+    <!-- Hero -->
+    <section class="hero" id="home">
+      <div class="container hero-grid">
+
+        <div class="hero-content">
+          <span class="eyebrow">Your journey starts here</span>
+
+          <h1>Your Journey,<br><span>Made Simple.</span></h1>
+
+          <p>
+            Make your next journey easier with HanyaGo.
+            Explore convenient transport options and plan your trip
+            from one simple place.
+          </p>
+
+          <div class="hero-actions">
+            <a href="#booking" class="btn btn-primary">
+              Book Your Journey →
+            </a>
+
+            <a href="#how-it-works" class="btn btn-secondary">
+              How It Works
+            </a>
+          </div>
+
+          <div class="hero-note">
+            Simple booking · Convenient travel · Clear journey details
+          </div>
+        </div>
+
+        <div class="trip-visual">
+          <div class="route-card">
+            <h3>Plan your next trip</h3>
+            <p>Choose your destination and get ready to go.</p>
+
+            <div class="route-point">
+              <span class="route-icon"></span>
+              <div>
+                <small>YOUR PICKUP</small>
+                <strong>Your starting point</strong>
+              </div>
+            </div>
+
+            <div class="route-line"></div>
+
+            <div class="route-point destination">
+              <span class="route-icon"></span>
+              <div>
+                <small>YOUR DESTINATION</small>
+                <strong>Where you want to go</strong>
+              </div>
+            </div>
+
+            <div class="trip-badge">
+              <span>🧭 Journey planner</span>
+              <span>HanyaGo</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Booking -->
+    <section class="booking-section" id="booking">
+      <div class="container">
+
+        <div class="section-heading">
+          <span class="eyebrow">Start travelling</span>
+          <h2>Plan Your Journey</h2>
+          <p>
+            Enter your trip details below to preview your journey.
+          </p>
+        </div>
+
+        <div class="booking-box">
+          <h3>Where are you going?</h3>
+          <p>Fill in your travel details to get started.</p>
+
+          <form class="booking-form" id="bookingForm">
+
+            <div class="form-group">
+              <label for="pickup">Pickup Location</label>
+              <input
+                type="text"
+                id="pickup"
+                name="pickup"
+                placeholder="e.g. Biu, Borno"
+                required
+              >
+            </div>
+
+            <div class="form-group">
+              <label for="destination">Destination</label>
+              <input
+                type="text"
+                id="destination"
+                name="destination"
+                placeholder="e.g. Maiduguri"
+                required
+              >
+            </div>
+
+            <div class="form-group">
+              <label for="travelDate">Travel Date</label>
+              <input
+                type="date"
+                id="travelDate"
+                name="travelDate"
+                required
+              >
+            </div>
+
+            <div class="form-group">
+              <label for="rideType">Transport Option</label>
+              <select id="rideType" name="rideType" required>
+                <option value="">Choose a transport option</option>
+                <option value="Private Car">Private Car</option>
+                <option value="Bus / Shared Ride">Bus / Shared Ride</option>
+                <option value="Shuttle">Shuttle</option>
+              </select>
+            </div>
+
+            <div class="full-width">
+              <button type="submit" class="btn btn-primary">
+                Preview My Journey →
+              </button>
+            </div>
+
+          </form>
+
+          <div class="form-message" id="formMessage" role="status"></div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Ride options -->
+    <section class="rides-section" id="rides">
+      <div class="container">
+
+        <div class="section-heading">
+          <span class="eyebrow">Travel your way</span>
+          <h2>Choose Your Ride</h2>
+          <p>
+            Explore the transport options HanyaGo is designed to support.
+          </p>
+        </div>
+
+        <div class="ride-grid">
+
+          <article class="ride-card">
+            <div class="ride-icon">🚘</div>
+            <h3>Private Car</h3>
+            <p>
+              A private travel option for people who prefer
+              a more personal journey.
+            </p>
+            <a href="#booking" data-ride="Private Car">
+              Plan a car journey →
+            </a>
+          </article>
+
+          <article class="ride-card">
+            <div class="ride-icon">🚌</div>
+            <h3>Bus / Shared Ride</h3>
+            <p>
+              A shared transport option for travellers planning
+              a journey along a common route.
+            </p>
+            <a href="#booking" data-ride="Bus / Shared Ride">
+              Plan a shared journey →
+            </a>
+          </article>
+
+          <article class="ride-card">
+            <div class="ride-icon">🚐</div>
+            <h3>Shuttle</h3>
+            <p>
+              A transport option designed for organised trips
+              and suitable routes.
+            </p>
+            <a href="#booking" data-ride="Shuttle">
+              Plan a shuttle journey →
+            </a>
+          </article>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- How it works -->
+    <section id="how-it-works">
+      <div class="container">
+
+        <div class="section-heading">
+          <span class="eyebrow">Simple steps</span>
+          <h2>How HanyaGo Works</h2>
+          <p>
+            A straightforward journey-planning experience,
+            from your starting point to your destination.
+          </p>
+        </div>
+
+        <div class="steps-grid">
+
+          <article class="step">
+            <div class="step-number">1</div>
+            <h3>Enter Your Details</h3>
+            <p>
+              Choose your pickup location, destination and travel date.
+            </p>
+          </article>
+
+          <article class="step">
+            <div class="step-number">2</div>
+            <h3>Choose Your Ride</h3>
+            <p>
+              Select the transport option that matches your journey.
+            </p>
+          </article>
+
+          <article class="step">
+            <div class="step-number">3</div>
+            <h3>Confirm Your Booking</h3>
+            <p>
+              In the full service, review the trip details before
+              confirming your booking and making payment.
+            </p>
+          </article>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- Call to action -->
+    <section class="cta-section">
+      <div class="container">
+        <div class="cta-box">
+          <h2>Every Journey Has a Starting Point.</h2>
+          <p>
+            Let HanyaGo help you organise your next trip
+            with a simpler booking experience.
+          </p>
+          <a href="#booking" class="btn">
+            Plan Your Journey →
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ -->
+    <section class="faq-section" id="faq">
+      <div class="container">
+
+        <div class="section-heading">
+          <span class="eyebrow">Need to know</span>
+          <h2>Frequently Asked Questions</h2>
+          <p>Some helpful information about HanyaGo.</p>
+        </div>
+
+        <div class="faq-list">
+
+          <div class="faq-item">
+            <button
+              class="faq-question"
+              aria-expanded="false"
+            >
+              What is HanyaGo?
+              <span class="faq-symbol">+</span>
+            </button>
+
+            <div class="faq-answer">
+              HanyaGo is a transport-booking platform concept
+              designed to help travellers plan journeys and
+              access available transport options.
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <button
+              class="faq-question"
+              aria-expanded="false"
+            >
+              Can I book a trip on this website now?
+              <span class="faq-symbol">+</span>
+            </button>
+
+            <div class="faq-answer">
+              This version is a frontend prototype. The booking
+              form can preview trip details, but it does not yet
+              save real bookings or contact transport operators.
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <button
+              class="faq-question"
+              aria-expanded="false"
+            >
+              Can I pay online?
+              <span class="faq-symbol">+</span>
+            </button>
+
+            <div class="faq-answer">
+              Online payment has not been connected yet.
+              A payment provider such as Paystack or Flutterwave
+              must be integrated securely before real payments
+              can be accepted.
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <button
+              class="faq-question"
+              aria-expanded="false"
+            >
+              Will my booking details be saved?
+              <span class="faq-symbol">+</span>
+            </button>
+
+            <div class="faq-answer">
+              Not in this prototype. A database such as Supabase
+              will be needed to store bookings and manage
+              trip information in the full application.
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer>
+    <div class="container">
+
+      <div class="footer-grid">
+
+        <div class="footer-brand">
+          <a href="#home" class="logo">Hanya<span>Go</span></a>
+
+          <p>
+            Your Journey, Made Simple. A transport-booking
+            platform designed to make journey planning easier.
+          </p>
+        </div>
+
+        <div class="footer-column">
+          <h4>Explore</h4>
+          <a href="#home">Home</a>
+          <a href="#booking">Book a Ride</a>
+          <a href="#rides">Ride Options</a>
+          <a href="#how-it-works">How It Works</a>
+        </div>
+
+        <div class="footer-column">
+          <h4>Information</h4>
+          <a href="#faq">FAQs</a>
+          <a href="#booking">Plan a Journey</a>
+        </div>
+
+      </div>
+
+      <div class="footer-bottom">
+        <span>
+          © <span id="currentYear"></span> HanyaGo. All rights reserved.
+        </span>
+
+        <span>Your Journey, Made Simple.</span>
+      </div>
+
+      <p class="prototype-note">
+        Development note: This is a frontend prototype.
+        Real booking storage, authentication and payment processing
+        must be implemented before launch.
+      </p>
+
+    </div>
+  </footer>
+
+  <script>
+    // Mobile navigation
+    const menuToggle = document.getElementById("menuToggle");
+    const navLinks = document.getElementById("navLinks");
+
+    menuToggle.addEventListener("click", function () {
+      const isOpen = navLinks.classList.toggle("active");
+
+      menuToggle.setAttribute("aria-expanded", String(isOpen));
+      menuToggle.textContent = isOpen ? "✕" : "☰";
+    });
+
+    // Close mobile menu after selecting a link
+    document.querySelectorAll("#navLinks a").forEach(function (link) {
+      link.addEventListener("click", function () {
+        navLinks.classList.remove("active");
+        menuToggle.setAttribute("aria-expanded", "false");
+        menuToggle.textContent = "☰";
+      });
+    });
+
+    // Set minimum travel date to today
+    const travelDate = document.getElementById("travelDate");
+
+    const today = new Date();
+    const localToday = new Date(
+      today.getTime() - today.getTimezoneOffset() * 60000
+    ).toISOString().split("T")[0];
+
+    travelDate.min = localToday;
+
+    // Booking form preview
+    const bookingForm = document.getElementById("bookingForm");
+    const formMessage = document.getElementById("formMessage");
+
+    bookingForm.addEventListener("submit", function (event) {
+      event.preventDefault();
+
+      const pickup = document.getElementById("pickup").value.trim();
+      const destination = document.getElementById("destination").value.trim();
+      const date = travelDate.value;
+      const rideType = document.getElementById("rideType").value;
+
+      if (!pickup || !destination || !date || !rideType) {
+        alert("Please complete all the booking fields.");
+        return;
+      }
+
+      if (pickup.toLowerCase() === destination.toLowerCase()) {
+        alert("Pickup and destination cannot be the same.");
+        return;
+      }
+
+      if (date < localToday) {
+        alert("Please select today or a future travel date.");
+        return;
+      }
+
+      const formattedDate = new Date(date + "T12:00:00")
+        .toLocaleDateString(undefined, {
+          day: "numeric",
+          month: "long",
+          year: "numeric"
+        });
+
+      formMessage.innerHTML = `
+        <strong>Journey Preview</strong><br><br>
+        <strong>From:</strong> ${escapeHTML(pickup)}<br>
+        <strong>To:</strong> ${escapeHTML(destination)}<br>
+        <strong>Travel Date:</strong> ${formattedDate}<br>
+        <strong>Transport:</strong> ${escapeHTML(rideType)}<br><br>
+        <strong>Important:</strong> This is only a preview.
+        Your booking has not been submitted or saved because
+        the database and live booking system are not connected yet.
+      `;
+
+      formMessage.style.display = "block";
+      formMessage.scrollIntoView({
+        behavior: "smooth",
+        block: "nearest"
+      });
+    });
+
+    // Escape user-entered text before inserting it into HTML
+    function escapeHTML(value) {
+      return value.replace(/[&<>"']/g, function (character) {
+        const entities = {
+          "&": "&amp;",
+          "<": "&lt;",
+          ">": "&gt;",
+          '"': "&quot;",
+          "'": "&#39;"
+        };
+
+        return entities[character];
+      });
+    }
+
+    // Ride option cards select the corresponding booking option
+    document.querySelectorAll("[data-ride]").forEach(function (link) {
+      link.addEventListener("click", function () {
+        document.getElementById("rideType").value =
+          link.getAttribute("data-ride");
+      });
+    });
+
+    // FAQ accordion
+    document.querySelectorAll(".faq-question").forEach(function (button) {
+      button.addEventListener("click", function () {
+        const item = button.closest(".faq-item");
+        const isActive = item.classList.contains("active");
+
+        document.querySelectorAll(".faq-item").forEach(function (faq) {
+          faq.classList.remove("active");
+          faq.querySelector(".faq-question")
+            .setAttribute("aria-expanded", "false");
+        });
+
+        if (!isActive) {
+          item.classList.add("active");
+          button.setAttribute("aria-expanded", "true");
+        }
+      });
+    });
+
+    // Current year in footer
+    document.getElementById("currentYear").textContent =
+      new Date().getFullYear();
+  </script>
+
+</body>
+  </html>
