@@ -9,7 +9,9 @@
  */
 window.HANYAGO_CONFIG = Object.freeze({
   supabaseUrl: "https://wtcheskbfahqpvnhyoyb.supabase.co",
-  supabasePublishableKey: "sb_publishable_0M4xmQr2zOcpAhpv0pGTpw_qreW3UyR"
+  supabasePublishableKey: "sb_publishable_0M4xmQr2zOcpAhpv0pGTpw_qreW3UyR",
+  // Configure only the public, approved HanyaGo support inbox here before launch.
+  supportEmail: ""
 });
 
 window.hanyagoIsConfigured = function () {
