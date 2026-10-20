@@ -132,6 +132,10 @@ if (bookingForm) {
       if (document.getElementById("contactPhone")) document.getElementById("contactPhone").value = draft.contactPhone || "";
       if (document.getElementById("passengerNotes")) document.getElementById("passengerNotes").value = draft.passengerNotes || "";
       if (document.getElementById("allowLiveLocation")) document.getElementById("allowLiveLocation").checked = Boolean(draft.allowLiveLocation);
+      if (document.getElementById("pickupLatitude")) document.getElementById("pickupLatitude").value = draft.pickupLatitude ?? "";
+      if (document.getElementById("pickupLongitude")) document.getElementById("pickupLongitude").value = draft.pickupLongitude ?? "";
+      if (document.getElementById("destinationLatitude")) document.getElementById("destinationLatitude").value = draft.destinationLatitude ?? "";
+      if (document.getElementById("destinationLongitude")) document.getElementById("destinationLongitude").value = draft.destinationLongitude ?? "";
       sessionStorage.removeItem("hanyago_booking_draft");
       showBookingMessage(
         "<strong>Your journey details are ready.</strong><br>" +
