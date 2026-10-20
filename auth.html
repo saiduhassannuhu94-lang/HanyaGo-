@@ -557,6 +557,8 @@
       }
     }
   </style>
+  <link rel="stylesheet" href="site-shell.css">
+  <script src="site-shell.js" defer></script>
 </head>
 
 <body>
@@ -611,6 +613,10 @@
         <button type="button" class="google-button" id="googleSignIn">
           <span class="google-g" aria-hidden="true">G</span>
           <span>Continue with Google</span>
+        </button>
+        <button type="button" class="google-button github-button" id="githubSignIn">
+          <span class="github-g" aria-hidden="true">◆</span>
+          <span>Continue with GitHub</span>
         </button>
         <div class="auth-divider" id="authDivider"><span>OR CONTINUE WITH EMAIL</span></div>
 
@@ -758,7 +764,7 @@
       supabaseClient.auth.getSession().then(({ data, error }) => {
         if (error || !data?.session) {
           showMessage(
-            "We could not complete Google sign-in. Please try again or use email and password.",
+            "We could not complete social sign-in. Please try again or use email and password.",
             "error"
           );
           return;
@@ -766,7 +772,7 @@
 
         const destination = authCallbackParams.get("redirect");
         window.location.replace(
-          destination === "booking" ? "index.html#booking" : "index.html"
+          destination === "booking" ? "booking.html" : "index.html"
         );
       }).catch(() => {
         showMessage(
@@ -826,7 +832,7 @@
       $("switchNote").innerHTML = login
         ? 'New to HanyaGo? <button type="button" id="switchButton">Create an account</button>'
         : 'Already have an account? <button type="button" id="switchButton">Sign in</button>';
-      updateGoogleVisibility();
+      updateOAuthVisibility();
       const heading = $("title");
       heading.style.animation = "none";
       void heading.offsetWidth;
@@ -836,42 +842,52 @@
 
 
     const googleButton = $("googleSignIn");
-    function updateGoogleVisibility() {
+    const githubButton = $("githubSignIn");
+
+    function updateOAuthVisibility() {
       const login = mode === "login";
       googleButton.classList.toggle("hidden", !login);
+      githubButton.classList.toggle("hidden", !login);
       $("authDivider").classList.toggle("hidden", !login);
     }
 
-    googleButton.addEventListener("click", async () => {
+    async function startOAuth(provider, button, providerLabel) {
       if (busy) return;
       if (!supabaseClient) {
-        showMessage("Google sign-in is unavailable because Supabase is not configured.", "error");
+        showMessage("Social sign-in is unavailable because Supabase is not configured.", "error");
         return;
       }
+
       busy = true;
-      googleButton.disabled = true;
-      googleButton.innerHTML = '<span class="google-g" aria-hidden="true">G</span><span>Connecting to Google...</span>';
+      const previousHtml = button.innerHTML;
+      button.disabled = true;
+      button.innerHTML = '<span aria-hidden="true">…</span><span>Connecting to ' + providerLabel + '...</span>';
+
       try {
         const destination = new URLSearchParams(window.location.search).get("redirect");
         const redirectUrl = new URL(AUTH_REDIRECT_URL);
         if (destination === "booking") redirectUrl.searchParams.set("redirect", "booking");
+
         const { error } = await supabaseClient.auth.signInWithOAuth({
-          provider: "google",
+          provider,
           options: { redirectTo: redirectUrl.toString() }
         });
         if (error) throw error;
       } catch (error) {
-        showMessage(
-          /provider is not enabled|unsupported provider/i.test(String(error?.message || ""))
-            ? "Google sign-in has not been enabled in Supabase yet. Enable Google under Authentication → Sign In / Providers, then add the Google OAuth credentials."
-            : "Could not start Google sign-in. Please try email and password instead.",
-          "error"
-        );
+        const raw = String(error?.message || "");
+        let message = "Could not start " + providerLabel + " sign-in. Please use email and password or try again later.";
+        if (/provider is not enabled|unsupported provider/i.test(raw)) {
+          message = providerLabel + " sign-in is not enabled in Supabase yet. Enable the provider under Authentication → Sign In / Providers and add the OAuth credentials.";
+        }
+        showMessage(message, "error");
         busy = false;
-        googleButton.disabled = false;
-        googleButton.innerHTML = '<span class="google-g" aria-hidden="true">G</span><span>Continue with Google</span>';
+        button.disabled = false;
+        button.innerHTML = previousHtml;
       }
-    });
+    }
+
+    googleButton.addEventListener("click", () => startOAuth("google", googleButton, "Google"));
+    githubButton.addEventListener("click", () => startOAuth("github", githubButton, "GitHub"));
 
     $("loginTab").addEventListener("click", () => setMode("login"));
     $("signupTab").addEventListener("click", () => setMode("signup"));
@@ -1022,7 +1038,7 @@
           // Preserve the booking intent when the user came from a booking action.
           const destination = new URLSearchParams(window.location.search).get("redirect");
           window.location.replace(
-            destination === "booking" ? "index.html#booking" : "index.html"
+            destination === "booking" ? "booking.html" : "index.html"
           );
           return;
         } else {
