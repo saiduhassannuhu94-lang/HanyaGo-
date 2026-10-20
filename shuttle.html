@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Request a shuttle for an organised trip or a suitable route. Submit your travel details and HanyaGo will need to confirm that an appropriate operator and vehicle are available.">
+  <title>HanyaGo | Shuttle</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="reference-polish.css">
+  <link rel="stylesheet" href="transport-pages.css">
+</head>
+<body class="transport-detail-page">
+  <main>
+    <section class="transport-detail-hero">
+      <div class="container">
+        <nav class="transport-detail-nav" aria-label="Main navigation">
+          <a href="index.html" class="logo">Hanya<span>Go</span></a>
+          <a class="back-link" href="index.html#rides">← All transport options</a>
+        </nav>
+        <div class="transport-detail-layout">
+          <div class="transport-detail-copy">
+            <span class="eyebrow">Group transport</span>
+            <h1>Shuttle</h1>
+            <p>Request a shuttle for an organised trip or a suitable route. Submit your travel details and HanyaGo will need to confirm that an appropriate operator and vehicle are available.</p>
+            <div class="transport-detail-actions">
+              <a class="btn btn-primary" href="index.html?ride=Shuttle#booking">Book this ride →</a>
+              <a class="btn btn-secondary" href="index.html#how-it-works">How booking works</a>
+            </div>
+          </div>
+          <img class="transport-detail-image" src="https://images.unsplash.com/photo-1519003722824-194d4455a60c?auto=format&fit=crop&w=1400&q=88" alt="Photograph of a passenger transport van" fetchpriority="high">
+        </div>
+      </div>
+    </section>
+    <section class="transport-detail-content">
+      <div class="container">
+        <div class="section-heading">
+          <span class="eyebrow">Before you book</span>
+          <h2>Plan your journey with confidence</h2>
+          <p>Choose this transport option, submit your trip details and wait for the booking to be reviewed.</p>
+        </div>
+        <div class="transport-info-grid">
+          <article class="transport-info-card"><h2>Best for</h2><p>Organised trips, groups and routes suitable for shuttle vehicles.</p></article>
+          <article class="transport-info-card"><h2>Availability</h2><p>Vehicle capacity, pickup arrangements and departure time require confirmation.</p></article>
+          <article class="transport-info-card"><h2>Fare and operator</h2><p>Availability, pickup arrangements and fare are confirmed by the transport operator before travel.</p></article>
+        </div>
+        <div class="transport-notice"><strong>Please note:</strong> Submitting a booking request does not confirm a vehicle, driver, seat or fare. HanyaGo must confirm availability and the agreed fare before the journey is treated as confirmed.</div>
+        <div class="transport-detail-actions">
+          <a class="btn btn-primary" href="index.html?ride=Shuttle#booking">Continue to booking →</a>
+          <a class="btn btn-outline" href="index.html#rides">Compare transport options</a>
+        </div>
+      </div>
+    </section>
+  </main>
+  <footer class="transport-detail-footer">
+    <div class="container">© <span id="year"></span> HanyaGo · Your Journey, Made Simple.</div>
+  </footer>
+  <script>document.getElementById("year").textContent = new Date().getFullYear();</script>
+</body>
+</html>
