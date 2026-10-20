@@ -1,0 +1,36 @@
+/* HanyaGo trip intelligence: live weather and refined location controls. */
+.weather-section{padding:8px 0 72px;background:#f4f8f8}
+.weather-card{position:relative;display:grid;grid-template-columns:1.1fr 1fr;gap:26px;align-items:center;overflow:hidden;padding:28px;color:#fff;background:linear-gradient(125deg,#073750 0%,#07546d 58%,#08765e 100%);border:1px solid rgba(255,255,255,.16);border-radius:26px;box-shadow:0 20px 48px rgba(7,55,80,.16)}
+.weather-card:after{content:"";position:absolute;width:250px;height:250px;top:-120px;right:22%;border:1px solid rgba(255,255,255,.12);border-radius:50%;box-shadow:0 0 0 30px rgba(255,255,255,.025),0 0 0 65px rgba(255,255,255,.02);pointer-events:none}
+.weather-main,.weather-stats,.weather-head{position:relative;z-index:1}
+.weather-kicker{display:flex;align-items:center;gap:8px;margin-bottom:10px;color:#c8f4df;font-size:.78rem;font-weight:850;letter-spacing:1.2px;text-transform:uppercase}
+.weather-location{margin:0 0 3px;font-size:clamp(1.25rem,2.5vw,1.7rem);letter-spacing:-.5px}
+.weather-description{color:#dcecf0;font-size:.95rem}
+.weather-reading{display:flex;align-items:center;gap:16px;margin:14px 0 12px}
+.weather-icon{font-size:3.8rem;line-height:1;filter:drop-shadow(0 5px 12px rgba(0,0,0,.15))}
+.weather-temp{font-size:clamp(3.2rem,6vw,4.5rem);line-height:1;font-weight:800;letter-spacing:-3px}
+.weather-meta{color:#dcecf0;font-size:.88rem}
+.weather-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:18px}
+.weather-live{display:inline-flex;align-items:center;gap:7px;color:#d7f9e7;font-size:.78rem;font-weight:750}
+.weather-live:before{content:"";width:7px;height:7px;border-radius:50%;background:#6be4a9;box-shadow:0 0 0 4px rgba(107,228,169,.15)}
+.weather-refresh,.location-action{display:inline-flex;align-items:center;justify-content:center;gap:7px;min-height:42px;padding:9px 13px;color:inherit;background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.24);border-radius:12px;font-size:.84rem;font-weight:750;transition:background .2s ease,transform .2s ease}
+.weather-refresh:hover,.location-action:hover{background:rgba(255,255,255,.16);transform:translateY(-1px)}
+.weather-stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.weather-stat{min-width:0;padding:17px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.13);border-radius:17px;backdrop-filter:blur(8px)}
+.weather-stat span{display:block;color:#c5dfe5;font-size:.78rem}
+.weather-stat strong{display:block;margin-top:5px;font-size:1.12rem}
+.weather-footnote{margin-top:16px;color:#c8dfe4;font-size:.78rem}
+.weather-error{color:#ffe7b7}
+.location-input-row{display:flex;gap:8px;align-items:stretch}
+.location-input-row input{min-width:0;flex:1}
+.location-input-row .location-action{flex:0 0 auto;color:#087c52;background:#edf8f2;border-color:#d1eadc;white-space:nowrap}
+.location-help{display:block;margin-top:7px;color:var(--text-muted);font-size:.78rem}
+.location-action[disabled],.weather-refresh[disabled]{opacity:.65;cursor:wait;transform:none}
+.booking-form-page{gap:20px}
+.booking-form-page .form-group{gap:9px}
+.booking-form-page input,.booking-form-page select,.booking-form-page textarea{border-radius:13px;border-color:#d7e3e5;background:#fbfdfd}
+.booking-form-page input:focus,.booking-form-page select:focus,.booking-form-page textarea:focus{background:#fff;border-color:#07834f;box-shadow:0 0 0 4px rgba(8,131,79,.1)}
+.booking-form-page .full-width>.btn{min-height:54px;border-radius:13px;font-size:1rem}
+.booking-box>h3{letter-spacing:-.5px}
+@media(max-width:760px){.weather-section{padding:0 0 50px}.weather-card{grid-template-columns:1fr;gap:23px;padding:22px 18px;border-radius:22px}.weather-stats{gap:9px}.weather-stat{padding:14px}.weather-icon{font-size:3.1rem}.weather-temp{font-size:3.5rem}.weather-head{align-items:flex-start}.location-input-row{flex-direction:column}.location-input-row .location-action{width:100%;min-height:46px}}
+@media(prefers-reduced-motion:reduce){.weather-refresh,.location-action{transition:none}}
