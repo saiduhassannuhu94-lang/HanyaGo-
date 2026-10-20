@@ -8,11 +8,11 @@
 
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="reference-polish.css">
-    <link rel="stylesheet" href="site-shell.css">
+    <link rel="stylesheet" href="site-shell.css"><link rel="stylesheet" href="trip-tools.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
     <script src="config.js" defer></script>
     <script src="animations.js" defer></script>
-    <script src="site-shell.js" defer></script>
+    <script src="site-shell.js" defer></script><script src="trip-tools.js" defer></script>
 </head>
 
 <body>
@@ -101,6 +101,34 @@
           </div>
         </div>
 
+      </div>
+    </section>
+
+
+    <!-- Live weather: default to Biu, then let visitors opt in to device location. -->
+    <section class="weather-section" aria-labelledby="weatherHeading">
+      <div class="container">
+        <article class="weather-card" id="liveWeather" aria-live="polite">
+          <div class="weather-main">
+            <div class="weather-head">
+              <span class="weather-live">Live weather</span>
+              <button class="weather-refresh" type="button" data-weather-refresh>↻ Refresh</button>
+            </div>
+            <div class="weather-kicker">HANYAGO TRIP INTELLIGENCE</div>
+            <h2 class="weather-location" id="weatherHeading">Biu, Borno</h2>
+            <div class="weather-reading"><span class="weather-icon" aria-hidden="true">🌤️</span><strong class="weather-temp">--°</strong></div>
+            <p class="weather-description">Fetching the latest available conditions…</p>
+            <p class="weather-meta weather-updated">Weather updates automatically</p>
+            <p class="weather-footnote">Weather by Open-Meteo · Location defaults to Biu, Borno. Device location is optional.</p>
+            <button class="weather-refresh" type="button" data-weather-location style="margin-top:12px">◎ Use my location</button>
+          </div>
+          <div class="weather-stats" aria-label="Current weather details">
+            <div class="weather-stat"><span>Feels like</span><strong class="weather-feels">--°C</strong></div>
+            <div class="weather-stat"><span>Humidity</span><strong class="weather-humidity">--%</strong></div>
+            <div class="weather-stat"><span>Wind speed</span><strong class="weather-wind">-- km/h</strong></div>
+            <div class="weather-stat"><span>Precipitation</span><strong class="weather-rain">-- mm</strong></div>
+          </div>
+        </article>
       </div>
     </section>
 
