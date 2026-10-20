@@ -680,10 +680,7 @@
             </div>
 
             <div class="row" id="loginOptions">
-              <label class="remember">
-                <input type="checkbox" id="remember">
-                Keep me signed in
-              </label>
+              <span class="remember" aria-label="Session information">🔒 Secure sign-in on this device</span>
 
               <a href="#" class="text-link" id="forgotLink">Forgot password?</a>
             </div>
@@ -717,9 +714,8 @@
     /*
       HANYAGO SUPABASE CONFIGURATION
 
-      Replace the two placeholders below with your Supabase project values.
-
-      Use the publishable key or legacy anon key only.
+      Public Supabase settings are loaded from config.js.
+      Only a publishable/anon key belongs in browser code.
       NEVER put the service_role key in frontend JavaScript.
     */
 
@@ -1001,7 +997,7 @@
 
       if (!supabaseClient) {
         showMessage(
-          "Supabase is not connected yet. Configure SUPABASE_URL and SUPABASE_ANON_KEY in this file. No account data has been sent.",
+          "HanyaGo could not connect to its authentication service. Please try again later. No account data has been sent.",
           "error"
         );
         return;
@@ -1048,7 +1044,7 @@
 
           if (data.session) {
             showMessage(
-              "Your account has been created. Role-based permissions and profile tables must be configured before protected services are enabled.",
+              "Your account is ready. You are now signed in to HanyaGo.",
               "success"
             );
           } else {
