@@ -691,6 +691,12 @@
               <a href="#" class="text-link" id="forgotLink">Forgot password?</a>
             </div>
 
+            <div class="field captcha-field" id="captchaField">
+              <label for="hcaptchaWidget">Security verification</label>
+              <div id="hcaptchaWidget" class="hcaptcha-widget"></div>
+              <p id="captchaHelp" class="captcha-help" role="status" aria-live="polite">Email sign-in, sign-up and password recovery need the public hCaptcha Site Key configured in the site settings. Keep the Secret Key in Supabase only.</p>
+            </div>
+
             <button class="submit" id="submitButton" type="submit">
               <span id="submitText">Sign in</span>
               <span aria-hidden="true">→</span>
@@ -701,9 +707,9 @@
 
         <p class="terms" id="terms">
           By continuing, you agree to HanyaGo’s
-          <a href="#" id="termsLink">Terms of Service</a>
+          <a href="terms.html" id="termsLink">Terms of Service</a>
           and
-          <a href="#" id="privacyLink">Privacy Policy</a>.
+          <a href="privacy.html" id="privacyLink">Privacy Policy</a>.
         </p>
 
         <p class="switch-note" id="switchNote">
@@ -781,6 +787,84 @@
         );
       });
     }
+    // Supabase CAPTCHA protection needs a front-end hCaptcha token for email/password actions.
+    const hcaptchaSiteKey = String(publicConfig.hcaptchaSiteKey || "").trim();
+    let captchaToken = "";
+    let hcaptchaWidgetId = null;
+    let hcaptchaReady = false;
+
+    function onHcaptchaVerified(token) {
+      captchaToken = String(token || "");
+      $("captchaHelp").textContent = captchaToken
+        ? "Security check complete. It will be reset after the request."
+        : "Complete the hCaptcha check before continuing.";
+      $("captchaHelp").classList.remove("captcha-error");
+    }
+
+    function onHcaptchaExpired() {
+      captchaToken = "";
+      $("captchaHelp").textContent = "The security check expired. Please complete it again.";
+    }
+
+    function onHcaptchaError() {
+      captchaToken = "";
+      $("captchaHelp").textContent = "hCaptcha could not load. Check your connection and try again.";
+      $("captchaHelp").classList.add("captcha-error");
+    }
+
+    window.hanyagoHcaptchaLoaded = function () {
+      if (!hcaptchaSiteKey || !window.hcaptcha) return;
+      try {
+        hcaptchaWidgetId = window.hcaptcha.render("hcaptchaWidget", {
+          sitekey: hcaptchaSiteKey,
+          callback: onHcaptchaVerified,
+          "expired-callback": onHcaptchaExpired,
+          "error-callback": onHcaptchaError,
+          theme: document.documentElement.getAttribute("data-theme") === "dark" ? "dark" : "light"
+        });
+        hcaptchaReady = true;
+        $("captchaHelp").textContent = "Complete the hCaptcha check before signing in, creating an account or requesting a password reset.";
+      } catch (_) {
+        onHcaptchaError();
+      }
+    };
+
+    function getCaptchaTokenOrShowError() {
+      if (!hcaptchaSiteKey) {
+        showMessage("Email/password authentication is waiting for the public hCaptcha Site Key. Add it to config.js; keep the Secret Key only in Supabase.", "error");
+        return "";
+      }
+      if (!hcaptchaReady || !window.hcaptcha) {
+        showMessage("The hCaptcha security check is still loading. Please wait a moment and try again.", "error");
+        return "";
+      }
+      if (!captchaToken) {
+        showMessage("Please complete the hCaptcha security check before continuing.", "error");
+        $("captchaField").scrollIntoView({ behavior: "smooth", block: "center" });
+        return "";
+      }
+      return captchaToken;
+    }
+
+    function resetHcaptcha() {
+      captchaToken = "";
+      if (hcaptchaWidgetId !== null && window.hcaptcha) {
+        try { window.hcaptcha.reset(hcaptchaWidgetId); } catch (_) {}
+      }
+    }
+
+    if (hcaptchaSiteKey) {
+      $("captchaHelp").textContent = "Loading security verification…";
+      const hcaptchaScript = document.createElement("script");
+      hcaptchaScript.src = "https://js.hcaptcha.com/1/api.js?onload=hanyagoHcaptchaLoaded&render=explicit";
+      hcaptchaScript.async = true;
+      hcaptchaScript.defer = true;
+      hcaptchaScript.onerror = onHcaptchaError;
+      document.head.appendChild(hcaptchaScript);
+    } else {
+      $("captchaField").classList.add("captcha-unconfigured");
+    }
+
     let mode = "login";
     let busy = false;
 
@@ -935,10 +1019,14 @@
         return;
       }
 
+      const recoveryCaptchaToken = getCaptchaTokenOrShowError();
+      if (!recoveryCaptchaToken) return;
+
       try {
         const { error } =
           await supabaseClient.auth.resetPasswordForEmail(email, {
-            redirectTo: AUTH_REDIRECT_URL
+            redirectTo: AUTH_REDIRECT_URL,
+            captchaToken: recoveryCaptchaToken
           });
 
         if (error) throw error;
@@ -949,9 +1037,13 @@
         );
       } catch (error) {
         showMessage(
-          error.message || "Could not start password recovery.",
+          /captcha/i.test(String(error?.message || ""))
+            ? "The security check failed or expired. Complete hCaptcha and try again."
+            : (error.message || "Could not start password recovery."),
           "error"
         );
+      } finally {
+        resetHcaptcha();
       }
     });
 
@@ -1019,6 +1111,9 @@
         return;
       }
 
+      const captchaToken = getCaptchaTokenOrShowError();
+      if (!captchaToken) return;
+
       busy = true;
       $("submitButton").disabled = true;
       $("submitText").textContent =
@@ -1029,7 +1124,8 @@
           const { error } =
             await supabaseClient.auth.signInWithPassword({
               email,
-              password
+              password,
+              options: { captchaToken }
             });
 
           if (error) throw error;
@@ -1051,8 +1147,8 @@
                 phone: phone || null,
                 role
               },
-              emailRedirectTo:
-                AUTH_REDIRECT_URL
+              emailRedirectTo: AUTH_REDIRECT_URL,
+              captchaToken
             }
           });
 
@@ -1084,10 +1180,13 @@
           message = "An account may already exist for this email. Try signing in or resetting your password.";
         } else if (/email not confirmed/i.test(raw)) {
           message = "Please confirm your email using the link sent to your inbox.";
+        } else if (/captcha/i.test(raw)) {
+          message = "The security check failed or expired. Complete hCaptcha and try again.";
         }
 
         showMessage(message, "error");
       } finally {
+        resetHcaptcha();
         busy = false;
         $("submitButton").disabled = false;
         $("submitText").textContent =
