@@ -8,7 +8,7 @@
   // Leave blank rather than directing passengers to an invented or unrelated number.
   const HANYAGO_WHATSAPP_NUMBER = "";
   // This is the contact email previously supplied for the project owner. Replace it if HanyaGo uses a dedicated support inbox.
-  const HANYAGO_CONTACT_EMAIL = "saiduhassannuhu94@gmail.com";
+  const HANYAGO_CONTACT_EMAIL = (window.HANYAGO_CONFIG && window.HANYAGO_CONFIG.supportEmail) || "";
 
   function applyTheme(theme, persist) {
     const selected = theme === "dark" ? "dark" : "light";
@@ -126,8 +126,16 @@
 
   // Contact forms open a pre-filled email draft. No message is silently sent or stored by the static site.
   document.querySelectorAll("[data-contact-email]").forEach(function (node) {
-    node.textContent = HANYAGO_CONTACT_EMAIL;
-    if (node.tagName === "A") node.href = "mailto:" + HANYAGO_CONTACT_EMAIL;
+    if (HANYAGO_CONTACT_EMAIL) {
+      node.textContent = HANYAGO_CONTACT_EMAIL;
+      if (node.tagName === "A") node.href = "mailto:" + HANYAGO_CONTACT_EMAIL;
+    } else {
+      node.textContent = "Support email not configured yet";
+      if (node.tagName === "A") {
+        node.href = "#contact-status";
+        node.setAttribute("aria-disabled", "true");
+      }
+    }
   });
   const contactForm = document.querySelector("[data-contact-form]");
   const contactStatus = document.querySelector("[data-contact-status]");
@@ -140,6 +148,10 @@
     contactForm.addEventListener("submit", function (event) {
       event.preventDefault();
       if (!contactForm.reportValidity()) return;
+      if (!HANYAGO_CONTACT_EMAIL) {
+        setContactStatus("The official HanyaGo support email has not been configured yet. Your message has not been sent or stored.", "error");
+        return;
+      }
       const name = contactForm.elements.namedItem("name").value.trim();
       const replyEmail = contactForm.elements.namedItem("email").value.trim();
       const topic = contactForm.elements.namedItem("topic").value;
