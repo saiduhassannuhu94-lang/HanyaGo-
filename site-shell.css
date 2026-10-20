@@ -359,3 +359,27 @@ html[data-theme="dark"] .captcha-unconfigured .captcha-help { color:#f2dc9e; }
 .visual .wordmark-go { color: #9de0bf; }
 html[data-theme="dark"] .visual .wordmark-hanya { color: #fff; }
 html[data-theme="dark"] .visual .wordmark-go { color: #9de0bf; }
+
+/* Collapse the seven-link navigation before tablet widths begin to feel crowded. */
+@media (max-width: 920px) {
+  .site-header .navbar { min-height: 68px; gap: 10px; }
+  .site-header .menu-toggle { display: inline-flex; flex: 0 0 42px; }
+  .nav-actions { margin-left: auto; }
+  .site-header .nav-links {
+    top: calc(100% + 1px);
+    left: 0;
+    right: 0;
+    display: none;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0;
+    padding: 12px 18px 18px;
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-top: 0;
+    box-shadow: var(--shadow-md);
+  }
+  .site-header .nav-links.active { display: flex; }
+  .site-header .nav-links a { padding: 13px 8px; border-bottom: 1px solid var(--border); }
+  .site-header .nav-links .nav-cta { margin-top: 8px; text-align: center; }
+}
