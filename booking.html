@@ -21,7 +21,7 @@
   </div>
 </header>
 <main>
-  <section class="page-hero"><div class="container"><span class="eyebrow">Journey planner</span><h1>Plan your next journey.</h1><p>Enter the trip details once. HanyaGo will save the request after you sign in, then it will remain pending until availability and fare are confirmed.</p></div></section>
+  <section class="page-hero"><div class="container"><span class="eyebrow">Journey planner</span><h1>Plan your next journey.</h1><p>Add your route, preferred pickup time, passenger count and contact number. Requests remain pending until an operator confirms availability and fare.</p></div></section>
   <section class="page-body"><div class="container">
     <div class="booking-box" style="max-width:980px;margin:0 auto;">
       <h3>Where are you going?</h3><p>Use the details below to submit a booking request.</p>
@@ -29,8 +29,12 @@
         <div class="form-group"><label for="pickup">Pickup location</label><input id="pickup" name="pickup" type="text" autocomplete="street-address" placeholder="e.g. Biu, Borno" required maxlength="180"></div>
         <div class="form-group"><label for="destination">Destination</label><input id="destination" name="destination" type="text" placeholder="e.g. Maiduguri" required maxlength="180"></div>
         <div class="form-group"><label for="travelDate">Travel date</label><input id="travelDate" name="travelDate" type="date" required></div>
+        <div class="form-group"><label for="travelTime">Preferred pickup time</label><input id="travelTime" name="travelTime" type="time" required></div>
+        <div class="form-group"><label for="passengerCount">Number of passengers</label><select id="passengerCount" name="passengerCount" required><option value="1">1 passenger</option><option value="2">2 passengers</option><option value="3">3 passengers</option><option value="4">4 passengers</option><option value="5">5 passengers</option><option value="6">6 passengers</option><option value="7">7 passengers</option><option value="8">8 passengers</option></select></div>
+        <div class="form-group"><label for="contactPhone">Contact phone number</label><input id="contactPhone" name="contactPhone" type="tel" autocomplete="tel" inputmode="tel" placeholder="e.g. 07012345678" maxlength="20" required></div>
         <div class="form-group"><label for="rideType">Transport option</label><select id="rideType" name="rideType" required><option value="">Choose a transport option</option><option value="Private Car">Private Car</option><option value="Bus / Shared Ride">Bus / Shared Ride</option><option value="Shuttle">Shuttle</option></select></div>
-        <div class="full-width"><button type="submit" class="btn btn-primary">Continue with journey →</button></div>
+        <div class="form-group full-width"><label for="passengerNotes">Additional requests <span class="optional-label">(optional)</span></label><textarea id="passengerNotes" name="passengerNotes" rows="3" maxlength="1000" placeholder="Luggage, pickup landmark, accessibility needs, or other useful details"></textarea><small class="field-hint">Do not include passwords, bank details or verification codes.</small></div>
+        <div class="full-width"><button type="submit" class="btn btn-primary">Review journey request →</button></div>
       </form>
       <div class="form-message" id="formMessage" role="status" aria-live="polite"></div>
       <div class="trust-note"><strong>Important:</strong> A saved request is not a confirmed ticket. A HanyaGo operator must confirm the driver or vehicle, availability and agreed fare. Online payments are not enabled yet.</div>
