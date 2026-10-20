@@ -896,16 +896,13 @@
 
           if (error) throw error;
 
+          // After a successful login, always leave the auth page.
+          // Preserve the booking intent when the user came from a booking action.
           const destination = new URLSearchParams(window.location.search).get("redirect");
-          if (destination === "booking") {
-            window.location.href = "index.html#booking";
-            return;
-          }
-
-          showMessage(
-            "You are signed in. Your account session is active on this device.",
-            "success"
+          window.location.replace(
+            destination === "booking" ? "index.html#booking" : "index.html"
           );
+          return;
         } else {
           const { data, error } = await supabaseClient.auth.signUp({
             email,
