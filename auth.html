@@ -1135,7 +1135,7 @@
           // Preserve the booking intent when the user came from a booking action.
           const destination = new URLSearchParams(window.location.search).get("redirect");
           window.location.replace(
-            destination === "booking" ? "booking.html" : "index.html"
+            destination === "booking" ? "booking.html" : destination === "admin" ? "admin.html" : "index.html"
           );
           return;
         } else {
