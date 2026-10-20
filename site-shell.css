@@ -383,3 +383,9 @@ html[data-theme="dark"] .visual .wordmark-go { color: #9de0bf; }
   .site-header .nav-links a { padding: 13px 8px; border-bottom: 1px solid var(--border); }
   .site-header .nav-links .nav-cta { margin-top: 8px; text-align: center; }
 }
+
+/* Journey form additions: readable optional notes and clear field guidance. */
+.booking-form-page textarea { width:100%; min-height:100px; padding:13px 14px; border:1px solid var(--border); border-radius:12px; background:var(--white); color:var(--text); font:inherit; resize:vertical; }
+.booking-form-page .field-hint, .booking-form-page .optional-label { display:block; margin-top:6px; color:var(--text-muted); font-size:.82rem; line-height:1.5; }
+.booking-form-page input:focus, .booking-form-page select:focus, .booking-form-page textarea:focus { outline:3px solid rgba(8,124,82,.16); border-color:var(--shell-accent); }
+html[data-theme="dark"] .booking-form-page textarea { background:#101d27; color:#e7eef3; border-color:#344857; }
