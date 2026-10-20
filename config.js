@@ -8,8 +8,8 @@
  * Replace the two placeholders after confirming the correct Supabase project.
  */
 window.HANYAGO_CONFIG = Object.freeze({
-  supabaseUrl: "YOUR_SUPABASE_PROJECT_URL",
-  supabasePublishableKey: "YOUR_SUPABASE_PUBLISHABLE_OR_ANON_KEY"
+  supabaseUrl: "https://wtcheskbfahqpvnhyoyb.supabase.co",
+  supabasePublishableKey: "sb_publishable_0M4xmQr2zOcpAhpv0pGTpw_qreW3UyR"
 });
 
 window.hanyagoIsConfigured = function () {
