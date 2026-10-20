@@ -28,6 +28,4 @@ loadWeather();
 window.setInterval(loadWeather, 15 * 60 * 1000);
 const refresh=$("[data-weather-refresh]");if(refresh)refresh.addEventListener("click",loadWeather);
 const locate=$("[data-weather-location]");if(locate){locate.addEventListener("click",()=>{const el=$(".weather-description");if(el)el.textContent="Weather currently uses Biu, Borno. The pickup form lets you enter your exact starting point.";const heading=$(".weather-location");if(heading)heading.scrollIntoView({behavior:"smooth",block:"nearest"})})}
-const pickup=document.querySelector("#pickup"),helper=document.querySelector("[data-pickup-helper]");
-if(pickup&&helper)helper.addEventListener("click",()=>{pickup.focus();pickup.placeholder="Enter your pickup address or a nearby landmark";const hint=document.querySelector("[data-location-help]");if(hint)hint.textContent="Enter a town, street, motor park, school, hospital or recognisable landmark."});
 })();
