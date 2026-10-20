@@ -1,0 +1,49 @@
+<!doctype html><html lang="en"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Plan a HanyaGo journey by entering your pickup, destination, date and preferred transport option.">
+<meta name="theme-color" content="#073750">
+<title>Book a Ride | HanyaGo</title>
+<link rel="stylesheet" href="style.css"><link rel="stylesheet" href="reference-polish.css"><link rel="stylesheet" href="site-shell.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script><script src="config.js" defer></script><script src="animations.js" defer></script><script src="site-shell.js" defer></script></head><body>
+<header class="site-header">
+  <div class="container navbar">
+    <a href="index.html" class="logo wordmark" aria-label="HanyaGo home">
+      <span class="wordmark-mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M5 18V6h4.2l5.6 7.2V6H19v12h-4.2L9.2 10.8V18H5Z" fill="currentColor"/><path d="M3 21h18" stroke="#E9B949" stroke-width="1.8" stroke-linecap="round"/></svg></span>
+      <span class="wordmark-name"><span class="wordmark-hanya">Hanya</span><span class="wordmark-go">Go</span></span>
+    </a>
+    <nav class="nav-links" id="navLinks" aria-label="Main navigation">
+      <a href="index.html" data-nav-item>Home</a><a href="booking.html" data-nav-item>Book a Ride</a><a href="rides.html" data-nav-item>Ride Options</a><a href="how-it-works.html" data-nav-item>How It Works</a><a href="faq.html" data-nav-item>FAQs</a><a href="contact.html" data-nav-item>Contact</a><a href="booking.html" class="nav-cta" data-nav-item>Plan a Trip →</a>
+    </nav>
+    <div class="nav-actions">
+      <button type="button" class="theme-toggle" data-theme-toggle aria-label="Switch to dark theme" title="Switch theme" aria-pressed="false"><span class="theme-toggle-icon" aria-hidden="true">☾</span><span class="theme-toggle-label">Dark</span></button>
+      <button type="button" class="menu-toggle" id="menuToggle" aria-label="Open navigation menu" aria-expanded="false">☰</button>
+    </div>
+  </div>
+</header>
+<main>
+  <section class="page-hero"><div class="container"><span class="eyebrow">Journey planner</span><h1>Plan your next journey.</h1><p>Enter the trip details once. HanyaGo will save the request after you sign in, then it will remain pending until availability and fare are confirmed.</p></div></section>
+  <section class="page-body"><div class="container">
+    <div class="booking-box" style="max-width:980px;margin:0 auto;">
+      <h3>Where are you going?</h3><p>Use the details below to submit a booking request.</p>
+      <form class="booking-form booking-form-page" id="bookingForm">
+        <div class="form-group"><label for="pickup">Pickup location</label><input id="pickup" name="pickup" type="text" autocomplete="street-address" placeholder="e.g. Biu, Borno" required maxlength="180"></div>
+        <div class="form-group"><label for="destination">Destination</label><input id="destination" name="destination" type="text" placeholder="e.g. Maiduguri" required maxlength="180"></div>
+        <div class="form-group"><label for="travelDate">Travel date</label><input id="travelDate" name="travelDate" type="date" required></div>
+        <div class="form-group"><label for="rideType">Transport option</label><select id="rideType" name="rideType" required><option value="">Choose a transport option</option><option value="Private Car">Private Car</option><option value="Bus / Shared Ride">Bus / Shared Ride</option><option value="Shuttle">Shuttle</option></select></div>
+        <div class="full-width"><button type="submit" class="btn btn-primary">Continue with journey →</button></div>
+      </form>
+      <div class="form-message" id="formMessage" role="status" aria-live="polite"></div>
+      <div class="trust-note"><strong>Important:</strong> A saved request is not a confirmed ticket. A HanyaGo operator must confirm the driver or vehicle, availability and agreed fare. Online payments are not enabled yet.</div>
+    </div>
+    <div class="page-cta"><div><h2>Need help before booking?</h2><p>Read the process or contact HanyaGo with your question.</p></div><a class="btn btn-primary" href="contact.html">Contact support →</a></div>
+  </div></section>
+</main><footer class="site-footer"><div class="container">
+  <div class="site-footer-main">
+    <div class="site-footer-brand"><a href="index.html" class="logo wordmark" aria-label="HanyaGo home"><span class="wordmark-mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M5 18V6h4.2l5.6 7.2V6H19v12h-4.2L9.2 10.8V18H5Z" fill="currentColor"/><path d="M3 21h18" stroke="#E9B949" stroke-width="1.8" stroke-linecap="round"/></svg></span><span class="wordmark-name"><span class="wordmark-hanya">Hanya</span><span class="wordmark-go">Go</span></span></a><p>Plan journeys with a clearer booking experience. Requests stay pending until availability, driver/operator and fare are confirmed.</p></div>
+    <div><h2>Explore</h2><nav class="site-footer-links" aria-label="Explore"><a href="booking.html">Book a ride</a><a href="rides.html">Ride options</a><a href="how-it-works.html">How it works</a></nav></div>
+    <div><h2>Help</h2><nav class="site-footer-links" aria-label="Help"><a href="faq.html">Frequently asked questions</a><a href="contact.html">Contact HanyaGo</a><a href="auth.html">Your account</a></nav></div>
+    <div><h2>HanyaGo</h2><nav class="site-footer-links" aria-label="About HanyaGo"><a href="index.html">Home</a><a href="contact.html">Send a message</a></nav></div>
+  </div>
+  <div class="site-footer-bottom"><span>© <span data-current-year></span> HanyaGo. All rights reserved.</span><span>Designed for clearer journeys in Nigeria.</span></div>
+</div></footer>
+<script src="script.js" defer></script><script>document.querySelectorAll("[data-current-year]").forEach(n=>n.textContent=new Date().getFullYear());</script></body></html>
