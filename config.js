@@ -12,6 +12,8 @@ window.HANYAGO_CONFIG = Object.freeze({
   supabasePublishableKey: "sb_publishable_0M4xmQr2zOcpAhpv0pGTpw_qreW3UyR",
   // Configure only the public, approved HanyaGo support inbox here before launch.
   supportEmail: "",
+  // Official WhatsApp number in international digits, without + or spaces.
+  whatsappNumber: "",
   // Public hCaptcha Site Key only. Never store the hCaptcha Secret Key in frontend code.
   hcaptchaSiteKey: ""
 });
