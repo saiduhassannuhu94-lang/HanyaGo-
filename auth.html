@@ -749,6 +749,36 @@
     const AUTH_REDIRECT_URL = "https://hanyago.vercel.app/auth.html";
 
     const $ = id => document.getElementById(id);
+
+    // Complete the OAuth round-trip after Supabase returns to this page.
+    // Only run this redirect when the URL actually looks like an OAuth callback.
+    const authCallbackParams = new URLSearchParams(window.location.search);
+    const isOAuthCallback =
+      authCallbackParams.has("code") ||
+      window.location.hash.includes("access_token=") ||
+      window.location.hash.includes("error_description=");
+
+    if (supabaseClient && isOAuthCallback) {
+      supabaseClient.auth.getSession().then(({ data, error }) => {
+        if (error || !data?.session) {
+          showMessage(
+            "We could not complete Google sign-in. Please try again or use email and password.",
+            "error"
+          );
+          return;
+        }
+
+        const destination = authCallbackParams.get("redirect");
+        window.location.replace(
+          destination === "booking" ? "index.html#booking" : "index.html"
+        );
+      }).catch(() => {
+        showMessage(
+          "We could not verify the sign-in session. Please try again.",
+          "error"
+        );
+      });
+    }
     let mode = "login";
     let busy = false;
 
