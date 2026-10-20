@@ -503,6 +503,52 @@
       }
     }
 
+
+    /* HanyaGo auth refresh: motion, tactile feedback and mobile polish */
+    .shell { overflow: hidden; }
+    .visual::before {
+      content: ""; position: absolute; inset: -30%;
+      background: radial-gradient(circle at 20% 25%, #b7f7d12a, transparent 35%),
+                  radial-gradient(circle at 80% 75%, #f4b94222, transparent 30%);
+      animation: ambientDrift 16s ease-in-out infinite alternate;
+      pointer-events: none;
+    }
+    .visual > * { position: relative; z-index: 1; }
+    .brand-mark { box-shadow: 0 8px 24px #00000020; transition: transform .25s ease; }
+    .brand:hover .brand-mark { transform: rotate(-7deg) scale(1.04); }
+    .mode { position: relative; isolation: isolate; }
+    .mode button { transition: color .22s ease, background .22s ease, box-shadow .22s ease, transform .22s ease; }
+    .mode button:active, .role label:active, .submit:active { transform: scale(.985); }
+    .field input { transition: border-color .2s ease, box-shadow .2s ease, background .2s ease; }
+    .field input:focus { background: #fcfffd; }
+    .role label { transition: border-color .2s ease, background .2s ease, transform .2s ease, box-shadow .2s ease; }
+    .submit { position: relative; overflow: hidden; }
+    .submit::after {
+      content: ""; position: absolute; inset: 0 auto 0 -120%; width: 65%;
+      background: linear-gradient(100deg, transparent, #ffffff35, transparent);
+      transform: skewX(-18deg); transition: left .6s ease;
+    }
+    .submit:hover::after { left: 140%; }
+    .google-button {
+      width: 100%; min-height: 49px; margin-top: 13px; display: flex;
+      align-items: center; justify-content: center; gap: 11px;
+      border: 1px solid #dbe4e8; border-radius: 10px; background: #fff;
+      color: #263747; font-weight: 700; transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease;
+    }
+    .google-button:hover { border-color: #b8c9c4; box-shadow: 0 7px 20px #10243a0d; transform: translateY(-1px); }
+    .google-button:disabled { opacity: .65; cursor: wait; transform: none; }
+    .google-g { font-family: Arial, sans-serif; font-size: 19px; font-weight: 800; color: #4285f4; }
+    .auth-divider { display: flex; align-items: center; gap: 12px; margin-top: 16px; color: #8a969e; font-size: 11px; }
+    .auth-divider::before, .auth-divider::after { content: ""; flex: 1; height: 1px; background: #e7ecef; }
+    .form-wrap { animation: formRise .65s cubic-bezier(.2,.7,.2,1) both; }
+    .heading h2 { animation: headingIn .38s ease both; }
+    .message { transform-origin: top; }
+    .message.show { animation: messageIn .25s ease both; }
+    @keyframes formRise { from { opacity: 0; transform: translateY(18px) scale(.99); } to { opacity: 1; transform: translateY(0) scale(1); } }
+    @keyframes headingIn { from { opacity: .3; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes messageIn { from { opacity: 0; transform: translateY(-5px) scale(.99); } to { opacity: 1; transform: translateY(0) scale(1); } }
+    @keyframes ambientDrift { from { transform: translate3d(-2%, -1%, 0) rotate(0deg); } to { transform: translate3d(2%, 2%, 0) rotate(5deg); } }
+
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after {
         animation-duration: .01ms !important;
@@ -561,6 +607,12 @@
           <button type="button" id="loginTab" class="active">Sign in</button>
           <button type="button" id="signupTab">Create account</button>
         </div>
+
+        <button type="button" class="google-button" id="googleSignIn">
+          <span class="google-g" aria-hidden="true">G</span>
+          <span>Continue with Google</span>
+        </button>
+        <div class="auth-divider" id="authDivider"><span>OR CONTINUE WITH EMAIL</span></div>
 
         <form id="authForm" novalidate>
 
@@ -748,8 +800,52 @@
       $("switchNote").innerHTML = login
         ? 'New to HanyaGo? <button type="button" id="switchButton">Create an account</button>'
         : 'Already have an account? <button type="button" id="switchButton">Sign in</button>';
+      updateGoogleVisibility();
+      const heading = $("title");
+      heading.style.animation = "none";
+      void heading.offsetWidth;
+      heading.style.animation = "headingIn .38s ease both";
 
     }
+
+
+    const googleButton = $("googleSignIn");
+    function updateGoogleVisibility() {
+      const login = mode === "login";
+      googleButton.classList.toggle("hidden", !login);
+      $("authDivider").classList.toggle("hidden", !login);
+    }
+
+    googleButton.addEventListener("click", async () => {
+      if (busy) return;
+      if (!supabaseClient) {
+        showMessage("Google sign-in is unavailable because Supabase is not configured.", "error");
+        return;
+      }
+      busy = true;
+      googleButton.disabled = true;
+      googleButton.innerHTML = '<span class="google-g" aria-hidden="true">G</span><span>Connecting to Google...</span>';
+      try {
+        const destination = new URLSearchParams(window.location.search).get("redirect");
+        const redirectUrl = new URL(AUTH_REDIRECT_URL);
+        if (destination === "booking") redirectUrl.searchParams.set("redirect", "booking");
+        const { error } = await supabaseClient.auth.signInWithOAuth({
+          provider: "google",
+          options: { redirectTo: redirectUrl.toString() }
+        });
+        if (error) throw error;
+      } catch (error) {
+        showMessage(
+          /provider is not enabled|unsupported provider/i.test(String(error?.message || ""))
+            ? "Google sign-in has not been enabled in Supabase yet. Enable Google under Authentication → Sign In / Providers, then add the Google OAuth credentials."
+            : "Could not start Google sign-in. Please try email and password instead.",
+          "error"
+        );
+        busy = false;
+        googleButton.disabled = false;
+        googleButton.innerHTML = '<span class="google-g" aria-hidden="true">G</span><span>Continue with Google</span>';
+      }
+    });
 
     $("loginTab").addEventListener("click", () => setMode("login"));
     $("signupTab").addEventListener("click", () => setMode("signup"));
