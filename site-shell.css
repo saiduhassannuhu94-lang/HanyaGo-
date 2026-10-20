@@ -351,3 +351,11 @@ html[data-theme="dark"] .text-link { color: #39cf94; }
 html[data-theme="dark"] .captcha-unconfigured { border-color:#635226; background:#302915; }
 html[data-theme="dark"] .captcha-unconfigured .captcha-help { color:#f2dc9e; }
 @media(max-width:420px) { .captcha-field { padding:10px; } .hcaptcha-widget iframe { max-width:100%; } }
+
+.policy-content { max-width: 860px; margin: 0 auto; line-height: 1.75; }
+.policy-content h2 { margin: 28px 0 9px; color: var(--primary); font-size: 1.18rem; line-height: 1.35; }
+.policy-content p { margin: 0 0 14px; color: var(--text-muted); }
+.visual .wordmark-hanya { color: #fff; }
+.visual .wordmark-go { color: #9de0bf; }
+html[data-theme="dark"] .visual .wordmark-hanya { color: #fff; }
+html[data-theme="dark"] .visual .wordmark-go { color: #9de0bf; }
