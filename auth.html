@@ -929,10 +929,11 @@
     const githubButton = $("githubSignIn");
 
     function updateOAuthVisibility() {
-      const login = mode === "login";
-      googleButton.classList.toggle("hidden", !login);
-      githubButton.classList.toggle("hidden", !login);
-      $("authDivider").classList.toggle("hidden", !login);
+      // OAuth can be used to sign in or create a first-time account, so keep both
+      // providers visible in either email form mode.
+      googleButton.classList.remove("hidden");
+      githubButton.classList.remove("hidden");
+      $("authDivider").classList.remove("hidden");
     }
 
     async function startOAuth(provider, button, providerLabel) {
