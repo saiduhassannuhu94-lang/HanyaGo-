@@ -189,7 +189,11 @@ drop policy if exists "Passengers and staff can read bookings" on public.booking
 create policy "Passengers and staff can read bookings"
 on public.bookings for select
 to authenticated
-using (passenger_id = (select auth.uid()) or public.is_hanyago_staff());
+using (
+  passenger_id = (select auth.uid())
+  or assigned_driver_id = (select auth.uid())
+  or public.is_hanyago_staff()
+);
 
 drop policy if exists "Passengers can create their own pending bookings" on public.bookings;
 create policy "Passengers can create their own pending bookings"
