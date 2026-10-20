@@ -3,6 +3,13 @@
   "use strict";
   const root = document.documentElement;
   const reduceMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if (!document.querySelector('link[rel~="icon"]')) {
+    const favicon = document.createElement("link");
+    favicon.rel = "icon";
+    favicon.type = "image/svg+xml";
+    favicon.href = new URL("favicon.svg", window.location.href).href;
+    document.head.appendChild(favicon);
+  }
   const THEME_KEY = "hanyago-theme";
   // Official HanyaGo WhatsApp line must be entered as country-code digits only, e.g. 2348012345678.
   // Leave blank rather than directing passengers to an invented or unrelated number.
