@@ -1,0 +1,40 @@
+<!doctype html><html lang="en"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Learn how to submit a HanyaGo journey request and what happens before a trip is confirmed.">
+<meta name="theme-color" content="#073750">
+<title>How It Works | HanyaGo</title>
+<link rel="stylesheet" href="style.css"><link rel="stylesheet" href="reference-polish.css"><link rel="stylesheet" href="site-shell.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script><script src="config.js" defer></script><script src="animations.js" defer></script><script src="site-shell.js" defer></script></head><body>
+<header class="site-header">
+  <div class="container navbar">
+    <a href="index.html" class="logo wordmark" aria-label="HanyaGo home">
+      <span class="wordmark-mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M5 18V6h4.2l5.6 7.2V6H19v12h-4.2L9.2 10.8V18H5Z" fill="currentColor"/><path d="M3 21h18" stroke="#E9B949" stroke-width="1.8" stroke-linecap="round"/></svg></span>
+      <span class="wordmark-name"><span class="wordmark-hanya">Hanya</span><span class="wordmark-go">Go</span></span>
+    </a>
+    <nav class="nav-links" id="navLinks" aria-label="Main navigation">
+      <a href="index.html" data-nav-item>Home</a><a href="booking.html" data-nav-item>Book a Ride</a><a href="rides.html" data-nav-item>Ride Options</a><a href="how-it-works.html" data-nav-item>How It Works</a><a href="faq.html" data-nav-item>FAQs</a><a href="contact.html" data-nav-item>Contact</a><a href="booking.html" class="nav-cta" data-nav-item>Plan a Trip →</a>
+    </nav>
+    <div class="nav-actions">
+      <button type="button" class="theme-toggle" data-theme-toggle aria-label="Switch to dark theme" title="Switch theme" aria-pressed="false"><span class="theme-toggle-icon" aria-hidden="true">☾</span><span class="theme-toggle-label">Dark</span></button>
+      <button type="button" class="menu-toggle" id="menuToggle" aria-label="Open navigation menu" aria-expanded="false">☰</button>
+    </div>
+  </div>
+</header>
+<main><section class="page-hero"><div class="container"><span class="eyebrow">Clear steps, fewer surprises</span><h1>From journey idea to booking request.</h1><p>HanyaGo is being built around a straightforward travel flow that keeps the booking status honest.</p></div></section>
+<section class="page-body"><div class="container"><div class="steps-list">
+  <article class="step"><div class="step-number">1</div><h2>Enter your journey</h2><p>Provide your pickup point, destination, travel date and preferred transport option. Check the details before submitting.</p></article>
+  <article class="step"><div class="step-number">2</div><h2>Sign in or create an account</h2><p>An account is required before the current booking flow can save your request. Keep access to your account email and password.</p></article>
+  <article class="step"><div class="step-number">3</div><h2>Submit the booking request</h2><p>HanyaGo saves an authenticated request and returns a booking reference. At this stage, the request is marked pending.</p></article>
+  <article class="step"><div class="step-number">4</div><h2>Wait for confirmation</h2><p>A human operator must still confirm transport availability, driver or vehicle assignment, pickup arrangements and the agreed fare.</p></article>
+</div>
+<div class="trust-note"><strong>What is not live yet:</strong> live vehicle inventory, real-time trip tracking, automated fare quotes, online payment and automated operator confirmation are not currently connected. HanyaGo will not describe a pending request as a confirmed ticket.</div>
+<div class="page-cta"><div><h2>Know your options</h2><p>Compare the available categories before you request a trip.</p></div><a class="btn btn-primary" href="rides.html">Compare rides →</a></div></div></section></main>
+<footer class="site-footer"><div class="container">
+  <div class="site-footer-main">
+    <div class="site-footer-brand"><a href="index.html" class="logo wordmark" aria-label="HanyaGo home"><span class="wordmark-mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M5 18V6h4.2l5.6 7.2V6H19v12h-4.2L9.2 10.8V18H5Z" fill="currentColor"/><path d="M3 21h18" stroke="#E9B949" stroke-width="1.8" stroke-linecap="round"/></svg></span><span class="wordmark-name"><span class="wordmark-hanya">Hanya</span><span class="wordmark-go">Go</span></span></a><p>Plan journeys with a clearer booking experience. Requests stay pending until availability, driver/operator and fare are confirmed.</p></div>
+    <div><h2>Explore</h2><nav class="site-footer-links" aria-label="Explore"><a href="booking.html">Book a ride</a><a href="rides.html">Ride options</a><a href="how-it-works.html">How it works</a></nav></div>
+    <div><h2>Help</h2><nav class="site-footer-links" aria-label="Help"><a href="faq.html">Frequently asked questions</a><a href="contact.html">Contact HanyaGo</a><a href="auth.html">Your account</a></nav></div>
+    <div><h2>HanyaGo</h2><nav class="site-footer-links" aria-label="About HanyaGo"><a href="index.html">Home</a><a href="contact.html">Send a message</a></nav></div>
+  </div>
+  <div class="site-footer-bottom"><span>© <span data-current-year></span> HanyaGo. All rights reserved.</span><span>Designed for clearer journeys in Nigeria.</span></div>
+</div></footer><script>document.querySelectorAll("[data-current-year]").forEach(n=>n.textContent=new Date().getFullYear());</script></body></html>
