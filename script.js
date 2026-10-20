@@ -232,6 +232,19 @@ if (bookingForm) {
   });
 }
 
+
+// Preselect the requested transport option when a visitor arrives from a service page.
+try {
+  const requestedRide = new URLSearchParams(window.location.search).get("ride");
+  const rideSelect = document.getElementById("rideType");
+  const supportedRides = ["Private Car", "Bus / Shared Ride", "Shuttle"];
+  if (rideSelect && requestedRide && supportedRides.includes(requestedRide)) {
+    rideSelect.value = requestedRide;
+  }
+} catch (_) {
+  // Keep the booking form usable if query-string parsing is unavailable.
+}
+
 // Ride option cards select the corresponding booking option.
 document.querySelectorAll("[data-ride]").forEach(function (link) {
   link.addEventListener("click", function () {
