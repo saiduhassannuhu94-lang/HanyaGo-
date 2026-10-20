@@ -253,7 +253,7 @@ if (bookingForm) {
 try {
   const requestedRide = new URLSearchParams(window.location.search).get("ride");
   const rideSelect = document.getElementById("rideType");
-  const supportedRides = ["Private Car", "Bus / Shared Ride", "Shuttle"];
+  const supportedRides = ["Keke Napep", "Private Car", "Bus / Shared Ride", "Shuttle", "Luxury Vehicle", "Motorcycle", "Taxi"];
   if (rideSelect && requestedRide && supportedRides.includes(requestedRide)) {
     rideSelect.value = requestedRide;
   }
