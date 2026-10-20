@@ -311,3 +311,32 @@ html[data-theme="dark"] .contact-fab { color: #04170f; }
   .page-loader { transition: none; }
   .info-card:hover, .contact-fab:hover, .theme-toggle:hover { transform: none; }
 }
+
+
+/* Final component alignment and social-provider controls. */
+.booking-form-page { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.github-g {
+  display: inline-grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  color: #fff;
+  background: #24292f;
+  border-radius: 50%;
+  font-size: 12px;
+  font-weight: 900;
+}
+html[data-theme="dark"] .google-button {
+  color: #e5eef5;
+  background: #142430;
+  border-color: #2a3d4a;
+}
+html[data-theme="dark"] .google-button:hover { border-color: #4a6879; }
+html[data-theme="dark"] .google-g { color: #7db2ff; }
+html[data-theme="dark"] .github-g { color: #07120c; background: #e5eef5; }
+html[data-theme="dark"] .role label { color: #b7c7d3; border-color: #2a3d4a; }
+html[data-theme="dark"] .field label, html[data-theme="dark"] .role-label { color: #c6d6e0; }
+html[data-theme="dark"] .text-link { color: #39cf94; }
+@media (max-width: 760px) {
+  .booking-form-page { grid-template-columns: 1fr; }
+}
