@@ -66,13 +66,23 @@ function readBookingForm() {
     pickup: document.getElementById("pickup").value.trim(),
     destination: document.getElementById("destination").value.trim(),
     date: travelDate.value,
-    rideType: document.getElementById("rideType").value
+    rideType: document.getElementById("rideType").value,
+    time: document.getElementById("travelTime")?.value || "",
+    passengerCount: Number(document.getElementById("passengerCount")?.value || 1),
+    contactPhone: document.getElementById("contactPhone")?.value.trim() || "",
+    passengerNotes: document.getElementById("passengerNotes")?.value.trim() || ""
   };
 }
 
 function validateBooking(booking) {
-  if (!booking.pickup || !booking.destination || !booking.date || !booking.rideType) {
-    return "Please complete all the booking fields.";
+  if (!booking.pickup || !booking.destination || !booking.date || !booking.rideType || !booking.time || !booking.contactPhone) {
+    return "Please complete all required journey details, including pickup time and contact phone.";
+  }
+  if (!Number.isInteger(booking.passengerCount) || booking.passengerCount < 1 || booking.passengerCount > 8) {
+    return "Please select between 1 and 8 passengers.";
+  }
+  if (!/^[+()\d\s-]{7,20}$/.test(booking.contactPhone)) {
+    return "Please enter a valid contact phone number.";
   }
   if (booking.pickup.toLowerCase() === booking.destination.toLowerCase()) {
     return "Pickup and destination cannot be the same.";
@@ -94,7 +104,11 @@ function renderBookingPreview(booking) {
     "<strong>From:</strong> " + escapeHTML(booking.pickup) + "<br>" +
     "<strong>To:</strong> " + escapeHTML(booking.destination) + "<br>" +
     "<strong>Travel Date:</strong> " + escapeHTML(formattedDate) + "<br>" +
-    "<strong>Transport:</strong> " + escapeHTML(booking.rideType) + "<br><br>" +
+    "<strong>Transport:</strong> " + escapeHTML(booking.rideType) + "<br>" +
+    "<strong>Pickup time:</strong> " + escapeHTML(booking.time) + "<br>" +
+    "<strong>Passengers:</strong> " + escapeHTML(booking.passengerCount) + "<br>" +
+    "<strong>Contact:</strong> " + escapeHTML(booking.contactPhone) + "<br>" +
+    (booking.passengerNotes ? "<strong>Additional requests:</strong> " + escapeHTML(booking.passengerNotes) + "<br>" : "") + "<br>" +
     "<strong>Preview mode:</strong> Supabase is not configured yet, so this journey has not been saved."
   );
 }
@@ -108,6 +122,10 @@ if (bookingForm) {
       document.getElementById("destination").value = draft.destination || "";
       travelDate.value = draft.date || "";
       document.getElementById("rideType").value = draft.rideType || "";
+      if (document.getElementById("travelTime")) document.getElementById("travelTime").value = draft.time || "";
+      if (document.getElementById("passengerCount")) document.getElementById("passengerCount").value = String(draft.passengerCount || 1);
+      if (document.getElementById("contactPhone")) document.getElementById("contactPhone").value = draft.contactPhone || "";
+      if (document.getElementById("passengerNotes")) document.getElementById("passengerNotes").value = draft.passengerNotes || "";
       sessionStorage.removeItem("hanyago_booking_draft");
       showBookingMessage(
         "<strong>Your journey details are ready.</strong><br>" +
@@ -169,6 +187,10 @@ if (bookingForm) {
           pickup_location: booking.pickup,
           destination: booking.destination,
           travel_date: booking.date,
+          travel_time: booking.time,
+          passenger_count: booking.passengerCount,
+          passenger_phone: booking.contactPhone,
+          passenger_notes: booking.passengerNotes || null,
           ride_type: booking.rideType,
           status: "pending",
           currency: "NGN"
