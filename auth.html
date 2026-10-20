@@ -749,15 +749,18 @@
         ? 'New to HanyaGo? <button type="button" id="switchButton">Create an account</button>'
         : 'Already have an account? <button type="button" id="switchButton">Sign in</button>';
 
-      $("switchButton").addEventListener("click", () => {
-        setMode(login ? "signup" : "login");
-      });
     }
 
     $("loginTab").addEventListener("click", () => setMode("login"));
     $("signupTab").addEventListener("click", () => setMode("signup"));
 
-    $("switchButton").addEventListener("click", () => setMode("signup"));
+    // Delegate clicks because setMode replaces the switch button's HTML.
+    // This prevents stale/duplicate listeners when users switch modes repeatedly.
+    $("switchNote").addEventListener("click", event => {
+      if (event.target.closest("#switchButton")) {
+        setMode(mode === "login" ? "signup" : "login");
+      }
+    });
 
     function setupPasswordToggle(buttonId, inputId) {
       $(buttonId).addEventListener("click", () => {
