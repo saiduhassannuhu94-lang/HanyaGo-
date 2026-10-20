@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#073750">
+<meta name="description" content="Choose your town, pickup area and drop-off area to see published HanyaGo Keke Napep fares before booking.">
+<title>Keke Napep | HanyaGo</title>
+<link rel="stylesheet" href="style.css"><link rel="stylesheet" href="site-shell.css"><link rel="stylesheet" href="keke-napep.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
+<script src="config.js" defer></script><script src="site-shell.js" defer></script><script src="keke-napep.js" defer></script>
+</head>
+<body>
+<header class="site-header"><div class="container navbar">
+<a href="index.html" class="logo wordmark" aria-label="HanyaGo home"><span class="wordmark-mark" aria-hidden="true">H</span><span class="wordmark-name"><span class="wordmark-hanya">Hanya</span><span class="wordmark-go">Go</span></span></a>
+<nav class="nav-links" id="navLinks" aria-label="Main navigation"><a href="index.html" data-nav-item>Home</a><a href="booking.html" data-nav-item>Book a Ride</a><a href="rides.html" data-nav-item>Ride Options</a><a href="how-it-works.html" data-nav-item>How It Works</a><a href="contact.html" data-nav-item>Contact</a><a href="auth.html" data-nav-item>Your account</a></nav>
+<div class="nav-actions"><button type="button" class="theme-toggle" data-theme-toggle aria-label="Switch theme" aria-pressed="false"><span class="theme-toggle-icon">☾</span><span class="theme-toggle-label">Dark</span></button><button type="button" class="menu-toggle" id="menuToggle" aria-label="Open navigation menu" aria-expanded="false">☰</button></div>
+</div></header>
+<main>
+<section class="keke-hero"><div class="keke-hero-inner"><span class="keke-eyebrow"><i></i> HANYAGO LOCAL RIDES</span><h1>Your town.<br><em>Your route.</em><br>Clear fare before you ride.</h1><p>Choose a town, your pickup area and your drop-off area. We’ll show the published fare for that exact route before you request a Keke Napep.</p><div class="keke-trust"><span>✓ Route-based pricing</span><span>✓ No made-up estimates</span><span>✓ Fare shown before booking</span></div></div><div class="keke-hero-art" aria-hidden="true"><div class="route-orbit orbit-one"></div><div class="route-orbit orbit-two"></div><div class="keke-pin pin-a">A</div><div class="keke-pin pin-b">B</div><div class="keke-route-line"></div><div class="keke-vehicle">🛺</div><div class="keke-map-label label-a">PICKUP</div><div class="keke-map-label label-b">DROP-OFF</div></div></section>
+<section class="keke-main"><div class="keke-shell">
+<div class="keke-intro"><div><span class="keke-section-label">LOCAL TRICYCLE SERVICE</span><h2>Where are you heading?</h2><p>Fare availability depends on the town and the route published by HanyaGo operations.</p></div><div class="live-indicator"><span></span> Live fare catalogue</div></div>
+<div class="keke-layout"><form class="keke-card" id="kekeForm">
+<div class="keke-card-heading"><span class="step-number">01</span><div><h3>Build your route</h3><p>Select your exact pickup and drop-off points.</p></div></div>
+<label for="town">Town / city</label><select id="town" required><option value="">Loading available towns…</option></select>
+<div class="keke-field-row"><div><label for="pickupArea">Pickup area</label><select id="pickupArea" required disabled><option value="">Choose pickup area</option></select></div><button type="button" class="swap-route" id="swapRoute" aria-label="Swap pickup and drop-off">⇅</button><div><label for="dropoffArea">Drop-off area</label><select id="dropoffArea" required disabled><option value="">Choose drop-off area</option></select></div></div>
+<div class="keke-route-summary" id="routeSummary"><span class="route-summary-icon">↗</span><span>Select a town and both areas to check the fare.</span></div>
+<div class="keke-fare-box" id="fareBox" aria-live="polite"><div><span class="fare-label">YOUR ROUTE FARE</span><p id="fareMessage">Choose a route to see the published price.</p></div><strong id="fareAmount">₦—</strong></div>
+<div class="keke-divider"></div><div class="keke-card-heading compact"><span class="step-number">02</span><div><h3>Trip details</h3><p>Only needed when you’re ready to request a ride.</p></div></div>
+<div class="keke-field-row"><div><label for="travelDate">Travel date</label><input id="travelDate" type="date" required></div><div><label for="travelTime">Pickup time</label><input id="travelTime" type="time" required></div></div>
+<div class="keke-field-row"><div><label for="passengerCount">Passengers</label><select id="passengerCount"><option value="1">1 passenger</option><option value="2">2 passengers</option><option value="3">3 passengers</option><option value="4">4 passengers</option></select></div><div><label for="phone">Phone number</label><input id="phone" type="tel" maxlength="20" placeholder="070… or +234…" required></div></div>
+<label for="notes">Pickup landmark or note <span class="keke-optional">Optional</span></label><textarea id="notes" rows="2" maxlength="500" placeholder="E.g. near the market gate"></textarea>
+<button class="keke-submit" id="bookKeke" type="submit" disabled>Choose a route first <span>→</span></button>
+<p class="keke-form-message" id="formMessage" role="status" aria-live="polite"></p>
+<p class="keke-smallprint">A fare shown here is the published route fare, not a payment receipt or driver confirmation. Online payment will only be offered after the payment gateway is enabled.</p>
+</form>
+<aside class="keke-side"><div class="keke-side-card dark"><span class="keke-side-icon">₦</span><h3>No guessing games.</h3><p>Every displayed amount comes from an approved fare record for the selected pickup and drop-off areas. If a route has no published price, we’ll tell you rather than invent one.</p><div class="side-rule"></div><div class="side-check">✓ <span>Fare before booking</span></div><div class="side-check">✓ <span>Town-specific area list</span></div><div class="side-check">✓ <span>Booking reference after request</span></div></div><div class="keke-side-card"><span class="keke-section-label">NEED A HAND?</span><h3>We’re here to help.</h3><p>For a route that isn’t listed yet, contact HanyaGo support. We’ll add it after the fare is confirmed.</p><a href="contact.html" class="keke-support-link">Contact support ↗</a></div></aside></div>
+<div class="keke-bottom-note"><span class="note-mark">i</span><p><strong>Built for local journeys.</strong> The fare catalogue can support multiple towns and neighbourhoods. Operators should only publish rates they have verified locally.</p></div>
+</div></section>
+</main>
+<footer class="site-footer"><div class="container"><div class="site-footer-bottom"><span>© <span data-current-year></span> HanyaGo. All rights reserved.</span><span>Designed for clearer journeys in Nigeria.</span></div></div></footer>
+<script src="script.js" defer></script><script>document.querySelectorAll("[data-current-year]").forEach(n=>n.textContent=new Date().getFullYear());</script>
+</body></html>
