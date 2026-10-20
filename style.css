@@ -1642,3 +1642,12 @@ select:focus-visible {
   outline: 3px solid var(--gold);
   outline-offset: 3px;
    }
+
+
+/* Homepage note text */
+.hero-note {
+  margin-top: 16px;
+  color: var(--text-muted);
+  font-size: 13px;
+  line-height: 1.6;
+}
