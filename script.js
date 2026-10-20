@@ -70,7 +70,12 @@ function readBookingForm() {
     time: document.getElementById("travelTime")?.value || "",
     passengerCount: Number(document.getElementById("passengerCount")?.value || 1),
     contactPhone: document.getElementById("contactPhone")?.value.trim() || "",
-    passengerNotes: document.getElementById("passengerNotes")?.value.trim() || ""
+    passengerNotes: document.getElementById("passengerNotes")?.value.trim() || "",
+    pickupLatitude: document.getElementById("pickupLatitude")?.value ? Number(document.getElementById("pickupLatitude").value) : null,
+    pickupLongitude: document.getElementById("pickupLongitude")?.value ? Number(document.getElementById("pickupLongitude").value) : null,
+    destinationLatitude: document.getElementById("destinationLatitude")?.value ? Number(document.getElementById("destinationLatitude").value) : null,
+    destinationLongitude: document.getElementById("destinationLongitude")?.value ? Number(document.getElementById("destinationLongitude").value) : null,
+    allowLiveLocation: Boolean(document.getElementById("allowLiveLocation")?.checked)
   };
 }
 
@@ -126,6 +131,7 @@ if (bookingForm) {
       if (document.getElementById("passengerCount")) document.getElementById("passengerCount").value = String(draft.passengerCount || 1);
       if (document.getElementById("contactPhone")) document.getElementById("contactPhone").value = draft.contactPhone || "";
       if (document.getElementById("passengerNotes")) document.getElementById("passengerNotes").value = draft.passengerNotes || "";
+      if (document.getElementById("allowLiveLocation")) document.getElementById("allowLiveLocation").checked = Boolean(draft.allowLiveLocation);
       sessionStorage.removeItem("hanyago_booking_draft");
       showBookingMessage(
         "<strong>Your journey details are ready.</strong><br>" +
@@ -191,6 +197,11 @@ if (bookingForm) {
           passenger_count: booking.passengerCount,
           passenger_phone: booking.contactPhone,
           passenger_notes: booking.passengerNotes || null,
+          pickup_latitude: booking.pickupLatitude,
+          pickup_longitude: booking.pickupLongitude,
+          destination_latitude: booking.destinationLatitude,
+          destination_longitude: booking.destinationLongitude,
+          passenger_location_sharing: booking.allowLiveLocation,
           ride_type: booking.rideType,
           status: "pending",
           currency: "NGN"
@@ -205,7 +216,8 @@ if (bookingForm) {
         "<strong>Booking request saved successfully.</strong><br><br>" +
         "<strong>Booking reference:</strong> " + escapeHTML(reference) + "<br>" +
         "<strong>Status:</strong> Pending confirmation<br><br>" +
-        "This confirms that the request was saved, not that a driver or fare has been confirmed."
+        "This confirms that the request was saved, not that a driver or fare has been confirmed." +
+        "<br><br><a href=\"trip-live.html?booking=" + encodeURIComponent(reference) + "\">Open live trip sharing →</a>"
       );
       bookingForm.reset();
       travelDate.min = localToday;
