@@ -42,7 +42,13 @@
     ".step",
     ".cta-box",
     ".faq-item",
-    ".footer-grid > *"
+    ".footer-grid > *",
+    ".page-intro",
+    ".info-card",
+    ".steps-list > *",
+    ".contact-panel",
+    ".contact-form-panel",
+    ".page-cta"
   ];
   const seen = new Set();
   document.querySelectorAll(revealTargets.join(",")).forEach(function (element) {
