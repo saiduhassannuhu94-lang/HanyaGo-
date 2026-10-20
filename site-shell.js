@@ -106,12 +106,19 @@
     window.setTimeout(function () { if (loader.parentNode) loader.parentNode.removeChild(loader); }, 350);
   }
   window.addEventListener("load", function () {
-    window.setTimeout(hideLoader, reduceMotion ? 0 : 330);
+    window.setTimeout(hideLoader, reduceMotion ? 0 : 120);
   }, { once: true });
-  window.setTimeout(hideLoader, 1800);
+  window.setTimeout(hideLoader, 850);
+  if (document.readyState === "interactive" || document.readyState === "complete") {
+    window.setTimeout(hideLoader, reduceMotion ? 0 : 180);
+  } else {
+    document.addEventListener("DOMContentLoaded", function () {
+      window.setTimeout(hideLoader, reduceMotion ? 0 : 180);
+    }, { once: true });
+  }
   window.addEventListener("pageshow", function (event) {
     // When returning from the browser back/forward cache, never leave the loader covering the restored page.
-    if (event.persisted) hideLoader();
+    hideLoader();
   });
 
   document.addEventListener("click", function (event) {
