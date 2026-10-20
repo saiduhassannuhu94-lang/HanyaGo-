@@ -94,7 +94,7 @@ const button=$("#saveVehicle");button.disabled=true;button.textContent="Uploadin
 let objectPath="";
 try{
 const extension=({ "image/jpeg":"jpg","image/png":"png","image/webp":"webp"})[file.type];
-objectPath=state.user.id+"/"+Date.now()+"-"+file.name.replace(/[^a-zA-Z0-9._-]/g,"_").slice(-90)+"."+extension;
+objectPath=state.user.id+"/"+Date.now()+"-"+file.name.replace(/\.[^.]+$/,"").replace(/[^a-zA-Z0-9_-]/g,"_").slice(-80)+"."+extension;
 const upload=await state.client.storage.from("hanyago-vehicle-images").upload(objectPath,file,{contentType:file.type,upsert:false});
 if(upload.error)throw upload.error;
 const publicUrl=state.client.storage.from("hanyago-vehicle-images").getPublicUrl(objectPath).data.publicUrl;
