@@ -144,6 +144,13 @@
     contactStatus.textContent = message;
     contactStatus.className = "contact-status show" + (type ? " " + type : "");
   }
+  document.querySelectorAll('[data-contact-email][aria-disabled="true"]').forEach(function (link) {
+    link.addEventListener("click", function (event) {
+      event.preventDefault();
+      setContactStatus("The official HanyaGo support email has not been configured yet. No message has been sent.", "error");
+      if (contactStatus) contactStatus.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "nearest" });
+    });
+  });
   if (contactForm) {
     contactForm.addEventListener("submit", function (event) {
       event.preventDefault();
