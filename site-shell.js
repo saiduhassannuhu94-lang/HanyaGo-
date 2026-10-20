@@ -6,7 +6,7 @@
   const THEME_KEY = "hanyago-theme";
   // Official HanyaGo WhatsApp line must be entered as country-code digits only, e.g. 2348012345678.
   // Leave blank rather than directing passengers to an invented or unrelated number.
-  const HANYAGO_WHATSAPP_NUMBER = "";
+  const HANYAGO_WHATSAPP_NUMBER = String((window.HANYAGO_CONFIG && window.HANYAGO_CONFIG.whatsappNumber) || "").replace(/\D/g, "");
   // This is the contact email previously supplied for the project owner. Replace it if HanyaGo uses a dedicated support inbox.
   const HANYAGO_CONTACT_EMAIL = (window.HANYAGO_CONFIG && window.HANYAGO_CONFIG.supportEmail) || "";
 
