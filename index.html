@@ -8,35 +8,34 @@
 
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="reference-polish.css">
+    <link rel="stylesheet" href="site-shell.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
     <script src="config.js" defer></script>
     <script src="animations.js" defer></script>
+    <script src="site-shell.js" defer></script>
 </head>
 
 <body>
 
-  <!-- Navigation -->
-  <header>
+  <header class="site-header">
     <div class="container navbar">
-      <a href="#home" class="logo">Hanya<span>Go</span></a>
-
-      <button
-        class="menu-toggle"
-        id="menuToggle"
-        aria-label="Open navigation menu"
-        aria-expanded="false"
-      >
-        ☰
-      </button>
-
-      <nav class="nav-links" id="navLinks">
-        <a href="#home">Home</a>
-        <a href="#booking">Book a Ride</a>
-        <a href="#rides">Ride Options</a>
-        <a href="#how-it-works">How It Works</a>
-        <a href="#faq">FAQs</a>
-        <a href="#booking" class="nav-cta">Get Started</a>
+      <a href="index.html" class="logo wordmark" aria-label="HanyaGo home">
+        <span class="wordmark-mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M5 18V6h4.2l5.6 7.2V6H19v12h-4.2L9.2 10.8V18H5Z" fill="currentColor"/><path d="M3 21h18" stroke="#E9B949" stroke-width="1.8" stroke-linecap="round"/></svg></span>
+        <span class="wordmark-name"><span class="wordmark-hanya">Hanya</span><span class="wordmark-go">Go</span></span>
+      </a>
+      <nav class="nav-links" id="navLinks" aria-label="Main navigation">
+        <a href="index.html" data-nav-item>Home</a>
+        <a href="booking.html" data-nav-item>Book a Ride</a>
+        <a href="rides.html" data-nav-item>Ride Options</a>
+        <a href="how-it-works.html" data-nav-item>How It Works</a>
+        <a href="faq.html" data-nav-item>FAQs</a>
+        <a href="contact.html" data-nav-item>Contact</a>
+        <a href="booking.html" class="nav-cta" data-nav-item>Plan a Trip →</a>
       </nav>
+      <div class="nav-actions">
+        <button type="button" class="theme-toggle" data-theme-toggle aria-label="Switch to dark theme" title="Switch theme" aria-pressed="false"><span class="theme-toggle-icon" aria-hidden="true">☾</span><span class="theme-toggle-label">Dark</span></button>
+        <button type="button" class="menu-toggle" id="menuToggle" aria-label="Open navigation menu" aria-expanded="false">☰</button>
+      </div>
     </div>
   </header>
 
@@ -58,11 +57,11 @@
           </p>
 
           <div class="hero-actions">
-            <a href="#booking" class="btn btn-primary">
+            <a href="booking.html" class="btn btn-primary">
               Book Your Journey →
             </a>
 
-            <a href="#how-it-works" class="btn btn-secondary">
+            <a href="how-it-works.html" class="btn btn-secondary">
               How It Works
             </a>
           </div>
@@ -105,77 +104,16 @@
       </div>
     </section>
 
-    <!-- Booking -->
-    <section class="booking-section" id="booking">
+    <!-- Dedicated journey planner entry point -->
+    <section class="booking-section" aria-labelledby="journeyPlannerHeading">
       <div class="container">
-
-        <div class="section-heading">
-          <span class="eyebrow">Start travelling</span>
-          <h2>Plan Your Journey</h2>
-          <p>
-            Enter your trip details below to preview your journey.
-          </p>
+        <div class="booking-box booking-teaser">
+          <span class="eyebrow">Ready when you are</span>
+          <h2 id="journeyPlannerHeading">Make your next move with HanyaGo.</h2>
+          <p>Open the dedicated journey planner to enter your pickup point, destination, travel date and preferred ride.</p>
+          <a class="btn btn-primary" href="booking.html">Open journey planner →</a>
+          <p class="booking-hint">A saved request is not a confirmed ticket. An operator must still confirm availability, driver or vehicle assignment, and the agreed fare.</p>
         </div>
-
-        <div class="booking-box">
-          <h3>Where are you going?</h3>
-          <p>Fill in your travel details to get started.</p>
-
-          <form class="booking-form" id="bookingForm">
-
-            <div class="form-group">
-              <label for="pickup">Pickup Location</label>
-              <input
-                type="text"
-                id="pickup"
-                name="pickup"
-                placeholder="e.g. Biu, Borno"
-                required
-              >
-            </div>
-
-            <div class="form-group">
-              <label for="destination">Destination</label>
-              <input
-                type="text"
-                id="destination"
-                name="destination"
-                placeholder="e.g. Maiduguri"
-                required
-              >
-            </div>
-
-            <div class="form-group">
-              <label for="travelDate">Travel Date</label>
-              <input
-                type="date"
-                id="travelDate"
-                name="travelDate"
-                required
-              >
-            </div>
-
-            <div class="form-group">
-              <label for="rideType">Transport Option</label>
-              <select id="rideType" name="rideType" required>
-                <option value="">Choose a transport option</option>
-                <option value="Private Car">Private Car</option>
-                <option value="Bus / Shared Ride">Bus / Shared Ride</option>
-                <option value="Shuttle">Shuttle</option>
-              </select>
-            </div>
-
-            <div class="full-width">
-              <button type="submit" class="btn btn-primary">
-                Continue with Journey →
-              </button>
-            </div>
-
-          </form>
-
-          <div class="form-message" id="formMessage" role="status"></div>
-        </div>
-
       </div>
     </section>
 
@@ -202,7 +140,7 @@
               <h3>Private Car</h3>
               <p>A private ride for passengers who want a more personal journey. Availability and fare must be confirmed before travel.</p>
               <a class="transport-detail-link" href="private-car.html">View car details →</a>
-              <a class="btn btn-primary transport-book-link" href="index.html?ride=Private%20Car#booking" data-ride="Private Car">Book this ride</a>
+              <a class="btn btn-primary transport-book-link" href="booking.html?ride=Private%20Car" data-ride="Private Car">Book this ride</a>
             </div>
           </article>
 
@@ -215,7 +153,7 @@
               <h3>Bus / Shared Ride</h3>
               <p>A shared transport option for passengers travelling along a common route, subject to operator availability.</p>
               <a class="transport-detail-link" href="bus.html">View bus details →</a>
-              <a class="btn btn-primary transport-book-link" href="index.html?ride=Bus%20%2F%20Shared%20Ride#booking" data-ride="Bus / Shared Ride">Book this ride</a>
+              <a class="btn btn-primary transport-book-link" href="booking.html?ride=Bus%20%2F%20Shared%20Ride" data-ride="Bus / Shared Ride">Book this ride</a>
             </div>
           </article>
 
@@ -228,7 +166,7 @@
               <h3>Shuttle</h3>
               <p>A flexible transport option for organised trips and suitable routes, subject to confirmation by an operator.</p>
               <a class="transport-detail-link" href="shuttle.html">View shuttle details →</a>
-              <a class="btn btn-primary transport-book-link" href="index.html?ride=Shuttle#booking" data-ride="Shuttle">Book this ride</a>
+              <a class="btn btn-primary transport-book-link" href="booking.html?ride=Shuttle" data-ride="Shuttle">Book this ride</a>
             </div>
           </article>
 
@@ -289,7 +227,7 @@
             Let HanyaGo help you organise your next trip
             with a simpler booking experience.
           </p>
-          <a href="#booking" class="btn">
+          <a href="booking.html" class="btn">
             Plan Your Journey →
           </a>
         </div>
@@ -382,7 +320,7 @@
       <div class="footer-grid">
 
         <div class="footer-brand">
-          <a href="#home" class="logo">Hanya<span>Go</span></a>
+          <a href="index.html" class="logo wordmark" aria-label="HanyaGo home"><span class="wordmark-mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M5 18V6h4.2l5.6 7.2V6H19v12h-4.2L9.2 10.8V18H5Z" fill="currentColor"/><path d="M3 21h18" stroke="#E9B949" stroke-width="1.8" stroke-linecap="round"/></svg></span><span class="wordmark-name"><span class="wordmark-hanya">Hanya</span><span class="wordmark-go">Go</span></span></a>
 
           <p>
             Your Journey, Made Simple. A transport-booking
@@ -392,17 +330,13 @@
 
         <div class="footer-column">
           <h4>Explore</h4>
-          <a href="#home">Home</a>
-          <a href="#booking">Book a Ride</a>
-          <a href="#rides">Ride Options</a>
-          <a href="#how-it-works">How It Works</a>
+          <a href="index.html">Home</a>
+          <a href="booking.html">Book a Ride</a>
+          <a href="rides.html">Ride Options</a>
+          <a href="how-it-works.html">How It Works</a>
         </div>
 
-        <div class="footer-column">
-          <h4>Information</h4>
-          <a href="#faq">FAQs</a>
-          <a href="#booking">Plan a Journey</a>
-        </div>
+        <div class="footer-column"><h4>Help & Information</h4><a href="faq.html">FAQs</a><a href="contact.html">Contact HanyaGo</a><a href="auth.html">Your account</a></div>
 
       </div>
 
@@ -421,6 +355,7 @@
     </div>
   </footer>
 
+    <a class="contact-fab" href="contact.html" aria-label="Get help from HanyaGo">✉ <span>Need help?</span></a>
     <script src="script.js" defer></script>
 
 </body>
