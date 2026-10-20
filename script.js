@@ -1,25 +1,7 @@
 // HanyaGo frontend behavior and authenticated booking submission.
 "use strict";
 
-// Mobile navigation
-const menuToggle = document.getElementById("menuToggle");
-const navLinks = document.getElementById("navLinks");
-
-if (menuToggle && navLinks) {
-  menuToggle.addEventListener("click", function () {
-    const isOpen = navLinks.classList.toggle("active");
-    menuToggle.setAttribute("aria-expanded", String(isOpen));
-    menuToggle.textContent = isOpen ? "✕" : "☰";
-  });
-
-  document.querySelectorAll("#navLinks a").forEach(function (link) {
-    link.addEventListener("click", function () {
-      navLinks.classList.remove("active");
-      menuToggle.setAttribute("aria-expanded", "false");
-      menuToggle.textContent = "☰";
-    });
-  });
-}
+// Site-wide mobile navigation is managed by site-shell.js, so this file only handles booking and page-specific interactions.
 
 // Use local calendar date rather than UTC date for travel-date validation.
 const travelDate = document.getElementById("travelDate");
