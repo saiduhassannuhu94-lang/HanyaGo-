@@ -25,6 +25,7 @@ const desc=$(".weather-description");if(desc)desc.classList.remove("weather-erro
 finally{if(btn){btn.disabled=false;btn.textContent="↻ Refresh"}}
 }
 loadWeather();
+window.setInterval(loadWeather, 15 * 60 * 1000);
 const refresh=$("[data-weather-refresh]");if(refresh)refresh.addEventListener("click",loadWeather);
 const locate=$("[data-weather-location]");if(locate){locate.addEventListener("click",()=>{const el=$(".weather-description");if(el)el.textContent="Weather currently uses Biu, Borno. The pickup form lets you enter your exact starting point.";const heading=$(".weather-location");if(heading)heading.scrollIntoView({behavior:"smooth",block:"nearest"})})}
 const pickup=document.querySelector("#pickup"),helper=document.querySelector("[data-pickup-helper]");
