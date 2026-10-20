@@ -660,6 +660,7 @@
     </main>
   </div>
 
+  <script src="config.js"></script>
   <script>
     /*
       HANYAGO SUPABASE CONFIGURATION
@@ -670,23 +671,25 @@
       NEVER put the service_role key in frontend JavaScript.
     */
 
-    const SUPABASE_URL = "YOUR_SUPABASE_PROJECT_URL";
-    const SUPABASE_ANON_KEY = "YOUR_SUPABASE_PUBLISHABLE_OR_ANON_KEY";
-
-    const configured =
-      SUPABASE_URL.startsWith("https://") &&
-      !SUPABASE_URL.includes("YOUR_SUPABASE") &&
-      SUPABASE_ANON_KEY.length > 20 &&
-      !SUPABASE_ANON_KEY.includes("YOUR_SUPABASE");
+    const publicConfig = window.HANYAGO_CONFIG || {};
+    const configured = Boolean(
+      window.hanyagoIsConfigured &&
+      window.hanyagoIsConfigured() &&
+      window.supabase
+    );
 
     const supabaseClient = configured
-      ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
-          auth: {
-            persistSession: true,
-            autoRefreshToken: true,
-            detectSessionInUrl: true
+      ? window.supabase.createClient(
+          publicConfig.supabaseUrl,
+          publicConfig.supabasePublishableKey,
+          {
+            auth: {
+              persistSession: true,
+              autoRefreshToken: true,
+              detectSessionInUrl: true
+            }
           }
-        })
+        )
       : null;
 
     const $ = id => document.getElementById(id);
@@ -885,6 +888,12 @@
             });
 
           if (error) throw error;
+
+          const destination = new URLSearchParams(window.location.search).get("redirect");
+          if (destination === "booking") {
+            window.location.href = "index.html#booking";
+            return;
+          }
 
           showMessage(
             "You are signed in. Your account session is active on this device.",
