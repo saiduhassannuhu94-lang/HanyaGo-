@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#092f40">
+<meta name="robots" content="noindex,nofollow">
+<title>Operations Console | HanyaGo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="admin.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
+<script src="config.js" defer></script><script src="admin.js" defer></script>
+</head>
+<body>
+<div class="admin-app">
+<aside class="sidebar" id="sidebar">
+<a class="brand" href="index.html"><span class="brand-mark">H</span><span>Hanya<span>Go</span><small>OPERATIONS</small></span></a>
+<div class="workspace"><span class="status-dot"></span><div><strong>Operations workspace</strong><small>Transport management</small></div></div>
+<nav class="side-nav" aria-label="Admin navigation">
+<a class="active" href="#overview" data-section="overview"><span>◫</span> Overview</a>
+<a href="#bookings" data-section="bookings"><span>▤</span> Bookings <b id="navPending">0</b></a>
+<a href="#fleet" data-section="fleet"><span>▰</span> Fleet & photos</a>
+<a href="#people" data-section="people"><span>♙</span> People</a>
+<a href="#payments" data-section="payments"><span>₦</span> Payments</a>
+</nav>
+<div class="sidebar-bottom"><div class="security-note"><span>◈</span><p><strong>Restricted workspace</strong><br>Access is checked against your HanyaGo staff role.</p></div><a href="index.html" class="back-link">← View public website</a></div>
+</aside>
+<main class="main">
+<header class="topbar"><button class="mobile-menu" id="mobileMenu" aria-label="Toggle navigation">☰</button><div><p class="eyebrow">HANYAGO / OPERATIONS</p><h1 id="pageTitle">Operations overview</h1></div><div class="top-actions"><span class="live-pill"><i></i> Connected workspace</span><button class="icon-button" id="refreshButton" aria-label="Refresh dashboard" title="Refresh">↻</button><div class="account-chip"><span class="avatar" id="userAvatar">H</span><span><strong id="userName">Staff account</strong><small id="userRole">Checking access…</small></span></div><button class="signout" id="signOutButton">Sign out</button></div></header>
+<div class="notice" id="notice" role="status" aria-live="polite" hidden></div>
+<section class="access-state" id="accessState"><div class="spinner"></div><h2>Securing your workspace</h2><p>Verifying your HanyaGo account permissions.</p></section>
+<div id="dashboard" hidden>
+<section class="welcome-row" id="overview"><div><span class="eyebrow">YOUR CONTROL CENTRE</span><h2>Good to see you, <span id="welcomeName">team</span>.</h2><p>Review requests, coordinate vehicles and keep passengers informed.</p></div><div class="date-chip"><span>Today</span><strong id="todayDate">—</strong></div></section>
+<section class="metric-grid" aria-label="Booking overview">
+<article class="metric-card metric-dark"><div class="metric-top"><span>Total requests</span><span class="metric-icon">▤</span></div><strong id="metricTotal">—</strong><small>All booking requests</small><div class="metric-track"><i id="totalBar"></i></div></article>
+<article class="metric-card"><div class="metric-top"><span>Needs attention</span><span class="metric-icon amber">◷</span></div><strong id="metricPending">—</strong><small>Waiting for an operator</small><div class="metric-foot amber-text">Pending confirmation</div></article>
+<article class="metric-card"><div class="metric-top"><span>Confirmed / assigned</span><span class="metric-icon green">✓</span></div><strong id="metricConfirmed">—</strong><small>Requests moving forward</small><div class="metric-foot green-text">Operations progress</div></article>
+<article class="metric-card"><div class="metric-top"><span>Active fleet</span><span class="metric-icon blue">▰</span></div><strong id="metricFleet">—</strong><small>Vehicles marked active</small><div class="metric-foot blue-text">Managed vehicles</div></article>
+</section>
+<section class="content-card booking-card" id="bookings">
+<div class="section-heading"><div><span class="eyebrow">DISPATCH DESK</span><h2>Booking requests</h2><p>Set the real status, assign a driver and record an agreed fare.</p></div><button class="secondary-button" data-refresh>↻ Refresh list</button></div>
+<div class="toolbar"><label class="search-box"><span>⌕</span><input id="bookingSearch" type="search" placeholder="Search route, passenger or reference…" aria-label="Search bookings"></label><select id="statusFilter" aria-label="Filter by booking status"><option value="all">All statuses</option><option value="pending">Pending</option><option value="confirmed">Confirmed</option><option value="assigned">Assigned</option><option value="in_progress">In progress</option><option value="completed">Completed</option><option value="cancelled">Cancelled</option></select></div>
+<div class="table-wrap"><table><thead><tr><th>Journey / reference</th><th>Passenger</th><th>Schedule</th><th>Status</th><th>Operations</th></tr></thead><tbody id="bookingRows"><tr><td colspan="5" class="empty-cell">Loading booking requests…</td></tr></tbody></table></div><div class="table-foot"><span id="bookingCount">Showing 0 requests</span><span>Booking updates are saved to the HanyaGo database.</span></div>
+</section>
+<div class="lower-grid">
+<section class="content-card" id="fleet"><div class="section-heading"><div><span class="eyebrow">VEHICLE DIRECTORY</span><h2>Fleet & photos</h2><p>Add real vehicle photos and keep the public fleet record current.</p></div></div>
+<form id="fleetForm" class="fleet-form">
+<div class="photo-drop" id="photoDrop"><span class="photo-symbol">▧</span><strong>Upload vehicle photo</strong><small>JPG, PNG or WebP · maximum 5 MB</small><input type="file" id="vehiclePhoto" accept="image/jpeg,image/png,image/webp" required><img id="photoPreview" alt="Selected vehicle preview" hidden></div>
+<div class="form-grid"><label>Vehicle name<input id="vehicleName" required maxlength="100" placeholder="e.g. Toyota Hiace"></label><label>Transport category<select id="vehicleCategory" required><option>Private Car</option><option>Bus / Shared Ride</option><option>Shuttle</option></select></label><label>Registration number<input id="vehicleRegistration" maxlength="30" placeholder="Optional"></label><label>Passenger capacity<input id="vehicleCapacity" type="number" min="1" max="80" value="4" required></label><label class="span-two">Internal note <input id="vehicleNotes" maxlength="500" placeholder="Condition, route or useful dispatch note"></label></div>
+<button class="primary-button" id="saveVehicle" type="submit">＋ Save vehicle</button><p class="form-hint">Photos are stored in the HanyaGo vehicle image bucket. Only authorised staff can upload or change fleet records.</p>
+</form><div id="fleetRows" class="fleet-list"><p class="empty-note">Loading fleet records…</p></div>
+</section>
+<section class="content-card" id="people"><div class="section-heading"><div><span class="eyebrow">COMMUNITY</span><h2>People & roles</h2><p>Passenger accounts and approved driver/operator roles.</p></div></div><div class="people-stats"><div><span>Registered profiles</span><strong id="peopleTotal">—</strong></div><div><span>Drivers</span><strong id="peopleDrivers">—</strong></div><div><span>Operators / admins</span><strong id="peopleStaff">—</strong></div></div><div class="mini-list" id="peopleList"><p class="empty-note">Loading account overview…</p></div></section>
+</div>
+<section class="content-card payments-card" id="payments"><div class="section-heading"><div><span class="eyebrow">MONEY MOVEMENT</span><h2>Payment activity</h2><p>Review payment records. Online checkout is not enabled yet, so do not treat a pending record as money received.</p></div><span class="status-tag muted">Paystack integration pending</span></div><div class="payment-summary"><div><span>Recorded successful payments</span><strong id="paidTotal">₦0</strong></div><div><span>Successful transactions</span><strong id="paidCount">0</strong></div><div><span>Pending records</span><strong id="unpaidCount">0</strong></div></div><div class="table-wrap"><table><thead><tr><th>Reference</th><th>Booking</th><th>Amount</th><th>Status</th><th>Date</th></tr></thead><tbody id="paymentRows"><tr><td colspan="5" class="empty-cell">Loading payments…</td></tr></tbody></table></div></section>
+<footer class="admin-footer"><span>HanyaGo Operations Console</span><span>Staff access only · <a href="privacy.html">Privacy</a></span></footer>
+</div>
+</main>
+</div>
+</body></html>
