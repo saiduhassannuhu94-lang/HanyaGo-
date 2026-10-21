@@ -817,14 +817,23 @@
       : null;
 
     // Always return email confirmation and password-reset links to the deployed site,
-    // never to localhost or a local development server.
-    const AUTH_REDIRECT_URL = "https://hanyago.vercel.app/auth.html";
+    // never to localhost or a local development server. Preserve only known internal
+    // destinations so the booking intent survives signup without creating an open redirect.
+    const authCallbackParams = new URLSearchParams(window.location.search);
+    const ALLOWED_AUTH_DESTINATIONS = new Set([
+      "dashboard", "booking", "intercity", "ticket", "intercity-admin",
+      "admin", "verification", "keke-napep", "mobility-profile"
+    ]);
+    const requestedAuthDestination = authCallbackParams.get("redirect");
+    const AUTH_REDIRECT_URL = "https://hanyago.vercel.app/auth.html" +
+      (ALLOWED_AUTH_DESTINATIONS.has(requestedAuthDestination)
+        ? "?redirect=" + encodeURIComponent(requestedAuthDestination)
+        : "");
 
     const $ = id => document.getElementById(id);
 
     // Complete the OAuth round-trip after Supabase returns to this page.
     // Only run this redirect when the URL actually looks like an OAuth callback.
-    const authCallbackParams = new URLSearchParams(window.location.search);
     const isOAuthCallback =
       authCallbackParams.has("code") ||
       window.location.hash.includes("access_token=") ||
