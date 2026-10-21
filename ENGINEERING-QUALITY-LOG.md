@@ -100,3 +100,14 @@ No sample departures or invented fares have been inserted into production. The l
 - **Prevention:** Test email/password, email confirmation, password recovery, and each enabled OAuth provider with and without a redirect parameter. Verify the destination after the full provider round-trip.
 - **Lesson:** Preserve user intent across authentication, but only through a strict internal destination allowlist.
 - **QA status:** Inline script syntax check passed. Vercel check for commit `ffe822b7a29f1da08e2c3af1a8fc507914631022` is successful; full real-browser auth-provider tests remain outstanding.
+
+
+## 12. AI-assisted identity-document quality triage (not identity approval)
+
+- **Problem:** Identity submissions were placed in a single manual-review queue, while file extension/MIME checks could not tell whether the document was readable or matched the selected document type.
+- **Root cause:** Upload validation and human approval were the only workflow stages; no separate AI quality-triage state existed.
+- **Why it was missed:** Earlier checks focused on storage privacy, RLS, and role-approval rules rather than the review workload and document quality.
+- **Fix:** Added AI-only assessment fields to `id_verification_submissions` and deployed the authenticated `ai-identity-triage` Supabase Edge Function. The function checks the caller's session and submission ownership, reads the document from private storage, asks Gemini for structured document-quality/type feedback, stores only bounded non-sensitive flags/summary, and never writes `status=approved` or changes a user's role. The identity-verification form invokes the triage function after upload and displays the result. If the AI provider key is absent or the provider fails, the document remains pending.
+- **Prevention:** Keep AI quality checks separate from authenticity checks and role activation. Never send OCR text or identity numbers into the stored summary; never log document contents; test owner isolation, file size/type, provider outage, malformed model output, and repeat calls. Add official registry integrations only through authorised providers with explicit privacy/legal approval.
+- **Lesson:** AI can reduce sorting and document-quality work, but it cannot claim NIN, driving-licence, union, school or business authenticity without a trusted registry connection. Driver/operator privilege remains subject to the existing secure approval function.
+- **QA status:** Database fields verified; edge function reports ACTIVE with JWT verification enabled; identity-verification inline JavaScript syntax passed. The Gemini secret `GEMINI_API_KEY` has not been configured through the available tool access, so live AI analysis is not yet activated. Vercel deployment check and real end-to-end invocation remain to be verified.
