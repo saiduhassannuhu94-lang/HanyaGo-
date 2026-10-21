@@ -232,3 +232,26 @@ header.is-scrolled { box-shadow: 0 8px 26px rgba(7,55,80,.09); }
  .booking-progress-step,.booking-step-next { transition:none; }
  .booking-progress-step:hover,.booking-step-next:hover { transform:none; }
 }
+
+
+/* Booking vehicle chooser: image-led, accessible, and responsive. */
+.booking-ride-visuals{margin:22px 0 24px;padding:18px;border:1px solid var(--border);border-radius:18px;background:linear-gradient(145deg,#f7faf8,#eef4f7)}
+.booking-ride-visuals-heading{margin-bottom:14px}
+.booking-ride-visuals-heading h4{margin:0 0 4px;color:var(--primary);font-size:1.02rem}
+.booking-ride-visuals-heading p{margin:0;color:var(--text-muted);font-size:.82rem;line-height:1.55}
+.booking-ride-visual-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.booking-ride-visual{display:flex;flex-direction:column;overflow:hidden;min-width:0;padding:0;text-align:left;border:1px solid #dce7e1;border-radius:14px;background:#fff;color:var(--primary);cursor:pointer;transition:transform .2s,border-color .2s,box-shadow .2s}
+.booking-ride-visual img{width:100%;height:104px;object-fit:cover;background:#dce6e2}
+.booking-ride-visual span{display:block;padding:10px 11px}
+.booking-ride-visual strong,.booking-ride-visual small{display:block}
+.booking-ride-visual strong{font-size:.83rem;line-height:1.35}
+.booking-ride-visual small{margin-top:3px;color:var(--text-muted);font-size:.72rem;line-height:1.35}
+.booking-ride-visual:hover,.booking-ride-visual:focus-visible{transform:translateY(-2px);border-color:var(--green);box-shadow:0 8px 22px rgba(16,43,70,.1)}
+.booking-ride-visual.is-selected{border:2px solid var(--green);box-shadow:0 0 0 3px rgba(8,124,82,.1)}
+.booking-ride-visual.is-selected strong:after{content:"  ✓";color:var(--green)}
+@media(max-width:900px){.booking-ride-visual-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.booking-ride-visual img{height:130px}}
+@media(max-width:540px){.booking-ride-visuals{padding:13px;margin:18px 0}.booking-ride-visual-grid{gap:9px}.booking-ride-visual img{height:100px}.booking-ride-visual span{padding:9px}.booking-ride-visual strong{font-size:.78rem}.booking-ride-visual small{font-size:.68rem}}
+@media(prefers-reduced-motion:reduce){.booking-ride-visual{transition:none}.booking-ride-visual:hover{transform:none}}
+.hanyago-back-to-top{z-index:1200}.hanyago-support-fab{z-index:1190}
+@media(min-width:701px){.hanyago-back-to-top{right:26px;bottom:88px;width:52px;height:52px}.hanyago-support-fab{right:26px;bottom:24px}}
+@media(max-width:700px){.hanyago-back-to-top{right:14px;bottom:76px;width:46px;height:46px}.hanyago-support-fab{right:12px;bottom:12px;min-height:44px;gap:8px;padding:7px 13px 7px 8px;font-size:.82rem}}
