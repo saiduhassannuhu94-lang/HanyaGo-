@@ -197,4 +197,42 @@
       link.rel = "noopener noreferrer";
     });
   });
+
+  // Session-aware logout action for the shared navigation.
+  (async function addSessionMenuAction() {
+    const nav = document.getElementById("navLinks");
+    const cfg = window.HANYAGO_CONFIG;
+    if (!nav || !window.supabase || !cfg || !cfg.supabaseUrl || !cfg.supabasePublishableKey) return;
+    try {
+      const client = window.__hanyagoSupabaseClient || window.supabase.createClient(cfg.supabaseUrl, cfg.supabasePublishableKey, {
+        auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true }
+      });
+      window.__hanyagoSupabaseClient = client;
+      const { data } = await client.auth.getSession();
+      if (!data || !data.session || nav.querySelector("[data-global-signout]")) return;
+      const item = document.createElement("a");
+      item.href = "#sign-out";
+      item.textContent = "Log out";
+      item.setAttribute("data-global-signout", "");
+      item.setAttribute("role", "button");
+      item.style.cssText = "color:#a32929;font-weight:800;";
+      nav.appendChild(item);
+      item.addEventListener("click", async function (event) {
+        event.preventDefault();
+        item.setAttribute("aria-disabled", "true");
+        item.textContent = "Signing out…";
+        const result = await client.auth.signOut({ scope: "local" });
+        if (result.error) {
+          item.textContent = "Log out failed";
+          item.removeAttribute("aria-disabled");
+          console.error("HanyaGo sign-out failed:", result.error);
+          return;
+        }
+        window.location.assign("auth.html?message=signed-out");
+      });
+    } catch (error) {
+      console.error("Could not initialise HanyaGo session menu:", error);
+    }
+  })();
+
 })();
