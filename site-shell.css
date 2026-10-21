@@ -418,3 +418,35 @@ html[data-theme="dark"] .booking-form-page textarea { background:#101d27; color:
 @media (prefers-reduced-motion: reduce) {
   .page-loader, .loader-track::after { animation: none !important; transition: none !important; }
 }
+
+
+/* Premium floating actions: support + back to top */
+.hanyago-back-to-top,.hanyago-support-fab {
+  position:fixed; z-index:1050; display:inline-flex; align-items:center; justify-content:center;
+  border:1px solid rgba(255,255,255,.55); box-shadow:0 12px 32px rgba(7,35,52,.2);
+  transition:opacity .22s ease, transform .22s ease, background .22s ease, box-shadow .22s ease;
+  -webkit-tap-highlight-color:transparent;
+}
+.hanyago-back-to-top {
+  right:20px; bottom:82px; width:48px; height:48px; border-radius:16px;
+  color:#fff; background:#102b46; opacity:0; visibility:hidden; pointer-events:none;
+  transform:translateY(10px);
+}
+.hanyago-back-to-top svg { width:23px; height:23px; }
+.hanyago-back-to-top.is-visible { opacity:1; visibility:visible; pointer-events:auto; transform:translateY(0); }
+.hanyago-back-to-top:hover { background:#087c52; transform:translateY(-3px); }
+.hanyago-support-fab {
+  right:20px; bottom:20px; gap:10px; min-height:48px; padding:8px 17px 8px 9px;
+  border-radius:999px; color:#fff; background:linear-gradient(120deg,#087c52,#066745);
+  font-size:.9rem; font-weight:850; text-decoration:none;
+}
+.hanyago-support-icon { display:grid; place-items:center; width:30px; height:30px; border-radius:50%; background:rgba(255,255,255,.18); border:1px solid rgba(255,255,255,.32); font-weight:950; }
+.hanyago-support-fab:hover { transform:translateY(-3px); box-shadow:0 16px 36px rgba(7,35,52,.27); background:linear-gradient(120deg,#099762,#07583e); }
+.hanyago-back-to-top:focus-visible,.hanyago-support-fab:focus-visible { outline:3px solid #e9b949; outline-offset:4px; }
+@media(max-width:540px) {
+  .hanyago-back-to-top { right:14px; bottom:76px; width:44px; height:44px; border-radius:14px; }
+  .hanyago-support-fab { right:14px; bottom:14px; min-height:46px; padding-right:14px; }
+}
+@media(prefers-reduced-motion:reduce) {
+  .hanyago-back-to-top,.hanyago-support-fab { transition:none; }
+}
