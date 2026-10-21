@@ -1413,7 +1413,7 @@
           if (error) throw error;
 
           if (data.session) {
-            if (getSelectedIdentityFile()) {
+            if (getSelectedIdentityFile() || $("documentType").value === "union_membership_number") {
               try {
                 await uploadIdentityProof(data.user.id, role);
                 showMessage("Your account is ready and your ID proof was uploaded privately. It is pending human review; your driver/operator access is not approved yet.", "success");
