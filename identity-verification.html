@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#102b46">
+<title>Identity Verification | HanyaGo</title>
+<meta name="description" content="Securely upload identity or role-related proof for HanyaGo account review.">
+<link rel="stylesheet" href="style.css"><link rel="stylesheet" href="site-shell.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="config.js"></script><script src="site-shell.js" defer></script>
+<style>
+body{background:#f3f7f5;color:#102b46}.verify-wrap{max-width:1000px;margin:34px auto;padding:0 18px 60px}.verify-hero{padding:28px;border-radius:22px;background:linear-gradient(125deg,#102b46,#0c5a50);color:#fff;margin-bottom:20px}.verify-hero h1{font-size:clamp(1.8rem,5vw,2.7rem);margin:12px 0}.verify-hero p{max-width:720px;line-height:1.75;color:#d5e8e2}.verify-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:18px;align-items:start}.verify-card{background:#fff;border:1px solid #e0e9e4;border-radius:17px;padding:23px;box-shadow:0 10px 28px #102b4608}.verify-card h2{font-size:1.2rem;margin:0 0 8px}.verify-card p,.verify-card li{color:#61736e;line-height:1.7;font-size:.9rem}.verify-card label{display:block;font-size:.8rem;font-weight:800;margin:14px 0 7px}.verify-card input:not([type=checkbox]),.verify-card select,.verify-card textarea{width:100%;border:1px solid #dce6e2;background:#fbfdfc;padding:12px;border-radius:10px;font:inherit}.verify-card input[type=file]{font-size:.8rem}.verify-check{display:flex!important;align-items:flex-start;gap:9px;line-height:1.6;font-weight:600!important}.verify-check input{margin-top:4px;accent-color:#087c52}.verify-btn{border:0;border-radius:10px;background:#087c52;color:white;padding:13px 16px;font-weight:850;cursor:pointer;margin-top:15px;width:100%}.verify-btn:disabled{opacity:.55;cursor:wait}.verify-msg{display:none;padding:12px 14px;border-radius:10px;margin:12px 0;line-height:1.6;font-size:.88rem;overflow-wrap:anywhere}.verify-msg.show{display:block}.verify-msg.error{background:#fff0ed;color:#8c3327}.verify-msg.success{background:#e5f6ec;color:#155d3d}.verify-msg.info{background:#eef5ff;color:#234f86}.verify-list{display:grid;gap:12px;margin-top:14px}.verify-item{border:1px solid #e0e9e4;border-radius:12px;padding:14px}.verify-item h3{font-size:.95rem;margin:0 0 6px}.verify-meta{font-size:.78rem;color:#61736e;line-height:1.65;overflow-wrap:anywhere}.verify-status{display:inline-block;border-radius:99px;padding:5px 9px;font-size:.7rem;font-weight:900;background:#fff3cd;color:#795900}.verify-status.approved{background:#e0f7e9;color:#09683d}.verify-status.rejected{background:#fff0ed;color:#8c3327}.verify-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.verify-actions button,.verify-actions a{border:1px solid #dbe5e0;border-radius:8px;background:#fff;color:#102b46;padding:8px 10px;font-size:.78rem;font-weight:800;text-decoration:none;cursor:pointer}.verify-actions .approve{background:#087c52;color:#fff;border-color:#087c52}.verify-actions .reject{background:#fff0ed;color:#8c3327;border-color:#f2c9c3}.verify-note{background:#fff8e5;border:1px solid #f0e1b6;border-radius:12px;padding:14px;color:#715921;line-height:1.65;font-size:.82rem}.verify-empty{color:#71817c;font-size:.88rem;padding:14px 0}@media(max-width:720px){.verify-grid{grid-template-columns:1fr}.verify-hero{padding:22px}.verify-card{padding:18px}}
+</style></head>
+<body>
+<header class="site-header"><div class="container navbar"><a href="index.html" class="logo wordmark"><span class="wordmark-mark">H</span><span class="wordmark-name"><span class="wordmark-hanya">Hanya</span><span class="wordmark-go">Go</span></span></a><nav class="nav-links" id="navLinks" aria-label="Main navigation"><a href="index.html" data-nav-item>Home</a><a href="booking.html" data-nav-item>Book a Ride</a><a href="rides.html" data-nav-item>Ride Options</a><a href="keke-napep.html" data-nav-item>Keke Napep</a><a href="safety-rules.html" data-nav-item>Safety Rules</a><a href="identity-verification.html" data-nav-item>Identity Verification</a><a href="contact.html" data-nav-item>Contact</a><a href="auth.html" data-nav-item>Account</a></nav><div class="nav-actions"><button type="button" class="theme-toggle" data-theme-toggle aria-label="Switch theme" aria-pressed="false"><span class="theme-toggle-icon">☾</span><span class="theme-toggle-label">Dark</span></button><button type="button" class="menu-toggle" id="menuToggle" aria-label="Open navigation menu" aria-expanded="false">☰</button></div></div></header>
+<main class="verify-wrap">
+<section class="verify-hero"><span class="eyebrow">Private document handling</span><h1>Identity Verification</h1><p>Submit a student ID, driver’s licence, employee ID, business proof or another relevant official document. Files are kept in private storage and are only available to you and authorised HanyaGo reviewers. Uploading a document does not automatically verify your identity or approve a driver/operator account.</p></section>
+<div id="verifyMessage" class="verify-msg" role="status" aria-live="polite"></div>
+<div class="verify-grid">
+<section class="verify-card"><h2>Upload identity proof</h2><p>Use a clear, genuine document. Only upload information needed for the verification purpose.</p>
+<form id="verifyForm">
+<label for="documentType">Document type</label><select id="documentType" required><option value="student_id">Student ID card</option><option value="national_id">National identity document</option><option value="drivers_license">Driver’s licence</option><option value="employee_id">Employee ID card</option><option value="business_proof">Business registration / business proof</option><option value="other_official_id">Other official ID</option></select>
+<label for="institutionName">School, employer or business name (if relevant)</label><input id="institutionName" maxlength="160" placeholder="School, company or registered business">
+<label for="identityFile">Document file (PDF, JPG, PNG or WEBP; max 10 MB)</label><input id="identityFile" type="file" accept=".pdf,.jpg,.jpeg,.png,.webp,application/pdf,image/jpeg,image/png,image/webp" required>
+<label class="verify-check"><input id="identityConsent" type="checkbox" required> I confirm that this is genuine evidence I am authorised to submit, and I consent to authorised HanyaGo reviewers assessing it for account or driver/operator verification.</label>
+<button id="uploadButton" class="verify-btn" type="submit">Upload securely</button>
+</form></section>
+<section class="verify-card"><h2>Your submissions</h2><p>Check whether your document is waiting for review, approved or needs a new submission.</p><div id="submissionList" class="verify-list"><div class="verify-empty">Checking your sign-in…</div></div></section>
+<section class="verify-card" id="adminPanel" hidden style="grid-column:1/-1"><h2>Reviewer queue</h2><p>Admin-only review queue. Check the submitted document and supporting context before changing the status. Do not approve solely because a file was uploaded.</p><div id="adminList" class="verify-list"></div></section>
+<section class="verify-card"><h2>How review works</h2><ul><li>Uploads are stored in a private bucket, not as public image URLs.</li><li>Accepted file types: PDF, JPEG, PNG and WEBP, up to 10 MB.</li><li>Only authorised reviewers should access submitted documents.</li><li>A document upload is not a criminal background check and does not prove a person is “wanted”.</li><li>Do not upload passwords, bank PINs, OTP codes or another person’s documents without authority.</li></ul><div class="verify-note">For your safety, HanyaGo must not publicly display ID documents or unverified allegations about a person.</div></section>
+</div></main>
+<footer class="site-footer"><div class="container"><div class="site-footer-bottom"><span>© <span id="year"></span> HanyaGo. All rights reserved.</span><span><a href="privacy.html">Privacy Policy</a> · <a href="terms.html">Terms of Service</a></span></div></div></footer>
+<script>
+(() => {
+ const $ = id => document.getElementById(id);
+ $("year").textContent = new Date().getFullYear();
+ const cfg = window.HANYAGO_CONFIG || {};
+ const configured = Boolean(window.hanyagoIsConfigured && window.hanyagoIsConfigured() && window.supabase);
+ const db = configured ? window.supabase.createClient(cfg.supabaseUrl,cfg.supabasePublishableKey,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}}) : null;
+ const allowed = new Set(["application/pdf","image/jpeg","image/png","image/webp"]);
+ const maxBytes = 10*1024*1024;
+ let currentUser=null, profile=null, isAdmin=false;
+ function message(text,type="info"){const box=$("verifyMessage");box.textContent=text;box.className="verify-msg show "+type;}
+ function labelForType(type){return ({student_id:"Student ID card",national_id:"National identity document",drivers_license:"Driver’s licence",employee_id:"Employee ID card",business_proof:"Business proof",other_official_id:"Other official ID"})[type]||type;}
+ function niceDate(value){try{return new Date(value).toLocaleString()}catch{return value||""}}
+ async function requireSession(){
+  if(!db){message("Supabase is not configured. Please return after the authentication settings are fixed.","error");$("submissionList").innerHTML='<div class="verify-empty">Authentication service is unavailable.</div>';return false}
+  const {data,error}=await db.auth.getSession();
+  if(error||!data.session){message("Please sign in before uploading or viewing identity documents.","info");$("submissionList").innerHTML='<div class="verify-empty"><a href="auth.html?redirect=verification">Sign in to continue →</a></div>';return false}
+  currentUser=data.session.user;
+  const {data:pr}=await db.from("profiles").select("role,requested_role,full_name").eq("id",currentUser.id).maybeSingle();
+  profile=pr||{};isAdmin=profile.role==="admin";
+  return true;
+ }
+ async function upload(file){
+  if(!currentUser)throw new Error("Please sign in again.");
+  if(!file||!allowed.has(file.type))throw new Error("Choose a PDF, JPG, PNG or WEBP file.");
+  if(file.size<=0||file.size>maxBytes)throw new Error("The file must be smaller than 10 MB.");
+  if(!$("identityConsent").checked)throw new Error("Please accept the document consent.");
+  const ext={"application/pdf":"pdf","image/jpeg":"jpg","image/png":"png","image/webp":"webp"}[file.type];
+  const path=currentUser.id+"/"+crypto.randomUUID()+"."+ext;
+  const {error:upErr}=await db.storage.from("hanyago-identity-documents").upload(path,file,{cacheControl:"0",contentType:file.type,upsert:false});
+  if(upErr)throw upErr;
+  const requestedRole=["passenger","driver","operator"].includes(profile.requested_role)?profile.requested_role:"passenger";
+  const {error:rowErr}=await db.from("id_verification_submissions").insert({user_id:currentUser.id,requested_role:requestedRole,document_type:$("documentType").value,institution_name:$("institutionName").value.trim()||null,object_path:path,original_file_name:file.name.slice(0,240),mime_type:file.type,size_bytes:file.size,status:"pending"});
+  if(rowErr){await db.storage.from("hanyago-identity-documents").remove([path]);throw rowErr}
+ }
+ async function signedLink(path){const {data,error}=await db.storage.from("hanyago-identity-documents").createSignedUrl(path,120);if(error)throw error;return data.signedUrl}
+ function cardMarkup(row, admin=false){
+  const status=row.status||"pending";
+  const note=row.review_note?'<p class="verify-meta">Reviewer note: '+escapeHtml(row.review_note)+'</p>':"";
+  return '<article class="verify-item" data-id="'+row.id+'"><h3>'+escapeHtml(labelForType(row.document_type))+' · '+escapeHtml(row.original_file_name)+'</h3><div class="verify-meta">'+escapeHtml(row.institution_name||"No school/company name supplied")+'<br>Submitted: '+escapeHtml(niceDate(row.submitted_at))+'<br>Request type: '+escapeHtml(row.requested_role||"passenger")+'<br><span class="verify-status '+status+'">'+escapeHtml(status.toUpperCase())+'</span></div>'+note+'<div class="verify-actions"><button type="button" data-open="'+row.id+'">Open private document</button>'+(admin?'<button type="button" class="approve" data-review="approved" data-id="'+row.id+'">Approve</button><button type="button" class="reject" data-review="rejected" data-id="'+row.id+'">Reject</button>':"")+'</div></article>';
+ }
+ function escapeHtml(value){return String(value??"").replace(/[&<>"']/g,ch=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[ch]))}
+ async function renderList(){
+  const {data,error}=await db.from("id_verification_submissions").select("id,user_id,requested_role,document_type,institution_name,object_path,original_file_name,status,review_note,submitted_at").order("submitted_at",{ascending:false}).limit(isAdmin?100:30);
+  if(error)throw error;
+  const mine=isAdmin?(data||[]):(data||[]).filter(row=>row.user_id===currentUser.id);
+  $("submissionList").innerHTML=mine.length?mine.map(row=>cardMarkup(row,false)).join(""):'<div class="verify-empty">No identity proof has been submitted yet.</div>';
+  if(isAdmin){$("adminPanel").hidden=false;$("adminList").innerHTML=(data||[]).length?data.map(row=>cardMarkup(row,true)).join(""):'<div class="verify-empty">No submissions waiting for review.</div>'}
+ }
+ async function openDocument(id, adminList=false){
+  const source=adminList?$("adminList"):$("submissionList");
+  const rowEl=source.querySelector('[data-id="'+CSS.escape(id)+'"]');
+  const {data,error}=await db.from("id_verification_submissions").select("user_id,object_path").eq("id",id).maybeSingle();
+  if(error||!data){message("Could not load this submission. Please refresh and try again.","error");return}
+  if(!isAdmin&&data.user_id!==currentUser.id){message("You cannot open another user’s document.","error");return}
+  const link=await signedLink(data.object_path);window.open(link,"_blank","noopener,noreferrer");
+ }
+ async function review(id,status){
+  if(!isAdmin){message("Only an authorised HanyaGo admin can review submissions.","error");return}
+  const note=window.prompt(status==="approved"?"Optional review note (avoid sensitive details):":"Brief reason the user can act on (do not include unnecessary sensitive details):","") ;
+  if(note===null)return;
+  const {error}=await db.from("id_verification_submissions").update({status,review_note:note.trim()||null,reviewed_by:currentUser.id,reviewed_at:new Date().toISOString()}).eq("id",id);
+  if(error){message("Review could not be saved: "+error.message,"error");return}
+  message("Review status updated.","success");await renderList();
+ }
+ $("verifyForm").addEventListener("submit",async event=>{
+  event.preventDefault();$("uploadButton").disabled=true;$("uploadButton").textContent="Uploading securely…";
+  try{if(!currentUser)throw new Error("Please sign in before uploading.");await upload($("identityFile").files[0]);$("verifyForm").reset();message("Document uploaded privately. Its status is now pending human review.","success");await renderList()}
+  catch(error){message(error.message||"Upload failed. Please try again.","error")}
+  finally{$("uploadButton").disabled=false;$("uploadButton").textContent="Upload securely"}
+ });
+ document.addEventListener("click",async event=>{
+  const open=event.target.closest("[data-open]");if(open){try{await openDocument(open.dataset.open,Boolean(event.target.closest("#adminList")))}catch(error){message(error.message||"Could not open document.","error")}return}
+  const rev=event.target.closest("[data-review]");if(rev){await review(rev.dataset.id,rev.dataset.review)}
+ });
+ (async()=>{try{if(await requireSession())await renderList()}catch(error){message(error.message||"Could not load verification data.","error")}})();
+})();
+</script>
+</body></html>
