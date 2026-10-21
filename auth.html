@@ -1241,10 +1241,14 @@
       $("identityProofHint").textContent = role === "driver" || role === "operator"
         ? "Direba/mai sufuri: za a iya amfani da lasisi ko Union Membership Card/Number. Ba za a buɗe damar aiki ba sai an tantance shaidar."
         : "Passenger: dole ne ka shigar da NIN mai lambobi 11 ko ka ɗora NIN slip. Ana adana takardu a sirrance.";
-      $("ninNumber").required = isSignup && role === "passenger" && $("documentType").value !== "nin_slip";
-      $("identityFile").required = isSignup && (role === "driver" || role === "operator" || $("documentType").value === "nin_slip" || $("documentType").value === "union_membership_card");
-      $("ninNumberWrap").classList.toggle("hidden", $("documentType").value !== "nin_slip" && $("documentType").value !== "national_id");
-      if ($("documentType").value === "nin_slip") $("ninNumber").required = false;
+      const proofType = $("documentType").value;
+      const numberOnlyUnionProof = proofType === "union_membership_number";
+      $("ninNumber").required = isSignup && role === "passenger" && proofType !== "nin_slip";
+      $("identityFile").required = isSignup && !numberOnlyUnionProof && (role === "driver" || role === "operator" || proofType === "nin_slip" || proofType === "union_membership_card");
+      $("ninNumberWrap").classList.toggle("hidden", proofType !== "nin_slip" && proofType !== "national_id");
+      $("unionNumberWrap").classList.toggle("hidden", !numberOnlyUnionProof);
+      $("unionMembershipNumber").required = isSignup && numberOnlyUnionProof && (role === "driver" || role === "operator");
+      if (proofType === "nin_slip") $("ninNumber").required = false;
     }
     document.querySelectorAll('input[name="role"]').forEach(input => input.addEventListener("change", updateIdentityRequirements));
     $("documentType").addEventListener("change", updateIdentityRequirements);
@@ -1310,15 +1314,16 @@
           $("identityFile").focus();
           return;
         }
-        if ((role === "driver" || role === "operator") && !identityFile && !((proofType === "union_membership_number") && $("institutionName").value.trim())) {
-          showMessage("Drivers and transport operators must choose an identity or role-related proof file. If email confirmation is required, you can upload it after signing in.", "error");
+        if ((role === "driver" || role === "operator") && !identityFile && proofType !== "union_membership_number") {
+          showMessage("Drivers and transport operators must upload an identity/role proof, or choose Union membership number and provide the number for manual review.", "error");
           $("identityProofField").classList.remove("hidden");
           $("identityFile").focus();
           return;
         }
-        if (role === "driver" && proofType === "union_membership_number" && !$("institutionName").value.trim()) {
-          showMessage("Enter the name of your drivers' union so the membership number can be checked.", "error");
-          $("institutionName").focus();
+        if ((role === "driver" || role === "operator") && proofType === "union_membership_number" && (!$("institutionName").value.trim() || $("unionMembershipNumber").value.trim().length < 3)) {
+          showMessage("Enter the union name and membership number so the information can be checked manually.", "error");
+          $("identityProofField").classList.remove("hidden");
+          $("unionMembershipNumber").focus();
           return;
         }
         if (identityFile) {
