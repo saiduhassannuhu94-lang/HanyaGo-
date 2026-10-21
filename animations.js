@@ -69,7 +69,13 @@
     return;
   }
 
-  let revealSafetyTimer = window.setTimeout(function () {\n    document.querySelectorAll("[data-reveal]").forEach(function (element) { element.classList.add("is-visible"); });\n  }, 2600);\n\n  const observer = new IntersectionObserver(function (entries, currentObserver) {
+  const revealSafetyTimer = window.setTimeout(function () {
+    document.querySelectorAll("[data-reveal]").forEach(function (element) {
+      element.classList.add("is-visible");
+    });
+  }, 2600);
+
+  const observer = new IntersectionObserver(function (entries, currentObserver) {
     entries.forEach(function (entry) {
       if (entry.isIntersecting) {
         entry.target.classList.add("is-visible");
