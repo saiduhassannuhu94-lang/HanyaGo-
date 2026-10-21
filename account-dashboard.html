@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#102b46">
+<title>My HanyaGo Account</title><meta name="description" content="Your HanyaGo account, profile and verification status.">
+<link rel="stylesheet" href="style.css"><link rel="stylesheet" href="site-shell.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="config.js"></script><script src="site-shell.js" defer></script>
+<style>
+:root{--dash-navy:#102b46;--dash-green:#087c52;--dash-gold:#d4af37;--dash-muted:#627487}
+body{background:#f3f7f5;color:var(--dash-navy)}.account-wrap{max-width:1120px;margin:32px auto;padding:0 18px 60px}.account-top{display:flex;justify-content:space-between;align-items:center;gap:18px;flex-wrap:wrap;margin-bottom:22px}.account-top h1{font-size:clamp(1.8rem,4vw,2.5rem);margin:5px 0}.eyebrow{font-size:.75rem;font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:var(--dash-green)}.profile-menu{position:relative}.profile-trigger{display:flex;align-items:center;gap:11px;padding:8px 12px 8px 8px;border:1px solid #dce7e1;border-radius:999px;background:#fff;cursor:pointer;color:var(--dash-navy);font:inherit}.avatar{width:43px;height:43px;object-fit:cover;border-radius:50%;background:#e5f1eb;display:grid;place-items:center;font-weight:900;color:var(--dash-green);border:1px solid #d9e8df}.profile-name{font-size:.85rem;font-weight:900}.profile-email{font-size:.72rem;color:var(--dash-muted);margin-top:3px}.profile-dropdown{position:absolute;right:0;top:calc(100% + 8px);z-index:10;width:220px;background:#fff;border:1px solid #dce7e1;border-radius:14px;padding:8px;box-shadow:0 15px 40px #102b4618}.profile-dropdown[hidden]{display:none}.profile-dropdown a,.profile-dropdown button{display:block;width:100%;text-align:left;padding:11px 12px;border:0;border-radius:9px;background:transparent;color:var(--dash-navy);text-decoration:none;font:inherit;font-size:.84rem;font-weight:750;cursor:pointer}.profile-dropdown a:hover,.profile-dropdown button:hover{background:#eef7f1}.account-card{background:#fff;border:1px solid #e0e9e4;border-radius:20px;padding:clamp(20px,4vw,32px);box-shadow:0 12px 32px #102b4608;margin-bottom:18px}.account-card h2{margin:0 0 8px;font-size:1.25rem}.account-card p{line-height:1.7;color:var(--dash-muted);font-size:.92rem}.status-pill{display:inline-flex;align-items:center;gap:7px;border-radius:99px;padding:7px 11px;font-size:.75rem;font-weight:900;background:#fff3d0;color:#795600}.status-pill.approved{background:#e2f7e9;color:#08633d}.status-pill.rejected{background:#fff0ed;color:#8c3327}.status-pill::before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor}.gate-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:17px}.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:12px 16px;border-radius:10px;text-decoration:none;font-size:.86rem;font-weight:900;border:1px solid #dce7e1;color:var(--dash-navy);background:#fff}.btn-primary{background:var(--dash-green);border-color:var(--dash-green);color:#fff}.tiles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:15px}.tile{display:block;text-decoration:none;color:inherit;background:#fff;border:1px solid #e0e9e4;border-radius:16px;padding:20px;transition:transform .2s,box-shadow .2s}.tile:hover{transform:translateY(-3px);box-shadow:0 12px 30px #102b4610}.tile-icon{width:43px;height:43px;display:grid;place-items:center;border-radius:13px;background:#e9f6ef;font-size:1.3rem;margin-bottom:14px}.tile h3{font-size:1rem;margin:0 0 7px}.tile p{font-size:.82rem;color:var(--dash-muted);line-height:1.6;margin:0}.account-message{padding:14px 16px;border-radius:12px;background:#eef5ff;color:#234f86;line-height:1.65;font-size:.88rem}.account-message.error{background:#fff0ed;color:#8c3327}.account-message.success{background:#e2f7e9;color:#08633d}.account-footer{font-size:.76rem;color:#7a8a96;line-height:1.7;margin-top:18px}@media(max-width:760px){.tiles{grid-template-columns:1fr 1fr}}@media(max-width:480px){.tiles{grid-template-columns:1fr}.profile-name{max-width:145px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}}
+</style>
+</head>
+<body>
+<header class="site-header"><div class="container navbar">
+<a href="index.html" class="logo wordmark" aria-label="HanyaGo home"><span class="wordmark-mark">H</span><span class="wordmark-name"><span class="wordmark-hanya">Hanya</span><span class="wordmark-go">Go</span></span></a>
+<nav class="nav-links" id="navLinks" aria-label="Main navigation"><a href="index.html" data-nav-item>Home</a><a href="booking.html" data-nav-item>Book a Ride</a><a href="rides.html" data-nav-item>Ride Options</a><a href="keke-napep.html" data-nav-item>Keke Napep</a><a href="identity-verification.html" data-nav-item>Identity Verification</a><a href="mobility-profile.html" data-nav-item>My Profile</a></nav>
+<div class="nav-actions"><button type="button" class="theme-toggle" data-theme-toggle aria-label="Switch theme" aria-pressed="false"><span class="theme-toggle-icon">☾</span><span class="theme-toggle-label">Dark</span></button><button type="button" class="menu-toggle" id="menuToggle" aria-label="Open navigation menu" aria-expanded="false">☰</button></div>
+</div></header>
+<main class="account-wrap">
+<div class="account-top"><div><span class="eyebrow">Your personal travel space</span><h1>My HanyaGo Account</h1><p style="margin:0;color:var(--dash-muted)">Your profile, verification status and journeys in one place.</p></div>
+<div class="profile-menu"><button type="button" class="profile-trigger" id="profileTrigger" aria-expanded="false" aria-controls="profileDropdown"><img id="profileAvatar" class="avatar" alt="Profile photo" hidden><span id="avatarInitials" class="avatar" aria-hidden="true">H</span><span><span id="profileName" class="profile-name">Loading account…</span><br><span id="profileEmail" class="profile-email"></span></span><span aria-hidden="true">⌄</span></button><div id="profileDropdown" class="profile-dropdown" hidden><a href="mobility-profile.html">Edit profile & photo</a><a href="identity-verification.html">Identity verification</a><a href="admin.html" id="adminLink" hidden>Admin console</a><button type="button" id="signOutButton">Sign out</button></div></div></div>
+<div id="accountMessage" class="account-message">Checking your account and proof status…</div>
+<section id="verificationGate" class="account-card" hidden><span id="gateStatus" class="status-pill">Verification required</span><h2 id="gateHeading" style="margin-top:16px">Complete identity verification to unlock your dashboard</h2><p id="gateText">HanyaGo checks submitted documents before enabling the account dashboard. This helps protect passengers, drivers and transport operators.</p><div id="reviewNote" class="account-message" hidden></div><div class="gate-actions"><a class="btn btn-primary" href="identity-verification.html">Submit or review my ID proof →</a><a class="btn" href="mobility-profile.html">Complete my profile</a></div></section>
+<section id="dashboardContent" hidden>
+<div class="account-card"><span class="status-pill approved">Identity approved</span><h2 style="margin-top:15px">Welcome, <span id="welcomeName">traveller</span> 👋</h2><p>Your identity proof has been approved. You can now use your HanyaGo dashboard. Keep your contact details accurate and never share your sign-in or one-time codes.</p></div>
+<div class="tiles">
+<a class="tile" href="booking.html"><span class="tile-icon">🧭</span><h3>Book a journey</h3><p>Plan a trip and keep your journey details together.</p></a>
+<a class="tile" href="keke-napep.html"><span class="tile-icon">🛺</span><h3>Keke Napep</h3><p>Choose Biu pickup and drop-off points and view the published fare.</p></a>
+<a class="tile" href="mobility-profile.html"><span class="tile-icon">👤</span><h3>My profile</h3><p>Manage your name, phone number, photo and availability settings.</p></a>
+<a class="tile" href="trip-live.html"><span class="tile-icon">📍</span><h3>Live trip</h3><p>Manage consent-based location sharing during a journey.</p></a>
+<a class="tile" href="nearby-drivers.html"><span class="tile-icon">🚘</span><h3>Nearby drivers</h3><p>View available drivers who have chosen to share their location.</p></a>
+<a class="tile" href="identity-verification.html"><span class="tile-icon">🛡️</span><h3>Verification status</h3><p>Review your submitted documents and any reviewer notes.</p></a>
+</div></section>
+<p class="account-footer">Identity documents are stored privately and reviewed by authorised HanyaGo admins. Approval confirms only the document review carried out by HanyaGo; it is not a criminal-background check. If you believe a decision is wrong, contact HanyaGo support for a review.</p>
+</main>
+<script>
+(function(){
+"use strict";
+const $=id=>document.getElementById(id);
+const cfg=window.HANYAGO_CONFIG||{};
+const db=window.hanyagoIsConfigured&&window.hanyagoIsConfigured()&&window.supabase?window.supabase.createClient(cfg.supabaseUrl,cfg.supabasePublishableKey,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}}):null;
+function showMessage(text,type=""){const el=$("accountMessage");el.textContent=text;el.className="account-message"+(type?" "+type:"");el.hidden=false}
+function initials(name){return String(name||"H").trim().split(/\s+/).slice(0,2).map(x=>x[0]||"").join("").toUpperCase()||"H"}
+function safe(value){return String(value||"").replace(/[&<>"']/g,ch=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[ch]))}
+$("profileTrigger").addEventListener("click",()=>{const open=$("profileDropdown").hidden;$("profileDropdown").hidden=!open;$("profileTrigger").setAttribute("aria-expanded",String(open))});
+document.addEventListener("click",e=>{if(!e.target.closest(".profile-menu")){$("profileDropdown").hidden=true;$("profileTrigger").setAttribute("aria-expanded","false")}});
+$("signOutButton").addEventListener("click",async()=>{if(!db)return;const {error}=await db.auth.signOut();if(error){showMessage(error.message,"error");return}location.replace("auth.html")});
+async function init(){
+ if(!db){showMessage("HanyaGo authentication is not configured. No dashboard data was loaded.","error");return}
+ const {data,error}=await db.auth.getSession();
+ if(error||!data.session){location.replace("auth.html?redirect=dashboard");return}
+ const user=data.session.user;
+ const meta=user.user_metadata||{};
+ let profile=null;
+ const {data:p,error:profileError}=await db.from("profiles").select("id,full_name,phone,role,requested_role,avatar_url,profile_photo_path").eq("id",user.id).maybeSingle();
+ if(profileError)console.warn("Profile lookup:",profileError.message);
+ profile=p||{};
+ const name=profile.full_name||meta.full_name||meta.name||user.phone||"HanyaGo member";
+ $("profileName").textContent=name;$("profileEmail").textContent=user.email||user.phone||"Verified account";$("avatarInitials").textContent=initials(name);
+ if(profile.avatar_url){$("profileAvatar").src=profile.avatar_url;$("profileAvatar").hidden=false;$("avatarInitials").hidden=true}
+ const admin=profile.role==="admin";$("adminLink").hidden=!admin;
+ const {data:proofs,error:proofError}=await db.from("id_verification_submissions").select("id,status,review_note,submitted_at,requested_role,document_type").eq("user_id",user.id).order("submitted_at",{ascending:false}).limit(10);
+ if(proofError){showMessage("We could not check your proof status. Please open Identity Verification and retry.","error");$("verificationGate").hidden=false;return}
+ const approved=(proofs||[]).find(row=>row.status==="approved");
+ if(admin||approved){
+   $("verificationGate").hidden=true;$("dashboardContent").hidden=false;$("welcomeName").textContent=name;
+   showMessage(admin?"Administrator account recognised. Admin tools are available from your profile menu.":"Your identity proof is approved. Dashboard access is unlocked.","success");
+   if(admin){$("gateStatus").textContent="Administrator";$("gateStatus").className="status-pill approved"}
+   return;
+ }
+ $("dashboardContent").hidden=true;$("verificationGate").hidden=false;
+ const latest=(proofs||[])[0];
+ if(!latest){
+  $("gateStatus").textContent="Proof required";$("gateStatus").className="status-pill";
+  $("gateHeading").textContent="Submit your proof before the dashboard unlocks";
+  $("gateText").textContent="Choose the document that matches your account: student ID or another official identity document for passengers; driver’s licence and identity proof for drivers; business or employee proof for transport operators. Your document remains private while an authorised admin reviews it.";
+  showMessage("Your account is signed in, but dashboard access is locked until your identity proof is approved.");
+ }else if(latest.status==="pending"){
+  $("gateStatus").textContent="Under review";$("gateStatus").className="status-pill";
+  $("gateHeading").textContent="Your proof is waiting for review";
+  $("gateText").textContent="Your document has been submitted. Dashboard features stay locked until an authorised admin completes the review. You can still open Identity Verification to check the submission.";
+  showMessage("Identity proof submitted. Dashboard is locked while review is pending.");
+ }else{
+  $("gateStatus").textContent="Action required";$("gateStatus").className="status-pill rejected";
+  $("gateHeading").textContent="Please submit an acceptable proof document";
+  $("gateText").textContent="The latest submission was not approved. Read the reviewer note and upload a clear, relevant document. Do not upload someone else’s ID.";
+  if(latest.review_note){$("reviewNote").textContent="Reviewer note: "+latest.review_note;$("reviewNote").hidden=false}
+  showMessage("Your latest identity proof needs a new submission.","error");
+ }
+}
+init().catch(e=>{console.error(e);showMessage(e.message||"Could not load your account.","error")});
+})();
+</script>
+</body></html>
