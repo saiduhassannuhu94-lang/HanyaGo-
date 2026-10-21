@@ -68,3 +68,13 @@ No sample departures or invented fares have been inserted into production. The l
 - **Fix:** Do not weaken the payment guard. Operations must review the request, enter the agreed fare in naira in the admin booking panel, set the booking to `confirmed` (or assign an approved driver), and save before the passenger retries checkout.
 - **Prevention:** Test checkout against pending/no-fare, pending/quoted-fare, confirmed/fare, expired-seat-hold, duplicate-pending-payment and webhook-confirmed cases. Never create a payment record until the server-side checks pass.
 - **Lesson:** Fare value and approval state are separate facts. Payment must follow confirmation, not replace it.
+
+## 9. Account profile and private profile details
+
+- **Problem:** The existing account dashboard had a basic profile menu, but the profile editing destination was the older mobility profile; it did not provide one consolidated, role-aware profile form for contact, about, driver/union fields, registration year, and a dashboard-visible profile photo.
+- **Root cause:** Profile presentation, identity evidence, and role-specific profile details were spread across separate screens and schemas.
+- **Why it was missed:** Earlier work prioritised booking/payment and identity submission gates over a complete account-profile workflow.
+- **Fix:** Added `account-profile.html` with signed-in-session enforcement, editable personal/contact/about fields, owner-scoped profile details, NIN format validation, union membership and renewal year, driving-licence number/expiry, optional registration number/year, emergency contact, and profile photo upload to the existing profile-photo bucket. Added `public.profile_details` with row-level security and owner-only select/insert/update policies. Updated account-dashboard profile-menu and verification-gate links to open the new editor.
+- **Prevention:** Keep identity proof review separate from self-entered profile data; profile completion must never grant a privileged role or mark a document verified. Test owner isolation, photo upload, schema constraints, and dashboard photo rendering before release.
+- **Lesson:** A profile field is user-supplied information, not verified identity. NIN format validation is not NIMC verification; driver/operator access still depends on the existing approval gate.
+- **QA status:** Migration applied; expected columns confirmed in Supabase; embedded JavaScript syntax parsed successfully. Full browser/end-to-end testing and live deployment verification remain outstanding.
