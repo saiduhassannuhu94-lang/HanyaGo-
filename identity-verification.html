@@ -132,7 +132,7 @@ body{background:#f3f7f5;color:#102b46}.verify-wrap{max-width:1000px;margin:34px 
  });
  $("verifyForm").addEventListener("submit",async event=>{
   event.preventDefault();$("uploadButton").disabled=true;$("uploadButton").textContent="Uploading securely…";
-  try{if(!currentUser)throw new Error("Please sign in before uploading.");await upload($("identityFile").files[0]);$("verifyForm").reset();message("Document uploaded privately. Its status is now pending human review.","success");await renderList()}
+  try{if(!currentUser)throw new Error("Please sign in before uploading.");await upload($("identityFile").files[0]);$("verifyForm").reset();await renderList()}
   catch(error){message(error.message||"Upload failed. Please try again.","error")}
   finally{$("uploadButton").disabled=false;$("uploadButton").textContent="Upload securely"}
  });
