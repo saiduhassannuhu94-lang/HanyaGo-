@@ -2,7 +2,7 @@
 (function () {
   "use strict";
   const root = document.documentElement;
-  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const reduceMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
   // If JavaScript is running, enable reveal styles; content stays visible without JS.
   root.classList.add("js-motion");
@@ -69,7 +69,7 @@
     return;
   }
 
-  const observer = new IntersectionObserver(function (entries, currentObserver) {
+  let revealSafetyTimer = window.setTimeout(function () {\n    document.querySelectorAll("[data-reveal]").forEach(function (element) { element.classList.add("is-visible"); });\n  }, 2600);\n\n  const observer = new IntersectionObserver(function (entries, currentObserver) {
     entries.forEach(function (entry) {
       if (entry.isIntersecting) {
         entry.target.classList.add("is-visible");
