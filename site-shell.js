@@ -105,7 +105,7 @@
     if (loaderHidden) return;
     loaderHidden = true;
     loader.classList.remove("is-visible");
-    window.setTimeout(function () { if (loader.parentNode) loader.parentNode.removeChild(loader); }, reduceMotion ? 0 : 300);
+    // Keep the hidden loader mounted so same-site navigation can reuse it.
   }
   window.addEventListener("load", function () {
     const remaining = Math.max(0, loaderMinimumVisibleMs - (Date.now() - loaderStartedAt));
