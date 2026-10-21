@@ -343,6 +343,12 @@ async function init() {
  try { await getSession(); }
  catch(err) { console.error("Could not load HanyaGo session",err); }
  updateRelationshipUI();
+ const savedTicketRedirect=sessionStorage.getItem("hanyago_ticket_redirect");
+ if(savedTicketRedirect && /^travel-ticket\\.html\\?booking=[0-9a-f-]+$/i.test(savedTicketRedirect)) {
+   sessionStorage.removeItem("hanyago_ticket_redirect");
+   window.location.replace(savedTicketRedirect);
+   return;
+ }
  await restoreDraft();
  const requestedBooking=new URLSearchParams(location.search).get("booking");
  if(requestedBooking) window.location.href="travel-ticket.html?booking="+encodeURIComponent(requestedBooking);
