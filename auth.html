@@ -851,7 +851,7 @@
 
         const destination = authCallbackParams.get("redirect");
         window.location.replace(
-          destination === "booking" ? "booking.html" : destination === "intercity" ? "intercity.html" : destination === "intercity-admin" ? "intercity-admin.html" : destination === "ticket" ? "intercity.html" : destination === "admin" ? "admin.html" : destination === "verification" ? "identity-verification.html" : destination === "keke-napep" ? "keke-napep.html" : destination === "mobility-profile" ? "mobility-profile.html" : "account-dashboard.html"
+          "onboarding.html"
         );
       }).catch(() => {
         showMessage(
@@ -1089,7 +1089,7 @@
         const { data, error } = await supabaseClient.auth.verifyOtp({ phone, token, type: "sms" });
         if (error) throw error;
         if (!data.session) throw new Error("No active session was returned. Sign in again.");
-        window.location.replace("account-dashboard.html");
+        window.location.replace("onboarding.html");
       } catch (error) { phoneMessage(error.message || "The code could not be verified. Request a new code and try again.", "error"); }
       finally { busy = false; $("verifyPhoneCode").disabled = false; $("verifyPhoneCode").textContent = "Verify code and continue"; }
     });
