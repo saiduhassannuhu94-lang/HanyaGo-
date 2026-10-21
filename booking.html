@@ -25,6 +25,15 @@
   <section class="page-body"><div class="container">
     <div class="booking-box" style="max-width:980px;margin:0 auto;">
       <h3>Where are you going?</h3><p>Use the details below to submit a booking request.</p>
+      <section class="booking-ride-visuals" aria-labelledby="bookingRideVisualsTitle">
+        <div class="booking-ride-visuals-heading"><h4 id="bookingRideVisualsTitle">Choose your preferred ride</h4><p>Tap a vehicle to preselect it in your booking form. Final availability and fare still require operator confirmation.</p></div>
+        <div class="booking-ride-visual-grid">
+          <button type="button" class="booking-ride-visual is-selected" data-select-ride="Keke Napep" aria-pressed="true"><img src="https://upload.wikimedia.org/wikipedia/commons/3/3b/A_Keke_Napep_%28commercial_tricycle%29_waiting_to_pick_up_a_passenger_in_Nigeria.jpg" alt="" loading="lazy" decoding="async"><span><strong>Keke Napep</strong><small>Local town rides</small></span></button>
+          <button type="button" class="booking-ride-visual" data-select-ride="Private Car" aria-pressed="false"><img src="https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?auto=format&fit=crop&w=1000&q=85" alt="" loading="lazy" decoding="async"><span><strong>Private Car</strong><small>Personal journeys</small></span></button>
+          <button type="button" class="booking-ride-visual" data-select-ride="Bus / Shared Ride" aria-pressed="false"><img src="https://images.unsplash.com/photo-1570125909232-eb263c188f7e?auto=format&fit=crop&w=1000&q=85" alt="" loading="lazy" decoding="async"><span><strong>Bus / Shared Ride</strong><small>Shared routes</small></span></button>
+          <button type="button" class="booking-ride-visual" data-select-ride="Shuttle" aria-pressed="false"><img src="https://images.unsplash.com/photo-1519003722824-194d4455a60c?auto=format&fit=crop&w=1000&q=85" alt="" loading="lazy" decoding="async"><span><strong>Shuttle</strong><small>Group transport</small></span></button>
+        </div>
+      </section>
       <form class="booking-form booking-form-page" id="bookingForm"><div class="booking-progress" aria-label="Booking form sections">
   <a href="#bookingStepLocation" class="booking-progress-step"><span>01</span><span><strong>Journey route</strong><small>Pickup and destination</small></span></a>
   <a href="#bookingStepTravel" class="booking-progress-step"><span>02</span><span><strong>Travel details</strong><small>Date, time and ride</small></span></a>
