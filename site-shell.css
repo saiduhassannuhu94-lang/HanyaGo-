@@ -389,3 +389,32 @@ html[data-theme="dark"] .visual .wordmark-go { color: #9de0bf; }
 .booking-form-page .field-hint, .booking-form-page .optional-label { display:block; margin-top:6px; color:var(--text-muted); font-size:.82rem; line-height:1.5; }
 .booking-form-page input:focus, .booking-form-page select:focus, .booking-form-page textarea:focus { outline:3px solid rgba(8,124,82,.16); border-color:var(--shell-accent); }
 html[data-theme="dark"] .booking-form-page textarea { background:#101d27; color:#e7eef3; border-color:#344857; }
+
+
+/* HanyaGo premium mobile navigation + motion reliability patch */
+@media (max-width: 920px) {
+  .site-header .navbar { position: relative; }
+  .site-header .nav-links {
+    position: absolute;
+    max-height: min(76vh, calc(100dvh - 82px));
+    overflow-y: auto;
+    overflow-x: hidden;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-gutter: stable;
+    padding-bottom: max(22px, env(safe-area-inset-bottom));
+    touch-action: pan-y;
+  }
+  .site-header .nav-links a { flex: 0 0 auto; min-height: 44px; line-height: 1.35; }
+  .site-header .nav-links.active { visibility: visible; }
+}
+@media (max-width: 540px) {
+  .site-header .nav-links { max-height: calc(100dvh - 74px); }
+}
+.scroll-progress { position: fixed; inset: 0 0 auto; height: 3px; z-index: 1200; pointer-events: none; }
+.scroll-progress-bar { display: block; width: 100%; height: 100%; transform-origin: left center; background: linear-gradient(90deg,#087c52,#20b67a,#e9b949); }
+.page-loader { pointer-events: none; }
+.page-loader.is-visible { pointer-events: all; }
+@media (prefers-reduced-motion: reduce) {
+  .page-loader, .loader-track::after { animation: none !important; transition: none !important; }
+}
