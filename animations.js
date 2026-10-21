@@ -50,6 +50,25 @@
     ".contact-form-panel",
     ".page-cta"
   ];
+  // Vehicle cards on the booking page preselect the matching form option.
+  document.querySelectorAll("[data-select-ride]").forEach(function (button) {
+    button.addEventListener("click", function () {
+      const selector = document.getElementById("rideType");
+      if (!selector) return;
+      const selectedRide = button.getAttribute("data-select-ride");
+      if (![...selector.options].some(function (option) { return option.value === selectedRide; })) return;
+      selector.value = selectedRide;
+      document.querySelectorAll("[data-select-ride]").forEach(function (card) {
+        const selected = card === button;
+        card.classList.toggle("is-selected", selected);
+        card.setAttribute("aria-pressed", String(selected));
+      });
+      const target = document.getElementById("bookingStepTravel") || selector;
+      target.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "start" });
+      selector.dispatchEvent(new Event("change", { bubbles: true }));
+    });
+  });
+
   const seen = new Set();
   document.querySelectorAll(revealTargets.join(",")).forEach(function (element) {
     if (seen.has(element)) return;
