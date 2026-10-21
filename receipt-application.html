@@ -25,9 +25,11 @@ body{background:#f4f7fa;color:#15283a}.receipt-wrap{max-width:900px;margin:32px 
 <div class="field"><label for="applicantPhone">Applicant's phone *</label><input id="applicantPhone" required type="tel" maxlength="24" autocomplete="tel" placeholder="080… or +234…"></div>
 <div class="field"><label for="passengerName">Passenger's full name *</label><input id="passengerName" required maxlength="100"></div>
 <div class="field"><label for="passengerPhone">Passenger's phone *</label><input id="passengerPhone" required type="tel" maxlength="24"></div>
+<div class="field proxy-only hidden"><label for="relationship">Your relationship to the passenger *</label><select id="relationship"><option value="">Choose relationship</option><option>Spouse</option><option>Parent</option><option>Child</option><option>Sibling</option><option>Other relative</option><option>Friend</option><option>Colleague</option><option>Employer / employee</option><option value="Other">Other</option></select></div>
+<div class="field proxy-only hidden" id="relationshipOtherWrap"><label for="relationshipOther">Specify relationship *</label><input id="relationshipOther" maxlength="80" placeholder="Write your relationship"></div>
 <div class="field full"><label for="passengerPhoto">Passenger's recent photograph *</label><input id="passengerPhoto" required type="file" accept="image/jpeg,image/png,image/webp"><small class="small">JPEG, PNG or WEBP, maximum 5 MB. The photo is previewed locally and is not uploaded by this standalone form.</small><img id="photoPreview" class="preview-photo hidden" alt="Passenger photo preview"></div>
-<div class="field"><label for="pickup">Pickup location *</label><input id="pickup" required maxlength="140"></div>
-<div class="field"><label for="destination">Destination *</label><input id="destination" required maxlength="140"></div>
+<div class="field"><label for="pickup">Pickup location / full address *</label><input id="pickup" required maxlength="200" autocomplete="street-address" placeholder="Enter area, street, landmark or full address"><small class="small">If your pickup address is not listed on HanyaGo, type it here manually with a nearby landmark.</small></div>
+<div class="field"><label for="destination">Destination / full address *</label><input id="destination" required maxlength="200" placeholder="Enter area, street, landmark or full address"><small class="small">If your destination is not listed, type the address or nearest known landmark.</small></div>
 <div class="field"><label for="travelDate">Travel date *</label><input id="travelDate" required type="date"></div>
 <div class="field"><label for="travelTime">Travel time</label><input id="travelTime" type="time"></div>
 <div class="field"><label for="transportType">Transport type *</label><select id="transportType" required><option value="">Select type</option><option>Keke Napep</option><option>Bus</option><option>Shuttle</option><option>Private car</option><option>Other</option></select></div>
@@ -56,6 +58,7 @@ body{background:#f4f7fa;color:#15283a}.receipt-wrap{max-width:900px;margin:32px 
 (function(){
 const $=id=>document.getElementById(id), form=$("receiptForm");
 const photo=$("passengerPhoto"), preview=$("photoPreview");
+const relationship=$("relationship"), relationshipOther=$("relationshipOther");
 let photoData="";
 function showStatus(message,type){const box=$("formStatus");box.textContent=message;box.className="status show "+type;}
 photo.addEventListener("change",()=>{
@@ -64,21 +67,34 @@ photo.addEventListener("change",()=>{
  if(!["image/jpeg","image/png","image/webp"].includes(file.type)||file.size>5*1024*1024){showStatus("Photo rejected: use JPG, PNG or WEBP up to 5 MB.","error");photo.value="";preview.classList.add("hidden");return;}
  const reader=new FileReader();reader.onload=()=>{photoData=reader.result;preview.src=photoData;preview.classList.remove("hidden");};reader.readAsDataURL(file);
 });
-document.querySelectorAll('input[name="applicant_type"]').forEach(el=>el.addEventListener("change",()=>{
+document.querySelectorAll('input[name="applicant_type"]').forEach(el=>el.addEventListener("change",updateApplicantType));
+function updateApplicantType(){
  const proxy=document.querySelector('input[name="applicant_type"]:checked').value==="proxy";
+ document.querySelectorAll(".proxy-only").forEach(el=>el.classList.toggle("hidden",!proxy));
+ relationship.required=proxy;
+ relationshipOther.required=proxy&&relationship.value==="Other";
  $("applicantName").parentElement.querySelector("label").textContent=proxy?"Your full name (person applying) *":"Applicant's full name *";
-}));
+}
+relationship.addEventListener("change",()=>{
+ const show=relationship.value==="Other";
+ $("relationshipOtherWrap").classList.toggle("hidden",!show);
+ relationshipOther.required=show&&document.querySelector('input[name="applicant_type"]:checked').value==="proxy";
+ if(!show)relationshipOther.value="";
+});
 form.addEventListener("submit",e=>{
  e.preventDefault();
  if(!form.reportValidity())return;
  const phone=$("applicantPhone").value.replace(/[\s().-]/g,"");
  if(phone.replace(/\D/g,"").length<7){showStatus("Enter a valid applicant phone number.","error");return;}
+ const proxy=document.querySelector('input[name="applicant_type"]:checked').value==="proxy";
+ if(proxy&&relationship.value==="Other"&&!relationshipOther.value.trim()){showStatus("Please specify the relationship because you selected Other.","error");relationshipOther.focus();return;}
  const f=photo.files&&photo.files[0];
  if(!f||!photoData){showStatus("Passenger photo is required. Please select a valid photo.","error");return;}
  const id="HG-APP-"+new Date().toISOString().slice(0,10).replace(/-/g,"")+"-"+cryptoRandom();
  const values=[
  ["Application reference",id],["Applicant", $("applicantName").value.trim()],["Applicant phone", $("applicantPhone").value.trim()],
- ["Application type",document.querySelector('input[name="applicant_type"]:checked').value==="proxy"?"On behalf of another person":"Own ticket"],
+ ["Application type",proxy?"On behalf of another person":"Own ticket"],
+ ["Relationship to passenger",proxy?(relationship.value==="Other"?"Other: "+relationshipOther.value.trim():relationship.value):"Not applicable - own ticket"],
  ["Passenger", $("passengerName").value.trim()],["Passenger phone",$("passengerPhone").value.trim()],
  ["Passenger photo","Attached in local preview"],["Pickup",$("pickup").value.trim()],["Destination",$("destination").value.trim()],
  ["Travel date",$("travelDate").value],["Travel time",$("travelTime").value||"Not specified"],["Transport",$("transportType").value],
@@ -98,7 +114,8 @@ $("downloadBtn").addEventListener("click",()=>{
  const html="<!doctype html><html><head><meta charset='utf-8'><title>HanyaGo Application Copy</title><style>body{font:16px Arial;padding:28px;color:#102b46}.paper{border:2px solid #c9a84c;padding:24px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.cell{border-bottom:1px dashed #bbb;padding:8px}.cell small{display:block;color:#666}.warning{border-top:1px solid #ccc;margin-top:20px;padding-top:10px}</style></head><body><div class='paper'><h1>HanyaGo</h1><h2>Passenger Ticket / Payment Receipt</h2><p><b>APPLICATION COPY ONLY • NOT PAID OR CONFIRMED</b></p><div class='grid'>"+$("ticketDetails").innerHTML+"</div><div class='warning'>This is not an official receipt, confirmed ticket, or company stamp. Verify payment and booking through HanyaGo before travel.</div></div></body></html>";
  const blob=new Blob([html],{type:"text/html;charset=utf-8"}),url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download="hanyago-application-copy.html";a.click();URL.revokeObjectURL(url);
 });
-$("newBtn").addEventListener("click",()=>{form.reset();$("ticketPreview").classList.remove("show");preview.classList.add("hidden");photoData="";$("formStatus").className="status";window.scrollTo({top:0,behavior:"smooth"});});
+$("newBtn").addEventListener("click",()=>{form.reset();updateApplicantType();$("relationshipOtherWrap").classList.add("hidden");$("ticketPreview").classList.remove("show");preview.classList.add("hidden");photoData="";$("formStatus").className="status";window.scrollTo({top:0,behavior:"smooth"});});
+updateApplicantType();
 })();
 </script>
 </body>
