@@ -47,7 +47,7 @@ body{background:#f3f7f5;color:#102b46}.verify-wrap{max-width:1000px;margin:34px 
   if(error||!data.session){message("Please sign in before uploading or viewing identity documents.","info");$("submissionList").innerHTML='<div class="verify-empty"><a href="auth.html?redirect=verification">Sign in to continue →</a></div>';return false}
   currentUser=data.session.user;
   const {data:pr}=await db.from("profiles").select("role,requested_role,full_name").eq("id",currentUser.id).maybeSingle();
-  profile=pr||{};isAdmin=profile.role==="admin";if(profile.requested_role&&["passenger","driver","operator"].includes(profile.requested_role))$("requestedRole").value=profile.requested_role;
+  profile=pr||{};isAdmin=profile.role==="admin";if(!isAdmin&&profile.requested_role&&["passenger","driver","operator"].includes(profile.requested_role)){$("requestedRole").value=profile.requested_role;$("requestedRole").disabled=true;$("roleProofHint").textContent="Your requested account type is fixed for this application. Contact HanyaGo support if it must change."; }
   return true;
  }
  async function upload(file){
