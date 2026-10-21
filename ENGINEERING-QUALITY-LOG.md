@@ -59,3 +59,12 @@ No sample departures or invented fares have been inserted into production. The l
 - **Fix:** Kept the latest changes in GitHub and verified JavaScript/inline-script syntax and the database migration separately. No claim is made that the newest commit is live.
 - **Prevention:** Check the deployed commit SHA and production smoke tests after every change. If deployment is rate-limited or team authorization fails, stop claiming the production link reflects the latest source.
 - **Lesson:** A committed change is not a deployed change. Verify the exact commit serving production.
+
+## 7. Paystack correctly refused an unconfirmed regular ride
+
+- **Problem:** Checkout returned a message that the operator had not confirmed a payable fare, so no payment was started.
+- **Root cause:** The booking remained `pending`. The checkout function requires a non-intercity ride to be `confirmed` or `assigned`, and it requires a valid fare in kobo. A displayed or quoted amount alone is not operator confirmation.
+- **Why it was missed:** Testing focused on whether a fare amount existed, not whether the booking status and fare satisfied the same server-side checkout gate.
+- **Fix:** Do not weaken the payment guard. Operations must review the request, enter the agreed fare in naira in the admin booking panel, set the booking to `confirmed` (or assign an approved driver), and save before the passenger retries checkout.
+- **Prevention:** Test checkout against pending/no-fare, pending/quoted-fare, confirmed/fare, expired-seat-hold, duplicate-pending-payment and webhook-confirmed cases. Never create a payment record until the server-side checks pass.
+- **Lesson:** Fare value and approval state are separate facts. Payment must follow confirmation, not replace it.
