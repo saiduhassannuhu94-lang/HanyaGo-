@@ -89,9 +89,10 @@ body{background:#f3f7f5;color:#102b46}.verify-wrap{max-width:1000px;margin:34px 
   if(!isAdmin){message("Only an authorised HanyaGo admin can review submissions.","error");return}
   const note=window.prompt(status==="approved"?"Optional review note (avoid sensitive details):":"Brief reason the user can act on (do not include unnecessary sensitive details):","") ;
   if(note===null)return;
-  const {error}=await db.from("id_verification_submissions").update({status,review_note:note.trim()||null,reviewed_by:currentUser.id,reviewed_at:new Date().toISOString()}).eq("id",id);
+  const {data,error}=await db.rpc("admin_review_identity_submission",{p_submission_id:id,p_status:status,p_review_note:note.trim()||null});
   if(error){message("Review could not be saved: "+error.message,"error");return}
-  message("Review status updated.","success");await renderList();
+  message(status==="approved"?"Document approved. If this was a driver/operator request, the approved role has been activated.":"Document rejected. The user can review the note and submit acceptable proof.","success");
+  await renderList();
  }
  $("verifyForm").addEventListener("submit",async event=>{
   event.preventDefault();$("uploadButton").disabled=true;$("uploadButton").textContent="Uploading securely…";
