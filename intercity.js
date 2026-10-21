@@ -39,8 +39,6 @@ function setStateOptions() {
     el.innerHTML=STATE_LIST.map(s=>'<option value="'+escapeHTML(s)+'">'+escapeHTML(s)+'</option>').join("");
     el.value=existing || (id==="originState"?"Borno":"Gombe");
   });
-  $("originState").value="Borno";
-  $("destinationState").value="Gombe";
   $("departureDate").min=localDate();
   if(!$("departureDate").value) $("departureDate").value=localDate();
 }
@@ -338,7 +336,7 @@ async function init() {
  if(STATE_LIST.includes(urlParams.get("destinationState"))) $("destinationState").value=urlParams.get("destinationState");
  if(urlParams.get("destination")) $("destinationCity").value=urlParams.get("destination").slice(0,80);
  const urlDate=urlParams.get("date");
- if(urlDate && /^\\d{4}-\\d{2}-\\d{2}$/.test(urlDate) && urlDate>=localDate()) $("departureDate").value=urlDate;
+ if(urlDate && /^\d{4}-\d{2}-\d{2}$/.test(urlDate) && urlDate>=localDate()) $("departureDate").value=urlDate;
  state.db=makeClient();
  $("intercitySearchForm").addEventListener("submit",searchTrips);
  $("departureResults").addEventListener("click",e=>{const b=e.target.closest("[data-open-seats]");if(b)openSeatMap(b.dataset.openSeats);});
@@ -358,7 +356,7 @@ async function init() {
  catch(err) { console.error("Could not load HanyaGo session",err); }
  updateRelationshipUI();
  const savedTicketRedirect=sessionStorage.getItem("hanyago_ticket_redirect");
- if(savedTicketRedirect && /^travel-ticket\\.html\\?booking=[0-9a-f-]+$/i.test(savedTicketRedirect)) {
+ if(savedTicketRedirect && /^travel-ticket\.html\?booking=[0-9a-f-]+$/i.test(savedTicketRedirect)) {
    sessionStorage.removeItem("hanyago_ticket_redirect");
    window.location.replace(savedTicketRedirect);
    return;
