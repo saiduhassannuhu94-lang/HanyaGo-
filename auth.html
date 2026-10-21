@@ -1004,10 +1004,9 @@
         const redirectUrl = new URL(AUTH_REDIRECT_URL);
         if (destination === "booking" || destination === "admin" || destination === "verification") redirectUrl.searchParams.set("redirect", destination);
 
-        const { error } = await supabaseClient.auth.signInWithOAuth({
-          provider,
-          options: { redirectTo: redirectUrl.toString() }
-        });
+        const oauthOptions = { redirectTo: redirectUrl.toString() };
+        if (provider === "azure") oauthOptions.scopes = "email";
+        const { error } = await supabaseClient.auth.signInWithOAuth({ provider, options: oauthOptions });
         if (error) throw error;
       } catch (error) {
         const raw = String(error?.message || "");
