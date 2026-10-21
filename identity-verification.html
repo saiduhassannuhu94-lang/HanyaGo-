@@ -64,18 +64,46 @@ body{background:#f3f7f5;color:#102b46}.verify-wrap{max-width:1000px;margin:34px 
   const path=currentUser.id+"/"+crypto.randomUUID()+"."+ext;
   const {error:upErr}=await db.storage.from("hanyago-identity-documents").upload(path,file,{cacheControl:"0",contentType:file.type,upsert:false});
   if(upErr)throw upErr;
-  const {error:rowErr}=await db.from("id_verification_submissions").insert({user_id:currentUser.id,requested_role:requestedRole,document_type:$("documentType").value,institution_name:$("institutionName").value.trim()||null,object_path:path,original_file_name:file.name.slice(0,240),mime_type:file.type,size_bytes:file.size,status:"pending"});
+  const {data:submission,error:rowErr}=await db.from("id_verification_submissions").insert({user_id:currentUser.id,requested_role:requestedRole,document_type:$("documentType").value,institution_name:$("institutionName").value.trim()||null,object_path:path,original_file_name:file.name.slice(0,240),mime_type:file.type,size_bytes:file.size,status:"pending"}).select("id").single();
   if(rowErr){await db.storage.from("hanyago-identity-documents").remove([path]);throw rowErr}
+  // AI is a document-quality assistant, not an authority verifier. Failure must not
+  // undo the upload or imply approval; the submission stays pending.
+  try {
+   const {data:triage,error:triageError}=await db.functions.invoke("ai-identity-triage",{body:{submission_id:submission.id}});
+   if(triageError) {
+    console.warn("AI document triage unavailable; submission remains pending.");
+    message("Document uploaded securely. AI quality check is not available yet, so the submission remains pending for review.","info");
+   } else if(triage?.ai_review_status==="ready_for_review") {
+    message("Document uploaded. AI found it readable and consistent with the selected document type. This does not prove authenticity; final approval is still required.","success");
+   } else if(triage?.ai_review_status==="needs_resubmission") {
+    message("Document uploaded. AI could not match or read it reliably. It has not been automatically rejected; review the file or upload a clearer copy.","info");
+   } else {
+    message("Document uploaded. AI could not confidently assess it, so it remains pending for review.","info");
+   }
+  } catch (triageError) {
+   console.warn("AI document triage unavailable; submission remains pending.");
+   message("Document uploaded securely. AI quality check is not available yet, so the submission remains pending for review.","info");
+  }
  }
  async function signedLink(path){const {data,error}=await db.storage.from("hanyago-identity-documents").createSignedUrl(path,120);if(error)throw error;return data.signedUrl}
  function cardMarkup(row, admin=false){
   const status=row.status||"pending";
   const note=row.review_note?'<p class="verify-meta">Reviewer note: '+escapeHtml(row.review_note)+'</p>':"";
-  return '<article class="verify-item" data-id="'+row.id+'"><h3>'+escapeHtml(labelForType(row.document_type))+' · '+escapeHtml(row.original_file_name)+'</h3><div class="verify-meta">'+escapeHtml(row.institution_name||"No school/company name supplied")+'<br>Submitted: '+escapeHtml(niceDate(row.submitted_at))+'<br>Request type: '+escapeHtml(row.requested_role||"passenger")+'<br><span class="verify-status '+status+'">'+escapeHtml(status.toUpperCase())+'</span></div>'+note+'<div class="verify-actions"><button type="button" data-open="'+row.id+'">Open private document</button>'+(admin?'<button type="button" class="approve" data-review="approved" data-id="'+row.id+'">Approve</button><button type="button" class="reject" data-review="rejected" data-id="'+row.id+'">Reject</button>':"")+'</div></article>';
+  const aiStatus=row.ai_review_status||"not_started";
+  const aiLabel={
+   ready_for_review:"AI quality check: readable; ready for decision",
+   needs_resubmission:"AI quality check: possible unreadable/wrong file",
+   needs_manual_review:"AI quality check: manual review needed",
+   processing:"AI quality check: processing",
+   failed:"AI quality check: unavailable",
+   not_started:"AI quality check: not run"
+  }[aiStatus]||"AI quality check: pending";
+  const aiSummary=row.ai_summary?'<p class="verify-meta"><strong>'+escapeHtml(aiLabel)+'</strong><br>'+escapeHtml(row.ai_summary)+(row.ai_confidence!==null&&row.ai_confidence!==undefined?' · Confidence '+Math.round(Number(row.ai_confidence)*100)+'%':'')+'<br><em>Quality assessment only; not proof of authenticity.</em></p>':'<p class="verify-meta"><strong>'+escapeHtml(aiLabel)+'</strong><br>AI cannot verify NIN, licence, union, school or company records without an authorised registry connection.</p>';
+  return '<article class="verify-item" data-id="'+row.id+'"><h3>'+escapeHtml(labelForType(row.document_type))+' · '+escapeHtml(row.original_file_name)+'</h3><div class="verify-meta">'+escapeHtml(row.institution_name||"No school/company name supplied")+'<br>Submitted: '+escapeHtml(niceDate(row.submitted_at))+'<br>Request type: '+escapeHtml(row.requested_role||"passenger")+'<br><span class="verify-status '+status+'">'+escapeHtml(status.toUpperCase())+'</span></div>'+aiSummary+note+'<div class="verify-actions"><button type="button" data-open="'+row.id+'">Open private document</button>'+(admin?'<button type="button" class="approve" data-review="approved" data-id="'+row.id+'">Approve</button><button type="button" class="reject" data-review="rejected" data-id="'+row.id+'">Reject</button>':"")+'</div></article>';
  }
  function escapeHtml(value){return String(value??"").replace(/[&<>"']/g,ch=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[ch]))}
  async function renderList(){
-  const {data,error}=await db.from("id_verification_submissions").select("id,user_id,requested_role,document_type,institution_name,object_path,original_file_name,status,review_note,submitted_at").order("submitted_at",{ascending:false}).limit(isAdmin?100:30);
+  const {data,error}=await db.from("id_verification_submissions").select("id,user_id,requested_role,document_type,institution_name,object_path,original_file_name,status,review_note,submitted_at,ai_review_status,ai_confidence,ai_document_type_match,ai_readability,ai_risk_flags,ai_summary,ai_checked_at").order("submitted_at",{ascending:false}).limit(isAdmin?100:30);
   if(error)throw error;
   const mine=isAdmin?(data||[]):(data||[]).filter(row=>row.user_id===currentUser.id);
   $("submissionList").innerHTML=mine.length?mine.map(row=>cardMarkup(row,false)).join(""):'<div class="verify-empty">No identity proof has been submitted yet.</div>';
