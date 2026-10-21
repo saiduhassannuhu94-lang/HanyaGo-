@@ -452,6 +452,13 @@
       font-weight: 800;
     }
 
+    .identity-panel{padding:16px;border:1px solid #d8e8df;border-radius:13px;background:#f5fbf7}
+    .identity-panel>strong{display:block;color:#10243a;font-size:14px;margin-bottom:6px}
+    .identity-panel p,.identity-panel small{display:block;color:#61736e;font-size:11px;line-height:1.6;margin:6px 0 12px}
+    .identity-panel label{display:block;color:#405264;font-size:12px;font-weight:700;margin:12px 0 7px}
+    .identity-select,.identity-file{width:100%;min-height:44px;border:1px solid #dbe4e8;border-radius:9px;background:#fff;padding:10px;color:#263747;font:inherit;font-size:13px}
+    .identity-consent{display:flex!important;gap:9px;align-items:flex-start;font-weight:500!important;line-height:1.6}
+    .identity-consent input{margin-top:4px;accent-color:var(--green);flex:0 0 auto}
     .hidden {
       display: none !important;
     }
@@ -677,6 +684,28 @@
               </div>
             </div>
 
+
+            <div class="field hidden" id="identityProofField">
+              <div class="identity-panel">
+                <strong>Identity proof (private upload)</strong>
+                <p id="identityProofHint">Drivers and transport operators should submit relevant proof for review. Passengers may upload an ID voluntarily.</p>
+                <label for="documentType">What does this document prove?</label>
+                <select id="documentType" class="identity-select">
+                  <option value="student_id">Student ID card</option>
+                  <option value="national_id">National identity document</option>
+                  <option value="drivers_license">Driver’s licence</option>
+                  <option value="employee_id">Employee ID card</option>
+                  <option value="business_proof">Business registration / business proof</option>
+                  <option value="other_official_id">Other official ID</option>
+                </select>
+                <label for="institutionName">School, employer or business name (if relevant)</label>
+                <input id="institutionName" maxlength="160" placeholder="e.g. school or registered business name">
+                <label for="identityFile">Upload ID / proof (PDF, JPG, PNG or WEBP; max 10 MB)</label>
+                <input id="identityFile" type="file" accept=".pdf,.jpg,.jpeg,.png,.webp,application/pdf,image/jpeg,image/png,image/webp" class="identity-file">
+                <label class="identity-consent"><input id="identityConsent" type="checkbox"> I confirm this is genuine evidence I am authorised to submit, and I agree that HanyaGo’s authorised reviewers may use it to assess my account or driver/operator request.</label>
+                <small>Files are stored privately. They are not public profile images. Uploading a document does not mean you are verified or approved.</small>
+              </div>
+            </div>
             <div class="field hidden" id="confirmField">
               <label for="confirmPassword">Confirm password</label>
               <div class="input-wrap">
@@ -712,7 +741,9 @@
           <a href="privacy.html" id="privacyLink">Privacy Policy</a>.
         </p>
 
-        <p class="switch-note" id="switchNote">
+        <p style="text-align:center;margin:12px 0 0"><a class="identity-link" href="identity-verification.html">Already signed in? Upload or check your ID verification →</a></p>
+
+      <p class="switch-note" id="switchNote">
           New to HanyaGo?
           <button type="button" id="switchButton">Create an account</button>
         </p>
@@ -902,6 +933,7 @@
       $("nameField").classList.toggle("hidden", login);
       $("phoneField").classList.toggle("hidden", login);
       $("confirmField").classList.toggle("hidden", login);
+      $("identityProofField").classList.toggle("hidden", login);
       $("loginOptions").classList.toggle("hidden", !login);
       $("terms").classList.toggle("hidden", login);
 
@@ -1048,6 +1080,54 @@
       }
     });
 
+
+    const ALLOWED_ID_MIME_TYPES = new Set(["application/pdf", "image/jpeg", "image/png", "image/webp"]);
+    const MAX_ID_FILE_BYTES = 10 * 1024 * 1024;
+
+    function getSelectedIdentityFile() {
+      return $("identityFile")?.files?.[0] || null;
+    }
+
+    async function uploadIdentityProof(userId, requestedRole) {
+      const file = getSelectedIdentityFile();
+      if (!file) return { uploaded: false };
+      if (!ALLOWED_ID_MIME_TYPES.has(file.type)) throw new Error("Upload a PDF, JPG, PNG or WEBP file.");
+      if (file.size <= 0 || file.size > MAX_ID_FILE_BYTES) throw new Error("Your ID file must be smaller than 10 MB.");
+      if (!$("identityConsent").checked) throw new Error("Please confirm the identity-document consent before uploading.");
+      if (!supabaseClient || !userId) throw new Error("Sign in before uploading identity documents.");
+
+      const extensionByMime = {"application/pdf":"pdf","image/jpeg":"jpg","image/png":"png","image/webp":"webp"};
+      const path = userId + "/" + crypto.randomUUID() + "." + extensionByMime[file.type];
+      const { error: uploadError } = await supabaseClient.storage
+        .from("hanyago-identity-documents")
+        .upload(path, file, { cacheControl: "0", contentType: file.type, upsert: false });
+      if (uploadError) throw uploadError;
+
+      const { error: recordError } = await supabaseClient.from("id_verification_submissions").insert({
+        user_id: userId,
+        requested_role: requestedRole,
+        document_type: $("documentType").value,
+        institution_name: $("institutionName").value.trim() || null,
+        object_path: path,
+        original_file_name: file.name.slice(0, 240),
+        mime_type: file.type,
+        size_bytes: file.size,
+        status: "pending"
+      });
+      if (recordError) {
+        await supabaseClient.storage.from("hanyago-identity-documents").remove([path]);
+        throw recordError;
+      }
+      return { uploaded: true };
+    }
+
+    document.querySelectorAll('input[name="role"]').forEach(input => input.addEventListener("change", () => {
+      const role = document.querySelector('input[name="role"]:checked')?.value || "passenger";
+      $("identityProofHint").textContent = role === "driver" || role === "operator"
+        ? "Driver and operator requests need relevant proof for review. Driver/operator access stays restricted until authorised approval."
+        : "Passengers may upload an ID for identity review. Only upload a document you are comfortable sharing with authorised reviewers.";
+    }));
+
     $("authForm").addEventListener("submit", async event => {
       event.preventDefault();
 
@@ -1094,6 +1174,28 @@
           return;
         }
 
+        const identityFile = getSelectedIdentityFile();
+        if ((role === "driver" || role === "operator") && !identityFile) {
+          showMessage("Drivers and transport operators must choose an identity or role-related proof file. If email confirmation is required, you can upload it after signing in.", "error");
+          $("identityProofField").classList.remove("hidden");
+          $("identityFile").focus();
+          return;
+        }
+        if (identityFile) {
+          if (!ALLOWED_ID_MIME_TYPES.has(identityFile.type)) {
+            showMessage("Upload a PDF, JPG, PNG or WEBP identity document.", "error");
+            return;
+          }
+          if (identityFile.size <= 0 || identityFile.size > MAX_ID_FILE_BYTES) {
+            showMessage("Your identity document must be smaller than 10 MB.", "error");
+            return;
+          }
+          if (!$("identityConsent").checked) {
+            showMessage("Please confirm the identity-document consent before continuing.", "error");
+            return;
+          }
+        }
+
         if (phone && phone.replace(/\D/g, "").length < 7) {
           showMessage(
             "Please check your phone number or leave it blank.",
@@ -1131,6 +1233,16 @@
 
           if (error) throw error;
 
+          const loggedInUser = (await supabaseClient.auth.getUser()).data?.user;
+          if (getSelectedIdentityFile() && loggedInUser) {
+            try {
+              await uploadIdentityProof(loggedInUser.id, role);
+            } catch (uploadError) {
+              showMessage("You are signed in, but the ID upload failed: " + (uploadError.message || "please try again") + ". You can upload it from Identity Verification.", "error");
+              return;
+            }
+          }
+
           // After a successful login, always leave the auth page.
           // Preserve the booking intent when the user came from a booking action.
           const destination = new URLSearchParams(window.location.search).get("redirect");
@@ -1156,19 +1268,22 @@
           if (error) throw error;
 
           if (data.session) {
-            showMessage(
-              "Your account is ready. You are now signed in to HanyaGo.",
-              "success"
-            );
+            if (getSelectedIdentityFile()) {
+              try {
+                await uploadIdentityProof(data.user.id, role);
+                showMessage("Your account is ready and your ID proof was uploaded privately. It is pending human review; your driver/operator access is not approved yet.", "success");
+              } catch (uploadError) {
+                showMessage("Your account was created, but the ID upload did not finish: " + (uploadError.message || "please try again") + ". You can upload it from Identity Verification.", "error");
+                return;
+              }
+            } else {
+              showMessage("Your account is ready. Sign in to upload your ID proof from Identity Verification before requesting driver/operator approval.", "success");
+            }
+            $("authForm").reset();
+            $("passenger").checked = true;
           } else {
-            showMessage(
-              "Account request received. Check your email for the confirmation link before signing in.",
-              "success"
-            );
+            showMessage("Account created. Confirm your email, then sign in and upload your ID proof from Identity Verification. For security, the document is not uploaded until you have an authenticated session.", "success");
           }
-
-          $("authForm").reset();
-          $("passenger").checked = true;
         }
       } catch (error) {
         const raw = String(error?.message || "");
