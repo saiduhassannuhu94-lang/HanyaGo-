@@ -709,19 +709,27 @@
               <div class="identity-panel">
                 <strong>Identity proof (private upload)</strong>
                 <p id="identityProofHint">Drivers and transport operators should submit relevant proof for review. Passengers may upload an ID voluntarily.</p>
-                <label for="documentType">What does this document prove?</label>
-                <select id="documentType" class="identity-select">
-                  <option value="student_id">Student ID card</option>
-                  <option value="national_id">National identity document</option>
+                <label for="documentType">Proof type / Nau'in shaida</label>
+                <select id="documentType" class="identity-select" required>
+                  <option value="nin_slip">NIN slip / National ID</option>
                   <option value="drivers_license">Driver’s licence</option>
+                  <option value="union_membership_card">Union membership card</option>
+                  <option value="union_membership_number">Union membership number</option>
+                  <option value="student_id">Student ID card</option>
                   <option value="employee_id">Employee ID card</option>
                   <option value="business_proof">Business registration / business proof</option>
                   <option value="other_official_id">Other official ID</option>
                 </select>
-                <label for="institutionName">School, employer or business name (if relevant)</label>
-                <input id="institutionName" maxlength="160" placeholder="e.g. school or registered business name">
-                <label for="identityFile">Upload ID / proof (PDF, JPG, PNG or WEBP; max 10 MB)</label>
+                <div id="ninNumberWrap">
+                  <label for="ninNumber">NIN number (11 digits) / Lambar NIN</label>
+                  <input id="ninNumber" inputmode="numeric" autocomplete="off" maxlength="11" pattern="[0-9]{11}" placeholder="Enter 11-digit NIN">
+                  <small>For security, enter your NIN only on this private form. HanyaGo must use an authorised official verification service to confirm it.</small>
+                </div>
+                <label for="institutionName">Union, school, employer or business name (if relevant)</label>
+                <input id="institutionName" maxlength="160" placeholder="e.g. registered drivers' union">
+                <label for="identityFile">Upload proof (PDF, JPG, PNG or WEBP; max 10 MB)</label>
                 <input id="identityFile" type="file" accept=".pdf,.jpg,.jpeg,.png,.webp,application/pdf,image/jpeg,image/png,image/webp" class="identity-file">
+                <small id="identityAutoCheckNote">Automatic checks can validate file type, size and readable format. Official identity authenticity is not confirmed unless an authorised verification service is connected.</small>
                 <label class="identity-consent"><input id="identityConsent" type="checkbox"> I confirm this is genuine evidence I am authorised to submit, and I agree that HanyaGo’s authorised reviewers may use it to assess my account or driver/operator request.</label>
                 <small>Files are stored privately. They are not public profile images. Uploading a document does not mean you are verified or approved.</small>
               </div>
@@ -1072,8 +1080,9 @@
       finally { busy = false; $("verifyPhoneCode").disabled = false; $("verifyPhoneCode").textContent = "Verify code and continue"; }
     });
 
-    $("loginTab").addEventListener("click", () => setMode("login"));
-    $("signupTab").addEventListener("click", () => setMode("signup"));
+    $("loginTab").addEventListener("click", () => { setMode("login"); updateIdentityRequirements(); });
+    $("signupTab").addEventListener("click", () => { setMode("signup"); updateIdentityRequirements(); });
+    updateIdentityRequirements();
 
     // Delegate clicks because setMode replaces the switch button's HTML.
     // This prevents stale/duplicate listeners when users switch modes repeatedly.
@@ -1174,6 +1183,7 @@
         requested_role: requestedRole,
         document_type: $("documentType").value,
         institution_name: $("institutionName").value.trim() || null,
+        // Do not persist raw NIN in this submission record until an authorised, secure verification flow is configured.
         object_path: path,
         original_file_name: file.name.slice(0, 240),
         mime_type: file.type,
@@ -1187,12 +1197,39 @@
       return { uploaded: true };
     }
 
-    document.querySelectorAll('input[name="role"]').forEach(input => input.addEventListener("change", () => {
+    // Front-end format checks only. This is not AI document classification or official NIN verification.
+    $("identityFile").addEventListener("change", () => {
+      const file = getSelectedIdentityFile();
+      if (!file) return;
+      const ext = file.name.split(".").pop().toLowerCase();
+      const expected = $("documentType").value;
+      if (!ALLOWED_ID_MIME_TYPES.has(file.type) || !["pdf","jpg","jpeg","png","webp"].includes(ext)) {
+        showMessage("Rejected: this file type is not supported. Upload PDF, JPG, PNG or WEBP.", "error");
+        $("identityFile").value = "";
+        return;
+      }
+      if (file.size <= 0 || file.size > MAX_ID_FILE_BYTES) {
+        showMessage("Rejected: file is empty or larger than 10 MB.", "error");
+        $("identityFile").value = "";
+        return;
+      }
+      showMessage("File format passed. HanyaGo has not yet confirmed that the document itself is genuine; it remains pending verification.", "info");
+    });
+
+    function updateIdentityRequirements() {
       const role = document.querySelector('input[name="role"]:checked')?.value || "passenger";
+      const isSignup = mode === "signup";
+      $("identityProofField").classList.toggle("hidden", !isSignup);
       $("identityProofHint").textContent = role === "driver" || role === "operator"
-        ? "Driver and operator requests need relevant proof for review. Driver/operator access stays restricted until authorised approval."
-        : "Passengers may upload an ID for identity review. Only upload a document you are comfortable sharing with authorised reviewers.";
-    }));
+        ? "Direba/mai sufuri: za a iya amfani da lasisi ko Union Membership Card/Number. Ba za a buɗe damar aiki ba sai an tantance shaidar."
+        : "Passenger: dole ne ka shigar da NIN mai lambobi 11 ko ka ɗora NIN slip. Ana adana takardu a sirrance.";
+      $("ninNumber").required = isSignup && role === "passenger" && $("documentType").value !== "nin_slip";
+      $("identityFile").required = isSignup && (role === "driver" || role === "operator" || $("documentType").value === "nin_slip" || $("documentType").value === "union_membership_card");
+      $("ninNumberWrap").classList.toggle("hidden", $("documentType").value !== "nin_slip" && $("documentType").value !== "national_id");
+      if ($("documentType").value === "nin_slip") $("ninNumber").required = false;
+    }
+    document.querySelectorAll('input[name="role"]').forEach(input => input.addEventListener("change", updateIdentityRequirements));
+    $("documentType").addEventListener("change", updateIdentityRequirements);
 
     $("authForm").addEventListener("submit", async event => {
       event.preventDefault();
@@ -1240,11 +1277,30 @@
           return;
         }
 
+        updateIdentityRequirements();
         const identityFile = getSelectedIdentityFile();
-        if ((role === "driver" || role === "operator") && !identityFile) {
+        const proofType = $("documentType").value;
+        const ninNumber = $("ninNumber").value.replace(/\D/g, "");
+        if (role === "passenger" && proofType === "national_id" && ninNumber.length !== 11) {
+          showMessage("NIN must contain exactly 11 digits. Enter it or choose NIN slip and upload the document.", "error");
+          $("ninNumber").focus();
+          return;
+        }
+        if (role === "passenger" && proofType === "nin_slip" && !identityFile) {
+          showMessage("Passengers must upload their NIN slip, or choose National ID and enter the 11-digit NIN.", "error");
+          $("identityProofField").classList.remove("hidden");
+          $("identityFile").focus();
+          return;
+        }
+        if ((role === "driver" || role === "operator") && !identityFile && !((proofType === "union_membership_number") && $("institutionName").value.trim())) {
           showMessage("Drivers and transport operators must choose an identity or role-related proof file. If email confirmation is required, you can upload it after signing in.", "error");
           $("identityProofField").classList.remove("hidden");
           $("identityFile").focus();
+          return;
+        }
+        if (role === "driver" && proofType === "union_membership_number" && !$("institutionName").value.trim()) {
+          showMessage("Enter the name of your drivers' union so the membership number can be checked.", "error");
+          $("institutionName").focus();
           return;
         }
         if (identityFile) {
