@@ -198,6 +198,32 @@
     });
   });
 
+  // Accessible back-to-top control, shown only after meaningful scrolling.
+  const backToTop = document.createElement("button");
+  backToTop.type = "button";
+  backToTop.className = "hanyago-back-to-top";
+  backToTop.setAttribute("aria-label", "Back to top");
+  backToTop.setAttribute("title", "Back to top");
+  backToTop.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true" fill="none"><path d="M12 19V5M6 11l6-6 6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  document.body.appendChild(backToTop);
+  function updateBackToTop() {
+    backToTop.classList.toggle("is-visible", window.scrollY > Math.max(420, window.innerHeight * 0.65));
+  }
+  window.addEventListener("scroll", updateBackToTop, { passive: true });
+  window.addEventListener("resize", updateBackToTop, { passive: true });
+  backToTop.addEventListener("click", function () {
+    window.scrollTo({ top: 0, behavior: reduceMotion ? "auto" : "smooth" });
+  });
+  updateBackToTop();
+
+  // Floating support control uses only the project's configured official contact channels.
+  const supportFab = document.createElement("a");
+  supportFab.className = "hanyago-support-fab";
+  supportFab.href = "contact.html";
+  supportFab.setAttribute("aria-label", "Contact HanyaGo support");
+  supportFab.innerHTML = '<span class="hanyago-support-icon" aria-hidden="true">?</span><span class="hanyago-support-label">Need help?</span>';
+  document.body.appendChild(supportFab);
+
   // Session-aware logout action for the shared navigation.
   (async function addSessionMenuAction() {
     const nav = document.getElementById("navLinks");
