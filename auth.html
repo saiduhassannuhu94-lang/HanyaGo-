@@ -1170,12 +1170,24 @@
 
     async function uploadIdentityProof(userId, requestedRole) {
       const file = getSelectedIdentityFile();
+      const documentType = $("documentType").value;
+      const unionNumber = $("unionMembershipNumber").value.trim();
+      if (!supabaseClient || !userId) throw new Error("Sign in before submitting identity proof.");
+      if (!$("identityConsent").checked) throw new Error("Please confirm the identity-document consent before submitting proof.");
+      if (documentType === "union_membership_number") {
+        if (unionNumber.length < 3 || unionNumber.length > 80) throw new Error("Enter a valid union membership number (3–80 characters).");
+        const { error } = await supabaseClient.from("id_verification_submissions").insert({
+          user_id: userId, requested_role: requestedRole, document_type: documentType,
+          institution_name: $("institutionName").value.trim() || null,
+          union_membership_number: unionNumber, object_path: null, original_file_name: null,
+          mime_type: null, size_bytes: null, status: "pending"
+        });
+        if (error) throw error;
+        return { uploaded: true, manualReview: true };
+      }
       if (!file) return { uploaded: false };
       if (!ALLOWED_ID_MIME_TYPES.has(file.type)) throw new Error("Upload a PDF, JPG, PNG or WEBP file.");
       if (file.size <= 0 || file.size > MAX_ID_FILE_BYTES) throw new Error("Your ID file must be smaller than 10 MB.");
-      if (!$("identityConsent").checked) throw new Error("Please confirm the identity-document consent before uploading.");
-      if (!supabaseClient || !userId) throw new Error("Sign in before uploading identity documents.");
-
       const extensionByMime = {"application/pdf":"pdf","image/jpeg":"jpg","image/png":"png","image/webp":"webp"};
       const path = userId + "/" + crypto.randomUUID() + "." + extensionByMime[file.type];
       const { error: uploadError } = await supabaseClient.storage
@@ -1186,8 +1198,9 @@
       const { error: recordError } = await supabaseClient.from("id_verification_submissions").insert({
         user_id: userId,
         requested_role: requestedRole,
-        document_type: $("documentType").value,
+        document_type: documentType,
         institution_name: $("institutionName").value.trim() || null,
+        union_membership_number: null,
         // Do not persist raw NIN in this submission record until an authorised, secure verification flow is configured.
         object_path: path,
         original_file_name: file.name.slice(0, 240),
