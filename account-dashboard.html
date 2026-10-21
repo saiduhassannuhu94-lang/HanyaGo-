@@ -84,10 +84,10 @@ async function init(){
  const admin=profile.role==="admin";$("adminLink").hidden=!admin;
  const {data:proofs,error:proofError}=await db.from("id_verification_submissions").select("id,status,review_note,submitted_at,requested_role,document_type").eq("user_id",user.id).order("submitted_at",{ascending:false}).limit(10);
  if(proofError){showMessage("We could not check your proof status. Please open Identity Verification and retry.","error");$("verificationGate").hidden=false;return}
- const approvedRows=(proofs||[]).filter(row=>row.status==="approved");
  const latest=(proofs||[])[0];
  const latestRole=latest&&["passenger","driver","operator"].includes(latest.requested_role)?latest.requested_role:null;
- const effectiveRole=admin?"admin":(["driver","operator"].includes(profile.role)?profile.role:(latestRole||profile.requested_role||meta.role||"passenger"));
+ const effectiveRole=admin?"admin":(["driver","operator"].includes(profile.role)?profile.role:(profile.requested_role||latestRole||meta.role||"passenger"));
+ const approvedRows=(proofs||[]).filter(row=>row.status==="approved"&&(admin||row.requested_role===effectiveRole));
  const approvedTypes=new Set(approvedRows.map(row=>row.document_type));
  const identityApproved=["national_id","other_official_id"].some(type=>approvedTypes.has(type));
  const passengerProofApproved=["student_id","national_id","drivers_license","employee_id","other_official_id"].some(type=>approvedTypes.has(type));
