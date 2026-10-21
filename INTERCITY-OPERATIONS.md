@@ -56,6 +56,15 @@ Before marking a published trip cancelled, review its upcoming bookings and succ
 
 For every departure, keep the actual operator/contact, terminal names, fare source, date/time confirmation, vehicle/capacity confirmation, staff reviewer and any changes. Do not put identity documents or unnecessary personal data in the public notes or evidence field.
 
+## Access control and post-migration checks
+
+- Public visitors may search eligible published schedules, see safe seat-state labels, and validate an opaque ticket code. They must not read private bookings or directly modify seat inventory.
+- Signed-in passengers may reserve seats through the guarded reservation RPC and retrieve their own ticket record only.
+- Schedule creation/publication and seat blocking are restricted by database row-level security to HanyaGo staff or an authorised company owner/admin.
+- Payment confirmation and hold-lifecycle RPCs are service-role-only; never call them from browser JavaScript or expose a service-role key.
+- After every SQL function migration, audit the effective privileges for the three main roles (`anon`, `authenticated`, `service_role`). A generic revoke does not remove every possible explicit role grant that may pre-date the migration. Public search/seat-status/public ticket verification are intentional anonymous functions; reservation and owner-ticket lookup must not be anonymously executable; payment confirmation/hold lifecycle must be service-role-only.
+- If an operator account cannot create a departure, verify that the user has an active `owner` or `admin` membership in the correct `transport_company_members` record. The company must also be active and license-approved before a company-linked departure can be published. Do not bypass the database policy to make a form appear to work.
+
 ## Pre-launch checks
 
 - [ ] The operator and terminal were actually checked.
