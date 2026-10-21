@@ -61,6 +61,42 @@ function getSupabaseClient() {
   return window.__hanyagoSupabaseClient;
 }
 
+// Booking is an account-only action. Keep the form hidden until the session check
+// completes so unauthenticated visitors are sent through signup/sign-in first.
+if (bookingForm) {
+  document.documentElement.classList.add("hanyago-auth-checking");
+  const authGateStyle = document.createElement("style");
+  authGateStyle.textContent = "html.hanyago-auth-checking body{visibility:hidden!important}";
+  document.head.appendChild(authGateStyle);
+
+  (async () => {
+    const client = getSupabaseClient();
+    if (!client) {
+      document.documentElement.classList.remove("hanyago-auth-checking");
+      const submit = bookingForm.querySelector('button[type="submit"]');
+      if (submit) submit.disabled = true;
+      showBookingMessage("Secure booking is temporarily unavailable because the account service is not configured. No booking has been saved.");
+      return;
+    }
+    try {
+      const { data, error } = await client.auth.getSession();
+      if (error) throw error;
+      if (!data?.session) {
+        const next = encodeURIComponent("booking");
+        window.location.replace("auth.html?redirect=" + next);
+        return;
+      }
+      document.documentElement.classList.remove("hanyago-auth-checking");
+    } catch (error) {
+      console.error("HanyaGo booking access check failed:", error);
+      document.documentElement.classList.remove("hanyago-auth-checking");
+      const submit = bookingForm.querySelector('button[type="submit"]');
+      if (submit) submit.disabled = true;
+      showBookingMessage("We could not verify your sign-in session. Refresh the page or sign in again before booking.");
+    }
+  })();
+}
+
 function readBookingForm() {
   return {
     pickup: document.getElementById("pickup").value.trim(),
