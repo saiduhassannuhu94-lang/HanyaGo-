@@ -66,15 +66,12 @@
       ["index.html", "Home", ""],
       ["intercity.html", "Intercity seats", ""],
       ["booking.html", "Local rides", ""],
-      ["rides.html", "Ride options", ""],
-      ["keke-napep.html", "Keke fares", ""],
-      ["how-it-works.html", "How it works", ""],
+      ["operators.html", "Operators", ""],
       ["safety-rules.html", "Safety", ""],
-      ["contact.html", "Contact", ""],
+      ["contact.html", "Help", ""],
       ["account-dashboard.html", "My account", ""],
       ["intercity.html", "Find a seat →", "nav-cta"]
-    ];
-    navLinks.innerHTML = publicNavigation.map(function (item) {
+    ];    navLinks.innerHTML = publicNavigation.map(function (item) {
       return '<a href="' + item[0] + '" data-nav-item' + (item[2] ? ' class="' + item[2] + '"' : '') + '>' + item[1] + '</a>';
     }).join("");
     navLinks.setAttribute("aria-label", "Main navigation");
