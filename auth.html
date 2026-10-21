@@ -809,7 +809,7 @@
 
         const destination = authCallbackParams.get("redirect");
         window.location.replace(
-          destination === "booking" ? "booking.html" : destination === "admin" ? "admin.html" : "index.html"
+          destination === "booking" ? "booking.html" : destination === "admin" ? "admin.html" : destination === "verification" ? "identity-verification.html" : "index.html"
         );
       }).catch(() => {
         showMessage(
@@ -983,7 +983,7 @@
       try {
         const destination = new URLSearchParams(window.location.search).get("redirect");
         const redirectUrl = new URL(AUTH_REDIRECT_URL);
-        if (destination === "booking" || destination === "admin") redirectUrl.searchParams.set("redirect", destination);
+        if (destination === "booking" || destination === "admin" || destination === "verification") redirectUrl.searchParams.set("redirect", destination);
 
         const { error } = await supabaseClient.auth.signInWithOAuth({
           provider,
@@ -1247,7 +1247,7 @@
           // Preserve the booking intent when the user came from a booking action.
           const destination = new URLSearchParams(window.location.search).get("redirect");
           window.location.replace(
-            destination === "booking" ? "booking.html" : destination === "admin" ? "admin.html" : "index.html"
+            destination === "booking" ? "booking.html" : destination === "admin" ? "admin.html" : destination === "verification" ? "identity-verification.html" : "index.html"
           );
           return;
         } else {
