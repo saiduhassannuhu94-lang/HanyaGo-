@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#102b46"><title>Getting Started | HanyaGo</title>
+<meta name="description" content="Complete your HanyaGo account setup, submit identity proof and track approval before accessing your dashboard.">
+<link rel="stylesheet" href="style.css"><link rel="stylesheet" href="site-shell.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="config.js"></script><script src="site-shell.js" defer></script>
+<style>
+body{background:#f3f7f5;color:#102b46}.flow-wrap{max-width:900px;margin:34px auto;padding:0 18px 60px}.flow-hero{background:linear-gradient(125deg,#102b46,#0b6e4f);color:#fff;padding:30px;border-radius:22px;margin-bottom:20px}.flow-hero h1{font-size:clamp(1.8rem,5vw,2.5rem);margin:12px 0}.flow-hero p{color:#d9ebe4;line-height:1.7;max-width:680px}.flow-card{background:#fff;border:1px solid #dfe9e3;border-radius:18px;padding:24px;margin:14px 0;box-shadow:0 10px 28px #102b4608}.flow-steps{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:20px 0}.flow-step{border:1px solid #dce7e1;border-radius:12px;padding:13px;background:#fff}.flow-step b{display:block;font-size:.78rem;margin-bottom:6px}.flow-step span{font-size:.76rem;color:#61736e;line-height:1.5}.flow-step.active{border-color:#087c52;background:#e9f7ef}.flow-step.done{border-color:#b9e2c9;background:#f2fbf5}.flow-status{padding:15px;border-radius:12px;background:#eef5ff;color:#234f86;line-height:1.7}.flow-status.success{background:#e2f7e9;color:#08633d}.flow-status.warn{background:#fff5dc;color:#795600}.flow-status.error{background:#fff0ed;color:#8c3327}.flow-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}.flow-btn{display:inline-flex;align-items:center;justify-content:center;border-radius:10px;padding:12px 16px;background:#087c52;color:#fff;text-decoration:none;font-weight:850;border:1px solid #087c52}.flow-btn.secondary{background:#fff;color:#102b46;border-color:#dce7e1}.flow-small{font-size:.84rem;line-height:1.7;color:#61736e}.flow-progress{height:8px;background:#e5eee8;border-radius:20px;overflow:hidden;margin:12px 0 20px}.flow-progress span{display:block;height:100%;width:0;background:#087c52;transition:width .25s}.flow-title{margin:0 0 8px}.flow-hidden{display:none}@media(max-width:650px){.flow-steps{grid-template-columns:1fr 1fr}.flow-hero{padding:23px}.flow-card{padding:18px}}
+</style>
+</head>
+<body>
+<header class="site-header"><div class="container navbar"><a href="index.html" class="logo wordmark"><span class="wordmark-mark">H</span><span class="wordmark-name"><span class="wordmark-hanya">Hanya</span><span class="wordmark-go">Go</span></span></a><nav class="nav-links" id="navLinks" aria-label="Main navigation"><a href="index.html" data-nav-item>Home</a><a href="how-it-works.html" data-nav-item>How it works</a><a href="privacy.html" data-nav-item>Privacy</a><a href="contact.html" data-nav-item>Help</a></nav><div class="nav-actions"><button type="button" class="theme-toggle" data-theme-toggle aria-label="Switch theme" aria-pressed="false"><span class="theme-toggle-icon">☾</span><span class="theme-toggle-label">Dark</span></button><button type="button" class="menu-toggle" id="menuToggle" aria-label="Open navigation menu" aria-expanded="false">☰</button></div></div></header>
+<main class="flow-wrap">
+<section class="flow-hero"><span class="eyebrow">HANYAGO ACCOUNT SETUP</span><h1>Your account, one clear journey.</h1><p>Every member follows the same secure process: create an account, submit the required proof, complete the review, then unlock the correct dashboard. No approval is granted just because a file was uploaded.</p></section>
+<div class="flow-steps" aria-label="Account setup steps"><div class="flow-step done"><b>01 · Account</b><span>Create an account and confirm your email if requested.</span></div><div class="flow-step active" id="stepProof"><b>02 · Proof</b><span>Submit the documents required for your account type.</span></div><div class="flow-step" id="stepReview"><b>03 · Review</b><span>AI checks document quality; authorised review decides approval.</span></div><div class="flow-step" id="stepDashboard"><b>04 · Dashboard</b><span>Access opens when all required proofs are approved.</span></div></div>
+<div class="flow-progress" aria-hidden="true"><span id="progressBar"></span></div>
+<section class="flow-card"><h2 class="flow-title" id="flowHeading">Checking your account…</h2><p class="flow-small" id="flowIntro">We are securely checking your sign-in and proof status. Do not refresh repeatedly.</p><div id="flowStatus" class="flow-status" role="status" aria-live="polite">Connecting to HanyaGo…</div><div class="flow-actions" id="flowActions"></div><p class="flow-small" style="margin-top:18px">Privacy and safety: identity files are stored privately. AI only helps assess readability and document type; it does not prove that an identity document is genuine. Rejected submissions must show a review reason and can be resubmitted.</p></section>
+</main>
+<script>
+(function(){
+"use strict";
+const $=id=>document.getElementById(id);
+const client=window.supabase&&window.HANYAGO_CONFIG?window.supabase.createClient(window.HANYAGO_CONFIG.url,window.HANYAGO_CONFIG.anonKey):null;
+function show(title,intro,text,type,actions,progress){$("flowHeading").textContent=title;$("flowIntro").textContent=intro;$("flowStatus").textContent=text;$("flowStatus").className="flow-status"+(type?" "+type:"");$("flowActions").innerHTML="";(actions||[]).forEach(a=>{const el=document.createElement("a");el.className="flow-btn"+(a.secondary?" secondary":"");el.href=a.href;el.textContent=a.label;$("flowActions").appendChild(el)});$("progressBar").style.width=progress+"%";}
+function mark(id,done,active){const el=$(id);el.classList.toggle("done",!!done);el.classList.toggle("active",!!active)}
+function goAuth(){location.replace("auth.html?redirect=onboarding")}
+async function init(){
+ if(!client){show("Setup service unavailable","HanyaGo could not connect to its authentication service.","No account information was loaded. Please retry later.","error",[{label:"Return home",href:"index.html",secondary:true}],0);return}
+ const {data,error}=await client.auth.getSession();
+ if(error||!data.session){show("Step 1: Create or sign in","You must have an authenticated account before submitting identity proof.","You are not signed in. Create an account or sign in to continue.","warn",[{label:"Sign up or sign in",href:"auth.html?redirect=onboarding"}],0);return}
+ const user=data.session.user;
+ const {data:profile,error:profileError}=await client.from("profiles").select("role,requested_role,full_name").eq("id",user.id).maybeSingle();
+ if(profileError){show("Could not check your account","We could not safely determine your current access status.","Please retry. We will not unlock the dashboard while verification status is unavailable.","error",[{label:"Retry",href:"onboarding.html"},{label:"Identity verification",href:"identity-verification.html",secondary:true}],25);return}
+ const p=profile||{};
+ if(p.role==="admin"){mark("stepProof",true,false);mark("stepReview",true,false);mark("stepDashboard",true,true);show("Administrator access recognised","Your administrator account has its separate protected review workspace.","Continue to the administrator dashboard. Keep admin access limited to authorised staff.","success",[{label:"Open admin workspace",href:"admin.html"},{label:"Account dashboard",href:"account-dashboard.html",secondary:true}],100);return}
+ const {data:rows,error:proofError}=await client.from("id_verification_submissions").select("id,status,review_note,requested_role,document_type,submitted_at").eq("user_id",user.id).order("submitted_at",{ascending:false}).limit(50);
+ if(proofError){show("Proof status could not be checked","We will not assume that a document is approved when the database cannot be checked.","Your dashboard remains locked until the verification status can be confirmed.","error",[{label:"Retry",href:"onboarding.html"},{label:"Identity verification",href:"identity-verification.html",secondary:true}],25);return}
+ const proofs=rows||[],role=["passenger","driver","operator"].includes(p.requested_role)?p.requested_role:(proofs[0]?.requested_role||"passenger");
+ const approved=new Set(proofs.filter(r=>r.status==="approved"&&r.requested_role===role).map(r=>r.document_type));
+ const hasIdentity=["national_id","other_official_id"].some(t=>approved.has(t));
+ const requirementsMet=role==="driver"?approved.has("drivers_license")&&hasIdentity:role==="operator"?(approved.has("business_proof")||approved.has("employee_id"))&&hasIdentity:["student_id","national_id","drivers_license","employee_id","other_official_id"].some(t=>approved.has(t));
+ const pending=proofs.filter(r=>r.requested_role===role&&r.status==="pending");
+ const rejected=proofs.filter(r=>r.requested_role===role&&r.status==="rejected");
+ if(requirementsMet){
+  mark("stepProof",true,false);mark("stepReview",true,false);mark("stepDashboard",true,true);
+  show("All required proof has been approved","Your account has passed the required HanyaGo proof checks.","Your dashboard is unlocked. You can continue to your account workspace.","success",[{label:"Open my dashboard",href:"account-dashboard.html"}],100);return;
+ }
+ mark("stepProof",approved.size>0||proofs.length>0,pending.length===0);mark("stepReview",pending.length>0||rejected.length>0,pending.length>0);mark("stepDashboard",false,false);
+ const required=role==="driver"?"Driver: an approved driver’s licence AND an approved official identity document.":role==="operator"?"Transport operator: approved business/employee proof AND an approved official identity document.":"Passenger: at least one approved student ID or accepted identity document.";
+ if(pending.length){
+  const last=pending[0];show("Step 3: Proof is under review","Your submitted document is waiting for an authorised decision.",required+" Current status: "+pending.length+" submission(s) pending. "+(last.review_note?"Review note: "+last.review_note:"AI document-quality results are not final approval."),"warn",[{label:"View my submissions",href:"identity-verification.html"},{label:"Account help",href:"contact.html",secondary:true}],65);return;
+ }
+ if(rejected.length){
+  const last=rejected[0];show("Action required: update your proof","At least one submission was rejected. Read the review reason and submit acceptable proof again.",(last.review_note?"Review reason: "+last.review_note+" ":"")+"Your dashboard remains locked until the required documents are approved. "+required,"error",[{label:"Review and resubmit proof",href:"identity-verification.html"},{label:"Contact support",href:"contact.html",secondary:true}],35);return;
+ }
+ show("Step 2: Submit your proof","Your account is signed in, but the dashboard is not available until your required proof is approved.",required+" Upload the relevant documents now. Clear files help; AI checks quality only and cannot confirm official authenticity.","warn",[{label:"Submit identity proof",href:"identity-verification.html"},{label:"Edit my profile",href:"account-profile.html",secondary:true}],25);
+}
+init().catch(()=>show("A temporary error occurred","We could not complete the account setup check.","Nothing has been approved automatically. Retry the check or open identity verification.","error",[{label:"Retry",href:"onboarding.html"},{label:"Identity verification",href:"identity-verification.html",secondary:true}],0));
+})();
+</script>
+</body></html>
