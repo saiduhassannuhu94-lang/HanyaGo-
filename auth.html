@@ -1435,6 +1435,8 @@
             }
             $("authForm").reset();
             $("passenger").checked = true;
+            window.location.replace("onboarding.html");
+            return;
           } else {
             showMessage("Account created. Confirm your email, then sign in and upload your ID proof from Identity Verification. For security, the document is not uploaded until you have an authenticated session.", "success");
           }
