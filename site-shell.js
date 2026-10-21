@@ -96,30 +96,27 @@
   loader.setAttribute("role", "status");
   loader.setAttribute("aria-live", "polite");
   loader.setAttribute("aria-label", "Loading HanyaGo page");
-  loader.innerHTML = '<div class="page-loader-card"><div class="page-loader-brand"><span>Hanya<span class="go">Go</span></span></div><span class="loader-track" aria-hidden="true"></span><p class="page-loader-caption">Preparing your next move</p></div>';
+  loader.innerHTML = '<div class="page-loader-card"><span class="page-loader-mark" aria-hidden="true">H</span><div class="page-loader-brand"><span>Hanya<span class="go">Go</span></span></div><span class="loader-track" aria-hidden="true"></span><p class="page-loader-caption">Preparing your journey</p></div>';
   document.body.appendChild(loader);
   let loaderHidden = false;
+  const loaderStartedAt = Date.now();
+  const loaderMinimumVisibleMs = reduceMotion ? 0 : 720;
   function hideLoader() {
     if (loaderHidden) return;
     loaderHidden = true;
     loader.classList.remove("is-visible");
-    window.setTimeout(function () { if (loader.parentNode) loader.parentNode.removeChild(loader); }, 350);
+    window.setTimeout(function () { if (loader.parentNode) loader.parentNode.removeChild(loader); }, reduceMotion ? 0 : 300);
   }
   window.addEventListener("load", function () {
-    window.setTimeout(hideLoader, reduceMotion ? 0 : 120);
+    const remaining = Math.max(0, loaderMinimumVisibleMs - (Date.now() - loaderStartedAt));
+    window.setTimeout(hideLoader, remaining);
   }, { once: true });
-  window.setTimeout(hideLoader, 850);
-  if (document.readyState === "interactive" || document.readyState === "complete") {
-    window.setTimeout(hideLoader, reduceMotion ? 0 : 180);
-  } else {
-    document.addEventListener("DOMContentLoaded", function () {
-      window.setTimeout(hideLoader, reduceMotion ? 0 : 180);
-    }, { once: true });
-  }
+  // Fail safe: never leave the page covered if a remote asset or request hangs.
+  window.setTimeout(hideLoader, 7000);
   window.addEventListener("pageshow", function (event) {
-    // When returning from the browser back/forward cache, never leave the loader covering the restored page.
-    hideLoader();
+    if (event.persisted) hideLoader();
   });
+
 
   document.addEventListener("click", function (event) {
     const link = event.target.closest("a[href]");
