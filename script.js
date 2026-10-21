@@ -118,6 +118,59 @@ function renderBookingPreview(booking) {
   );
 }
 
+// Start Paystack checkout only from an authenticated user's saved booking.
+// The server verifies ownership and uses the fare stored in the database.
+if (formMessage) {
+  formMessage.addEventListener("click", async function (event) {
+    const button = event.target.closest("#paystackCheckoutButton");
+    if (!button) return;
+    const client = getSupabaseClient();
+    if (!client) {
+      showBookingMessage("Payment service is unavailable. Refresh the page and sign in again.");
+      return;
+    }
+    const bookingId = button.getAttribute("data-booking-id");
+    if (!bookingId) return;
+    const originalText = button.textContent;
+    button.disabled = true;
+    button.textContent = "Preparing secure checkout…";
+    try {
+      const { data: sessionData, error: sessionError } = await client.auth.getSession();
+      if (sessionError) throw sessionError;
+      if (!sessionData?.session) {
+        window.location.href = "auth.html?redirect=booking";
+        return;
+      }
+      const { data, error } = await client.functions.invoke("paystack-checkout", {
+        body: { booking_id: bookingId }
+      });
+      if (error) {
+        let detail = "";
+        try { detail = (await error.context?.json?.())?.error || ""; } catch (_) {}
+        throw new Error(detail || error.message || "Checkout could not be started.");
+      }
+      if (!data?.authorization_url || !/^https:\/\/checkout\.paystack\.com\//i.test(data.authorization_url)) {
+        throw new Error(data?.error || "Paystack did not return a valid secure checkout link.");
+      }
+      window.location.assign(data.authorization_url);
+    } catch (error) {
+      console.error("HanyaGo Paystack checkout failed:", error);
+      const message = String(error?.message || "");
+      const safeMessage = /confirmed fare|valid confirmed fare/i.test(message)
+        ? "The operator has not confirmed a payable fare yet. No payment was started. Please try again after the fare is confirmed."
+        : /verified email/i.test(message)
+        ? "Please verify your account email before paying."
+        : "We could not start checkout. No payment was confirmed. Check the booking and try again.";
+      showBookingMessage(escapeHTML(safeMessage) + "<br><br><button type=\"button\" class=\"btn btn-primary\" id=\"paystackCheckoutButton\" data-booking-id=\"" + escapeHTML(bookingId) + "\">Try checkout again</button>");
+    } finally {
+      if (button.isConnected) {
+        button.disabled = false;
+        button.textContent = originalText;
+      }
+    }
+  });
+}
+
 if (bookingForm) {
   // Restore the draft after a user signs in and returns from auth.html.
   try {
@@ -220,7 +273,8 @@ if (bookingForm) {
         "<strong>Booking request saved successfully.</strong><br><br>" +
         "<strong>Booking reference:</strong> " + escapeHTML(reference) + "<br>" +
         "<strong>Status:</strong> Pending confirmation<br><br>" +
-        "This confirms that the request was saved, not that a driver or fare has been confirmed." +
+        "Online payment is available only after the operator confirms a valid fare. If the fare is not set yet, return to this booking after confirmation." +
+        "<br><br><button type=\"button\" class=\"btn btn-primary\" id=\"paystackCheckoutButton\" data-booking-id=\"" + escapeHTML(reference) + "\">Continue to secure payment</button>" +
         "<br><br><a href=\"trip-live.html?booking=" + encodeURIComponent(reference) + "\">Open live trip sharing →</a>"
       );
       bookingForm.reset();
