@@ -1651,3 +1651,30 @@ select:focus-visible {
   font-size: 13px;
   line-height: 1.6;
 }
+
+
+/* Premium responsive finish: consistent interactions, spacing and media behavior */
+:where(.ride-card,.booking-box,.route-card,.faq-item,.transport-info-card,.info-card,.account-card,.tile,.keke-card,.keke-side-card) {
+  transition: border-color .22s ease, box-shadow .22s ease, transform .22s ease;
+}
+:where(.ride-card,.info-card,.tile,.transport-info-card):hover {
+  border-color: rgba(8,124,82,.34);
+  box-shadow: 0 16px 38px rgba(16,43,70,.09);
+}
+:where(button,.btn,[role="button"]) { -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
+:where(input,select,textarea) { max-width: 100%; }
+img { max-width: 100%; }
+:where(.ride-card img,.transport-photo,.transport-info-card img) { display:block; width:100%; }
+:where(.ride-card,.transport-photo-card,.info-card,.tile) { min-width:0; }
+:where(.ride-card p,.info-card p,.tile p) { overflow-wrap: anywhere; }
+:where(a,button,input,select,textarea):focus-visible { outline-offset: 3px; }
+@media(max-width:650px) {
+  .section-heading { margin-bottom:24px; }
+  .ride-grid { gap:14px; }
+  .ride-card { border-radius:16px; }
+  .booking-box { border-radius:18px; }
+  .footer-bottom { gap:10px; line-height:1.65; }
+}
+@media(prefers-reduced-motion:reduce) {
+  :where(.ride-card,.booking-box,.route-card,.faq-item,.transport-info-card,.info-card,.account-card,.tile,.keke-card,.keke-side-card) { transition:none !important; }
+}
