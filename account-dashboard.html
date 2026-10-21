@@ -73,6 +73,7 @@ async function init(){
    : effectiveRole==="operator"
      ? (approvedTypes.has("business_proof")||approvedTypes.has("employee_id"))&&identityApproved
      : passengerProofApproved;
+ $("profileRole").textContent=admin?"Administrator":effectiveRole==="driver"?(requirementsMet?"Verified driver":"Driver verification pending"):effectiveRole==="operator"?(requirementsMet?"Verified operator":"Operator verification pending"):(requirementsMet?"Verified passenger":"Passenger verification pending");
  if(admin||requirementsMet){
    $("verificationGate").hidden=true;$("dashboardContent").hidden=false;$("welcomeName").textContent=name;
    showMessage(admin?"Administrator account recognised. Admin tools are available from your profile menu.":"Your required identity proof has been approved. Dashboard access is unlocked.","success");
