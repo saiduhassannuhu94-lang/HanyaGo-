@@ -111,3 +111,14 @@ No sample departures or invented fares have been inserted into production. The l
 - **Prevention:** Keep AI quality checks separate from authenticity checks and role activation. Never send OCR text or identity numbers into the stored summary; never log document contents; test owner isolation, file size/type, provider outage, malformed model output, and repeat calls. Add official registry integrations only through authorised providers with explicit privacy/legal approval.
 - **Lesson:** AI can reduce sorting and document-quality work, but it cannot claim NIN, driving-licence, union, school or business authenticity without a trusted registry connection. Driver/operator privilege remains subject to the existing secure approval function.
 - **QA status:** Database fields verified; edge function reports ACTIVE with JWT verification enabled; identity-verification inline JavaScript syntax passed. The Gemini secret `GEMINI_API_KEY` has not been configured through the available tool access, so live AI analysis is not yet activated. Vercel deployment check and real end-to-end invocation remain to be verified.
+
+
+## 13. AI triage frontend deployment is blocked by the Vercel build limit
+
+- **Problem:** The frontend commit integrating AI triage passes inline JavaScript syntax checks, but Vercel reports a build-rate-limit failure. The production website therefore cannot be assumed to contain this UI change.
+- **Root cause:** The connected Vercel project is currently rejecting new builds because its build/deployment limit has been reached.
+- **Why it was missed:** The Supabase database migration and Edge Function deploy independently of Vercel, so their success can make the whole feature look live even though the website UI is still on an older deployment.
+- **Fix:** Verified the exact GitHub commit status and recorded the deployment blocker. Do not claim the production form is invoking AI until Vercel has deployed the relevant commit.
+- **Prevention:** Track database migration, Edge Function deployment, frontend deployment and live end-to-end verification as separate release gates. Confirm the production commit SHA before declaring the feature live.
+- **Lesson:** A working backend function does not make a feature live if the frontend deployment is blocked.
+- **Current status:** Supabase Edge Function `ai-identity-triage` is ACTIVE (JWT required), and the AI triage schema exists. The frontend commit `75a0273ff501ac3a6ab6444e8c0667a46d659740` is not deployed because Vercel returned `build-rate-limit`. `GEMINI_API_KEY` is also still required in Supabase Edge Function secrets before model calls can run.
