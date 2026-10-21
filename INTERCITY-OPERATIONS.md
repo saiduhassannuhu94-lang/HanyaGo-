@@ -28,7 +28,7 @@ These official road listings help operations prioritise research. **They do not 
 5. Verify departure date and local Nigeria time with the operator. Add an arrival estimate only when the operator can support it; do not guess the arrival time.
 6. Select the actual service type, vehicle/coach type, physical passenger-seat capacity, arrangement (2+2, 2+1 or 2+3) and ticket price **per passenger seat in naira**. The system stores prices in kobo internally.
 7. Add a real HTTPS vehicle photo only when it genuinely depicts the listed vehicle or a clearly labelled representative vehicle. Tick only amenities that are confirmed. State actual luggage restrictions and extra charges.
-8. Record the source used to confirm the operator, terminal, vehicle and schedule in the operations evidence note. Then use **Verify & publish** only after the human review is complete.
+8. Record the source used to confirm the operator, terminal, vehicle and schedule in the operations evidence note. Operator accounts may submit and update their company-linked drafts, but **only a HanyaGo admin** can independently review the record, mark it staff-verified and publish it.
 
 The “HanyaGo staff-checked” badge means HanyaGo staff reviewed the entered record. It is **not** proof of FRSC registration, roadworthiness, insurance, a company licence or government endorsement. Where appropriate, check the operator and terminal against the [FRSC RTSSS portal](https://rtsss.frsc.gov.ng/) and store what was checked. Do not display an FRSC badge unless the relevant details have actually been independently verified.
 
@@ -60,7 +60,7 @@ For every departure, keep the actual operator/contact, terminal names, fare sour
 
 - Public visitors may search eligible published schedules, see safe seat-state labels, and validate an opaque ticket code. They must not read private bookings or directly modify seat inventory.
 - Signed-in passengers may reserve seats through the guarded reservation RPC and retrieve their own ticket record only.
-- Schedule creation/publication and seat blocking are restricted by database row-level security to HanyaGo staff or an authorised company owner/admin.
+- Draft creation and draft editing are restricted by database row-level security to HanyaGo admins or an authorised company owner/admin. Staff verification, publication and cancellation are admin-only; company owners/admins may manage unbooked seats for their own company.
 - Payment confirmation and hold-lifecycle RPCs are service-role-only; never call them from browser JavaScript or expose a service-role key.
 - After every SQL function migration, audit the effective privileges for the three main roles (`anon`, `authenticated`, `service_role`). A generic revoke does not remove every possible explicit role grant that may pre-date the migration. Public search/seat-status/public ticket verification are intentional anonymous functions; reservation and owner-ticket lookup must not be anonymously executable; payment confirmation/hold lifecycle must be service-role-only.
 - If an operator account cannot create a departure, verify that the user has an active `owner` or `admin` membership in the correct `transport_company_members` record. The company must also be active and license-approved before a company-linked departure can be published. Do not bypass the database policy to make a form appear to work.
