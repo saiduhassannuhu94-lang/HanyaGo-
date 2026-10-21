@@ -79,6 +79,9 @@ async function searchTrips(event) {
  if(q.p_origin_city.length<2||q.p_destination_city.length<2){alertBox("searchAlert","Enter both origin and destination towns.","error");return;}
  if(q.p_origin_state===q.p_destination_state&&q.p_origin_city.toLowerCase()===q.p_destination_city.toLowerCase()){alertBox("searchAlert","Origin and destination cannot be the same town.","error");return;}
  state.lastSearch=q;
+ if(state.countdown){clearInterval(state.countdown);state.countdown=null;}
+ state.booking=null;state.selectedTrip=null;state.seats=[];state.chosen.clear();
+ $("seatSelectionSection").hidden=true;
  $("departureResults").innerHTML='<div class="ic-empty"><div class="ic-spinner"></div><h3>Checking published departures…</h3><p>We are checking HanyaGo’s live schedule and seat inventory.</p></div>';
  $("resultsCount").textContent="Searching…";
  $("searchDeparturesButton").disabled=true;
