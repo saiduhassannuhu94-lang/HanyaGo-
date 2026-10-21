@@ -89,3 +89,14 @@ No sample departures or invented fares have been inserted into production. The l
 - **Prevention:** Test direct navigation to `booking.html` with no session, a valid session, expired session, and unavailable Supabase configuration. Keep server-side/RLS checks even when the page is gated.
 - **Lesson:** A frontend gate improves the flow, but only database and server-side checks provide the security boundary.
 - **QA status:** Embedded JavaScript syntax check passed. Vercel check for commit `95c2d504e868d4c7db2034587a37dc05f4ad4607` is pending; production behaviour and real-browser redirects are not yet verified.
+
+
+## 11. Preserve the requested destination through signup confirmation
+
+- **Problem:** A signed-out visitor who started from a booking action could be sent to authentication, but email confirmation or password recovery could return to the generic auth URL without the original booking intent.
+- **Root cause:** The auth redirect URL was fixed to `auth.html` and did not carry an allowlisted internal destination.
+- **Why it was missed:** Login and OAuth redirect paths had been checked separately from email-confirmation and recovery links.
+- **Fix:** The auth page now carries forward only known internal destination values (such as `booking`, `intercity`, and `dashboard`) in its confirmation/recovery URL. Arbitrary external URLs are not accepted, preventing an open redirect.
+- **Prevention:** Test email/password, email confirmation, password recovery, and each enabled OAuth provider with and without a redirect parameter. Verify the destination after the full provider round-trip.
+- **Lesson:** Preserve user intent across authentication, but only through a strict internal destination allowlist.
+- **QA status:** Inline script syntax check passed. Vercel check for commit `ffe822b7a29f1da08e2c3af1a8fc507914631022` is successful; full real-browser auth-provider tests remain outstanding.
