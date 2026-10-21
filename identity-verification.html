@@ -58,7 +58,7 @@ body{background:#f3f7f5;color:#102b46}.verify-wrap{max-width:1000px;margin:34px 
   const requestedRole=["passenger","driver","operator"].includes($("requestedRole").value)?$("requestedRole").value:"passenger";
   const documentType=$("documentType").value;
   if(requestedRole==="driver"&&!["drivers_license","national_id","other_official_id"].includes(documentType))throw new Error("For a driver account, submit a driver licence or an official identity document. Both approved documents are required.");
-  if(requestedRole==="operator"&&!["business_proof","national_id","other_official_id"].includes(documentType))throw new Error("For an operator account, submit business proof or an official identity document. Both approved documents are required.");
+  if(requestedRole==="operator"&&!["business_proof","employee_id","national_id","other_official_id"].includes(documentType))throw new Error("For an operator account, submit business proof or an official identity document. Both approved documents are required.");
   if(requestedRole==="passenger"&&!["student_id","national_id","drivers_license","employee_id","other_official_id"].includes(documentType))throw new Error("Choose a student ID or another accepted identity document.");
   const ext={"application/pdf":"pdf","image/jpeg":"jpg","image/png":"png","image/webp":"webp"}[file.type];
   const path=currentUser.id+"/"+crypto.randomUUID()+"."+ext;
@@ -100,7 +100,7 @@ body{background:#f3f7f5;color:#102b46}.verify-wrap{max-width:1000px;margin:34px 
  }
  $("requestedRole").addEventListener("change",()=>{
   const role=$("requestedRole").value;
-  $("roleProofHint").textContent=role==="driver"?"Drivers need two separately reviewed documents: a driver licence and an official identity document (national ID or other accepted official ID).":role==="operator"?"Transport operators need business proof and an official identity document (national ID or other accepted official ID).":"Passengers need a student ID or another accepted identity document.";
+  $("roleProofHint").textContent=role==="driver"?"Drivers need two separately reviewed documents: a driver licence and an official identity document (national ID or other accepted official ID).":role==="operator"?"Transport operators need business or employee proof and an official identity document (national ID or other accepted official ID).":"Passengers need a student ID or another accepted identity document.";
  });
  $("verifyForm").addEventListener("submit",async event=>{
   event.preventDefault();$("uploadButton").disabled=true;$("uploadButton").textContent="Uploading securely…";
