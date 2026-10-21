@@ -332,6 +332,13 @@ function quickSearch(button) {
 }
 async function init() {
  setStateOptions();
+ const urlParams=new URLSearchParams(location.search);
+ if(STATE_LIST.includes(urlParams.get("originState"))) $("originState").value=urlParams.get("originState");
+ if(urlParams.get("origin")) $("originCity").value=urlParams.get("origin").slice(0,80);
+ if(STATE_LIST.includes(urlParams.get("destinationState"))) $("destinationState").value=urlParams.get("destinationState");
+ if(urlParams.get("destination")) $("destinationCity").value=urlParams.get("destination").slice(0,80);
+ const urlDate=urlParams.get("date");
+ if(urlDate && /^\\d{4}-\\d{2}-\\d{2}$/.test(urlDate) && urlDate>=localDate()) $("departureDate").value=urlDate;
  state.db=makeClient();
  $("intercitySearchForm").addEventListener("submit",searchTrips);
  $("departureResults").addEventListener("click",e=>{const b=e.target.closest("[data-open-seats]");if(b)openSeatMap(b.dataset.openSeats);});
@@ -356,7 +363,11 @@ async function init() {
    window.location.replace(savedTicketRedirect);
    return;
  }
+ const hasSavedDraft=Boolean(sessionStorage.getItem("hanyago_intercity_draft"));
  await restoreDraft();
+ if(!hasSavedDraft && urlParams.get("origin") && urlParams.get("destination") && urlParams.get("date")) {
+   await searchTrips();
+ }
  const requestedBooking=new URLSearchParams(location.search).get("booking");
  if(requestedBooking) window.location.href="travel-ticket.html?booking="+encodeURIComponent(requestedBooking);
 }
