@@ -86,6 +86,28 @@ if (bookingForm) {
         window.location.replace("auth.html?redirect=" + next);
         return;
       }
+      const { data: profile, error: profileError } = await client
+        .from("profiles").select("role,requested_role").eq("id", data.session.user.id).maybeSingle();
+      if (profileError || !profile) throw new Error("We could not verify your account status.");
+      if (profile.role !== "admin") {
+        const { data: proofs, error: proofError } = await client
+          .from("id_verification_submissions").select("status,requested_role,document_type")
+          .eq("user_id", data.session.user.id).limit(50);
+        if (proofError) throw new Error("We could not check your identity approval status.");
+        const role = ["passenger","driver","operator"].includes(profile.requested_role)
+          ? profile.requested_role : (["passenger","driver","operator"].includes(profile.role) ? profile.role : "passenger");
+        const approved = new Set((proofs || []).filter(row => row.status === "approved" && row.requested_role === role).map(row => row.document_type));
+        const identityOk = approved.has("national_id") || approved.has("other_official_id");
+        const accessOk = role === "driver"
+          ? approved.has("drivers_license") && identityOk
+          : role === "operator"
+            ? (approved.has("business_proof") || approved.has("employee_id")) && identityOk
+            : ["student_id","national_id","drivers_license","employee_id","other_official_id"].some(type => approved.has(type));
+        if (!accessOk) {
+          window.location.replace("onboarding.html");
+          return;
+        }
+      }
       document.documentElement.classList.remove("hanyago-auth-checking");
     } catch (error) {
       console.error("HanyaGo booking access check failed:", error);
