@@ -7,6 +7,27 @@
   <title>HanyaGo | Your Journey, Made Simple</title>
 
     <link rel="stylesheet" href="style.css">
+<style id="hanyago-premium-home">
+.hanyago-hero-visual{display:block!important;min-height:0!important;padding:0!important;background:transparent!important;border:0!important;overflow:visible!important}
+.hanyago-transport-mosaic{position:relative;display:grid;grid-template-columns:1.15fr .85fr;grid-template-rows:repeat(2,minmax(150px,1fr));gap:14px;min-height:440px;padding:18px;border:1px solid rgba(16,43,70,.1);border-radius:30px;background:linear-gradient(145deg,#edf5f1,#eaf0f8);box-shadow:0 24px 65px rgba(16,43,70,.14)}
+.hanyago-transport-mosaic figure{position:relative;min-width:0;min-height:0;margin:0;overflow:hidden;border-radius:21px;background:#dce6e2;box-shadow:0 10px 28px rgba(16,43,70,.13)}
+.hanyago-transport-mosaic figure:after{content:"";position:absolute;inset:35% 0 0;background:linear-gradient(transparent,rgba(3,19,30,.82))}
+.hanyago-transport-mosaic img{width:100%;height:100%;min-height:150px;object-fit:cover;transition:transform .5s ease}
+.hanyago-transport-mosaic figure:hover img{transform:scale(1.045)}
+.hanyago-transport-main{grid-row:1/3}
+.hanyago-transport-main img{min-height:408px}
+.hanyago-transport-mosaic figcaption{position:absolute;z-index:1;right:17px;bottom:17px;left:17px;display:grid;gap:3px;color:#fff}
+.hanyago-transport-mosaic figcaption span{font-size:.65rem;font-weight:850;letter-spacing:.15em}
+.hanyago-transport-mosaic figcaption strong{font-size:clamp(1rem,2vw,1.35rem);line-height:1.2}
+.hanyago-brand-stamp{position:absolute;z-index:2;top:30px;right:30px;display:flex;align-items:center;gap:10px;padding:11px 15px;border:1px solid rgba(255,255,255,.7);border-radius:15px;background:rgba(255,255,255,.94);box-shadow:0 8px 24px rgba(16,43,70,.12);backdrop-filter:blur(12px);color:#102b46}
+.hanyago-brand-mark{display:grid;place-items:center;width:38px;height:38px;border-radius:12px;background:#102b46;color:#e9b949;font-weight:950;font-size:1.25rem}
+.hanyago-brand-stamp strong,.hanyago-brand-stamp small{display:block}.hanyago-brand-stamp strong{font-size:1rem;letter-spacing:-.03em}.hanyago-brand-stamp small{margin-top:2px;color:#64748b;font-size:.65rem}
+.hanyago-hero-trust{display:flex;align-items:center;gap:9px;margin:13px 5px 0;color:#536579;font-size:.82rem;font-weight:750}
+.hanyago-trust-dot{width:8px;height:8px;border-radius:50%;background:#087c52;box-shadow:0 0 0 4px rgba(8,124,82,.12)}
+@media(max-width:760px){.hanyago-transport-mosaic{min-height:350px;grid-template-rows:repeat(2,minmax(125px,1fr));gap:10px;padding:11px;border-radius:23px}.hanyago-transport-main img{min-height:320px}.hanyago-transport-mosaic img{min-height:125px}.hanyago-brand-stamp{top:20px;right:20px;padding:8px 10px}.hanyago-brand-mark{width:32px;height:32px}.hanyago-transport-mosaic figcaption{right:10px;bottom:11px;left:10px}.hanyago-transport-mosaic figcaption span{font-size:.56rem}.hanyago-transport-mosaic figcaption strong{font-size:.95rem}}
+@media(max-width:430px){.hanyago-transport-mosaic{min-height:300px}.hanyago-transport-main img{min-height:276px}.hanyago-brand-stamp small{display:none}.hanyago-brand-stamp{gap:7px}.hanyago-brand-stamp strong{font-size:.9rem}}
+@media(prefers-reduced-motion:reduce){.hanyago-transport-mosaic img{transition:none}}
+</style>
     <link rel="stylesheet" href="reference-polish.css">
     <link rel="stylesheet" href="site-shell.css"><link rel="stylesheet" href="trip-tools.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
@@ -74,34 +95,23 @@
           </div>
         </div>
 
-        <div class="trip-visual">
-          <div class="route-card">
-            <h3>Plan your next trip</h3>
-            <p>Choose your destination and get ready to go.</p>
-
-            <div class="route-point">
-              <span class="route-icon"></span>
-              <div>
-                <small>YOUR PICKUP</small>
-                <strong>Your starting point</strong>
-              </div>
-            </div>
-
-            <div class="route-line"></div>
-
-            <div class="route-point destination">
-              <span class="route-icon"></span>
-              <div>
-                <small>YOUR DESTINATION</small>
-                <strong>Where you want to go</strong>
-              </div>
-            </div>
-
-            <div class="trip-badge">
-              <span>🧭 Journey planner</span>
-              <span>HanyaGo</span>
-            </div>
+        <div class="trip-visual hanyago-hero-visual">
+          <div class="hanyago-transport-mosaic" aria-label="HanyaGo transport options">
+            <figure class="hanyago-transport-main">
+              <img src="https://upload.wikimedia.org/wikipedia/commons/3/3b/A_Keke_Napep_%28commercial_tricycle%29_waiting_to_pick_up_a_passenger_in_Nigeria.jpg" alt="Nigerian Keke Napep ready for a local journey" fetchpriority="high">
+              <figcaption><span>LOCAL RIDES</span><strong>Keke Napep</strong></figcaption>
+            </figure>
+            <figure class="hanyago-transport-small hanyago-transport-car">
+              <img src="https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?auto=format&fit=crop&w=900&q=85" alt="Passenger car for private journeys" loading="eager">
+              <figcaption><span>PRIVATE</span><strong>Car rides</strong></figcaption>
+            </figure>
+            <figure class="hanyago-transport-small hanyago-transport-bus">
+              <img src="https://images.unsplash.com/photo-1570125909232-eb263c188f7e?auto=format&fit=crop&w=900&q=85" alt="Passenger bus for longer journeys" loading="eager">
+              <figcaption><span>GROUP TRAVEL</span><strong>Buses</strong></figcaption>
+            </figure>
+            <div class="hanyago-brand-stamp"><span class="hanyago-brand-mark">H</span><span><strong>HanyaGo</strong><small>Your journey, made simple.</small></span></div>
           </div>
+          <div class="hanyago-hero-trust"><span class="hanyago-trust-dot"></span> One place for your next journey</div>
         </div>
 
       </div>
