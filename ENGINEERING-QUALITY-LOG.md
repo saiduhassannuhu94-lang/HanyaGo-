@@ -78,3 +78,14 @@ No sample departures or invented fares have been inserted into production. The l
 - **Prevention:** Keep identity proof review separate from self-entered profile data; profile completion must never grant a privileged role or mark a document verified. Test owner isolation, photo upload, schema constraints, and dashboard photo rendering before release.
 - **Lesson:** A profile field is user-supplied information, not verified identity. NIN format validation is not NIMC verification; driver/operator access still depends on the existing approval gate.
 - **QA status:** Migration applied; expected columns confirmed in Supabase; embedded JavaScript syntax parsed successfully. Full browser/end-to-end testing and live deployment verification remain outstanding.
+
+
+## 10. Booking page now requires a signed-in account before showing the form
+
+- **Problem:** The booking submit handler already required a Supabase session before saving a real booking, but a signed-out visitor could still open and fill the booking form before being redirected on submit.
+- **Root cause:** Authentication was enforced at the transaction boundary but not at the booking-page entry point.
+- **Why it was missed:** Earlier checks concentrated on preventing unauthenticated database inserts and Paystack checkout, rather than the complete visitor experience.
+- **Fix:** Added a page-entry session check in `script.js`. The booking page stays hidden during the check; signed-out visitors are redirected to `auth.html?redirect=booking`. If Supabase is unavailable, the form cannot submit a fake preview as a real booking and displays an explicit service-unavailable message.
+- **Prevention:** Test direct navigation to `booking.html` with no session, a valid session, expired session, and unavailable Supabase configuration. Keep server-side/RLS checks even when the page is gated.
+- **Lesson:** A frontend gate improves the flow, but only database and server-side checks provide the security boundary.
+- **QA status:** Embedded JavaScript syntax check passed. Vercel check for commit `95c2d504e868d4c7db2034587a37dc05f4ad4607` is pending; production behaviour and real-browser redirects are not yet verified.
