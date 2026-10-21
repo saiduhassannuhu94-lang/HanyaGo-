@@ -837,7 +837,7 @@
 
         const destination = authCallbackParams.get("redirect");
         window.location.replace(
-          destination === "booking" ? "booking.html" : destination === "admin" ? "admin.html" : destination === "verification" ? "identity-verification.html" : destination === "keke-napep" ? "keke-napep.html" : destination === "mobility-profile" ? "mobility-profile.html" : "account-dashboard.html"
+          destination === "booking" ? "booking.html" : destination === "intercity" ? "intercity.html" : destination === "intercity-admin" ? "intercity-admin.html" : destination === "ticket" ? "intercity.html" : destination === "admin" ? "admin.html" : destination === "verification" ? "identity-verification.html" : destination === "keke-napep" ? "keke-napep.html" : destination === "mobility-profile" ? "mobility-profile.html" : "account-dashboard.html"
         );
       }).catch(() => {
         showMessage(
@@ -1010,7 +1010,7 @@
       try {
         const destination = new URLSearchParams(window.location.search).get("redirect");
         const redirectUrl = new URL(AUTH_REDIRECT_URL);
-        if (destination === "booking" || destination === "admin" || destination === "verification") redirectUrl.searchParams.set("redirect", destination);
+        if (["booking", "intercity", "intercity-admin", "ticket", "admin", "verification", "keke-napep", "mobility-profile"].includes(destination)) redirectUrl.searchParams.set("redirect", destination);
 
         const oauthOptions = { redirectTo: redirectUrl.toString() };
         if (provider === "azure") oauthOptions.scopes = "email";
@@ -1369,7 +1369,7 @@
           // Preserve the booking intent when the user came from a booking action.
           const destination = new URLSearchParams(window.location.search).get("redirect");
           window.location.replace(
-            destination === "booking" ? "booking.html" : destination === "admin" ? "admin.html" : destination === "verification" ? "identity-verification.html" : destination === "keke-napep" ? "keke-napep.html" : destination === "mobility-profile" ? "mobility-profile.html" : "account-dashboard.html"
+            destination === "booking" ? "booking.html" : destination === "intercity" ? "intercity.html" : destination === "intercity-admin" ? "intercity-admin.html" : destination === "ticket" ? "intercity.html" : destination === "admin" ? "admin.html" : destination === "verification" ? "identity-verification.html" : destination === "keke-napep" ? "keke-napep.html" : destination === "mobility-profile" ? "mobility-profile.html" : "account-dashboard.html"
           );
           return;
         } else {
