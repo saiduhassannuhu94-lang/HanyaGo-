@@ -46,15 +46,28 @@ async function getSession() {
   const {data,error}=await state.db.auth.getSession();
   if(error) throw error;
   state.session=data.session||null;
-  if(state.session) {
-    const {data:profile,error:profileError}=await state.db.from("profiles").select("full_name,phone").eq("id",state.session.user.id).maybeSingle();
-    if(!profileError) state.profile=profile;
-    if(state.profile) {
-      if(!$("ticketPassengerName").value) $("ticketPassengerName").value=state.profile.full_name||"";
-      if(!$("ticketPassengerPhone").value) $("ticketPassengerPhone").value=state.profile.phone||"";
-      if(!$("bookingContactPhone").value) $("bookingContactPhone").value=state.profile.phone||"";
-    }
+  if(!state.session) {
+    window.location.replace("auth.html?redirect=intercity");
+    return false;
   }
+  const {data:profile,error:profileError}=await state.db.from("profiles").select("full_name,phone,role,requested_role").eq("id",state.session.user.id).maybeSingle();
+  if(profileError || !profile) throw new Error("Could not verify your HanyaGo account status.");
+  state.profile=profile;
+  if(profile.role!=="admin") {
+    const {data:proofs,error:proofError}=await state.db.from("id_verification_submissions").select("status,requested_role,document_type").eq("user_id",state.session.user.id).limit(50);
+    if(proofError) throw new Error("Could not check identity approval. Booking remains locked.");
+    const role=["passenger","driver","operator"].includes(profile.requested_role)?profile.requested_role:(profile.role||"passenger");
+    const approved=new Set((proofs||[]).filter(r=>r.status==="approved"&&r.requested_role===role).map(r=>r.document_type));
+    const identityOk=approved.has("national_id")||approved.has("other_official_id");
+    const accessOk=role==="driver"?approved.has("drivers_license")&&identityOk:role==="operator"?(approved.has("business_proof")||approved.has("employee_id"))&&identityOk:["student_id","national_id","drivers_license","employee_id","other_official_id"].some(t=>approved.has(t));
+    if(!accessOk){window.location.replace("onboarding.html");return false;}
+  }
+  if(state.profile) {
+    if(!$("ticketPassengerName").value) $("ticketPassengerName").value=state.profile.full_name||"";
+    if(!$("ticketPassengerPhone").value) $("ticketPassengerPhone").value=state.profile.phone||"";
+    if(!$("bookingContactPhone").value) $("bookingContactPhone").value=state.profile.phone||"";
+  }
+  return true;
 }
 function drawTrip(trip) {
  const departure=formatTime(trip.departure_at), arrival=trip.arrival_at?formatTime(trip.arrival_at):"ETA not published";
@@ -352,8 +365,16 @@ async function init() {
   $("searchDeparturesButton").disabled=true;
   return;
  }
- try { await getSession(); }
- catch(err) { console.error("Could not load HanyaGo session",err); }
+ try {
+  const ready=await getSession();
+  if(ready===false) return;
+ } catch(err) {
+  console.error("Could not load HanyaGo session",err);
+  alertBox("searchAlert",err.message||"Could not verify your account. Booking remains locked.","error");
+  $("searchDeparturesButton").disabled=true;
+  $("reserveSeatsButton").disabled=true;
+  return;
+ }
  updateRelationshipUI();
  const savedTicketRedirect=sessionStorage.getItem("hanyago_ticket_redirect");
  if(savedTicketRedirect && /^travel-ticket\.html\?booking=[0-9a-f-]+$/i.test(savedTicketRedirect)) {
