@@ -71,7 +71,7 @@ async function init(){
  const requirementsMet=effectiveRole==="driver"
    ? approvedTypes.has("drivers_license")&&identityApproved
    : effectiveRole==="operator"
-     ? approvedTypes.has("business_proof")&&identityApproved
+     ? (approvedTypes.has("business_proof")||approvedTypes.has("employee_id"))&&identityApproved
      : passengerProofApproved;
  if(admin||requirementsMet){
    $("verificationGate").hidden=true;$("dashboardContent").hidden=false;$("welcomeName").textContent=name;
@@ -83,7 +83,7 @@ async function init(){
  if(!latest){
   $("gateStatus").textContent="Proof required";$("gateStatus").className="status-pill";
   $("gateHeading").textContent="Submit your proof before the dashboard unlocks";
-  $("gateText").textContent=effectiveRole==="driver"?"Drivers must have an approved driver licence and an approved official identity document (national ID or another accepted official ID). Both are reviewed privately before dashboard access is unlocked.":effectiveRole==="operator"?"Transport operators must have approved business proof and an approved official identity document. Both are reviewed privately before dashboard access is unlocked.":"Passengers must have an approved student ID or another accepted identity document. The dashboard opens only after an authorised HanyaGo admin approves the proof.";
+  $("gateText").textContent=effectiveRole==="driver"?"Drivers must have an approved driver licence and an approved official identity document (national ID or another accepted official ID). Both are reviewed privately before dashboard access is unlocked.":effectiveRole==="operator"?"Transport operators must have approved business or employee proof and an approved official identity document. Both are reviewed privately before dashboard access is unlocked.":"Passengers must have an approved student ID or another accepted identity document. The dashboard opens only after an authorised HanyaGo admin approves the proof.";
   showMessage("Your account is signed in, but dashboard access is locked until your identity proof is approved.");
  }else if(latest.status==="pending"){
   $("gateStatus").textContent="Under review";$("gateStatus").className="status-pill";
