@@ -22,7 +22,7 @@ body{background:#f3f7f5;color:#102b46}.flow-wrap{max-width:900px;margin:34px aut
 (function(){
 "use strict";
 const $=id=>document.getElementById(id);
-const client=window.supabase&&window.HANYAGO_CONFIG?window.supabase.createClient(window.HANYAGO_CONFIG.url,window.HANYAGO_CONFIG.anonKey):null;
+const client=window.supabase&&window.HANYAGO_CONFIG?window.supabase.createClient(window.HANYAGO_CONFIG.supabaseUrl,window.HANYAGO_CONFIG.supabasePublishableKey):null;
 function show(title,intro,text,type,actions,progress){$("flowHeading").textContent=title;$("flowIntro").textContent=intro;$("flowStatus").textContent=text;$("flowStatus").className="flow-status"+(type?" "+type:"");$("flowActions").innerHTML="";(actions||[]).forEach(a=>{const el=document.createElement("a");el.className="flow-btn"+(a.secondary?" secondary":"");el.href=a.href;el.textContent=a.label;$("flowActions").appendChild(el)});$("progressBar").style.width=progress+"%";}
 function mark(id,done,active){const el=$(id);el.classList.toggle("done",!!done);el.classList.toggle("active",!!active)}
 function goAuth(){location.replace("auth.html?redirect=onboarding")}
