@@ -11,6 +11,45 @@ function fillStates(){["originState","destinationState"].forEach(id=>{$(id).inne
 function dateLagos(){return new Intl.DateTimeFormat("en-CA",{timeZone:"Africa/Lagos",year:"numeric",month:"2-digit",day:"2-digit"}).format(new Date())}
 function toISO(date,time){return new Date(date+"T"+time+":00+01:00").toISOString()}
 function friendlyDate(date){return date?new Intl.DateTimeFormat("en-NG",{timeZone:"Africa/Lagos",dateStyle:"medium",timeStyle:"short"}).format(new Date(date)):"Time not set"}
+async function loadCompanies(){
+ const select=$("companyId");
+ if(state.profile.role==="admin"){
+  select.required=false;
+  select.innerHTML='<option value="">Independent operator / no company record</option>';
+  try{
+   const {data,error}=await state.db.from("transport_companies").select("id,display_name,legal_name,company_status,license_status").order("display_name",{ascending:true}).limit(100);
+   if(error)throw error;
+   (data||[]).forEach(company=>{
+    const label=(company.display_name||company.legal_name)+" · "+company.company_status+" / "+company.license_status;
+    select.insertAdjacentHTML("beforeend",'<option value="'+esc(company.id)+'">'+esc(label)+'</option>');
+   });
+  }catch(err){console.warn("Could not load optional company directory for admin",err);}
+  return;
+ }
+ select.required=true;
+ select.innerHTML='<option value="">Loading your managed companies…</option>';
+ const {data:members,error:memberError}=await state.db.from("transport_company_members").select("company_id,company_role").eq("user_id",state.user.id).eq("membership_status","active").in("company_role",["owner","admin"]);
+ if(memberError)throw memberError;
+ const ids=[...new Set((members||[]).map(m=>m.company_id).filter(Boolean))];
+ if(!ids.length){
+  select.innerHTML='<option value="">No active company owner/admin membership</option>';
+  select.disabled=true;$("saveDeparture").disabled=true;
+  message("Your operator account is not linked to an active transport company as an owner/admin. Ask a HanyaGo admin to approve or correct your company membership before creating schedules.",true);
+  return;
+ }
+ const {data:companies,error:companiesError}=await state.db.from("transport_companies").select("id,display_name,legal_name,company_status,license_status").in("id",ids).order("display_name",{ascending:true});
+ if(companiesError)throw companiesError;
+ select.innerHTML='<option value="">Choose your transport company</option>';
+ (companies||[]).forEach(company=>{
+  const label=(company.display_name||company.legal_name)+" · "+company.company_status+" / "+company.license_status;
+  select.insertAdjacentHTML("beforeend",'<option value="'+esc(company.id)+'">'+esc(label)+'</option>');
+ });
+ if(!(companies||[]).length){
+  select.innerHTML='<option value="">Company record unavailable</option>';
+  select.disabled=true;$("saveDeparture").disabled=true;
+  message("Your company membership exists, but its company record is not readable. Ask HanyaGo admin to review the account.",true);
+ }
+}
 async function start(){
  state.db=client();if(!state.db){$("iaAccess").textContent="HanyaGo database config is not available.";return}
  try{
@@ -21,6 +60,7 @@ async function start(){
   state.profile=profile;if(!["admin","operator"].includes(profile.role)){$("iaAccess").innerHTML="<h2>No operations access</h2><p>Your account must be approved as HanyaGo operations staff before managing published departures.</p><a class='ia-btn secondary' href='index.html'>Return to website</a>";return}
   $("iaAccess").hidden=true;$("iaWorkspace").hidden=false;
   fillStates();$("departureDate").min=dateLagos();$("arrivalDate").min=dateLagos();
+  await loadCompanies();
   $("departureForm").addEventListener("submit",createDeparture);
   $("departureList").addEventListener("click",departureAction);
   $("seatDepartureSelect").addEventListener("change",loadSeats);
@@ -41,11 +81,11 @@ async function createDeparture(event){
  if(arrivalAt&&new Date(arrivalAt)<=new Date(departureAt)){message("Arrival must be later than departure. Use the next date for an overnight journey.",true);return}
  const image=$("vehicleImage").value.trim();if(image&&(!/^https:\/\//i.test(image))){message("Vehicle image URL must start with HTTPS.",true);return}
  const amenities=[...document.querySelectorAll('input[name="amenity"]:checked')].map(x=>x.value);
- const payload={created_by:state.user.id,operator_name:$("operatorName").value.trim(),operator_contact_phone:$("operatorPhone").value.trim()||null,operator_verification_note:$("verificationNote").value.trim(),operator_verified:false,origin_state:$("originState").value,origin_city:$("originCity").value.trim(),origin_terminal:$("originTerminal").value.trim(),destination_state:$("destinationState").value,destination_city:$("destinationCity").value.trim(),destination_terminal:$("destinationTerminal").value.trim(),departure_at:departureAt,arrival_at:arrivalAt,ride_type:$("rideType").value,vehicle_name:$("vehicleName").value.trim(),vehicle_registration:$("vehicleRegistration").value.trim()||null,vehicle_image_url:image||null,seat_capacity:cap,seat_layout:$("seatLayout").value,fare_kobo:Math.round(fare*100),booking_cutoff_minutes:cutoff,amenities,luggage_policy:$("luggagePolicy").value.trim()||null,status:"draft"};
+ const companyId=$("companyId").value||null;if(state.profile.role==="operator"&&!companyId){message("Choose the transport company you are authorised to manage.",true);return}const payload={created_by:state.user.id,company_id:companyId,operator_name:$("operatorName").value.trim(),operator_contact_phone:$("operatorPhone").value.trim()||null,operator_verification_note:$("verificationNote").value.trim(),operator_verified:false,origin_state:$("originState").value,origin_city:$("originCity").value.trim(),origin_terminal:$("originTerminal").value.trim(),destination_state:$("destinationState").value,destination_city:$("destinationCity").value.trim(),destination_terminal:$("destinationTerminal").value.trim(),departure_at:departureAt,arrival_at:arrivalAt,ride_type:$("rideType").value,vehicle_name:$("vehicleName").value.trim(),vehicle_registration:$("vehicleRegistration").value.trim()||null,vehicle_image_url:image||null,seat_capacity:cap,seat_layout:$("seatLayout").value,fare_kobo:Math.round(fare*100),booking_cutoff_minutes:cutoff,amenities,luggage_policy:$("luggagePolicy").value.trim()||null,status:"draft"};
  const btn=$("saveDeparture");btn.disabled=true;btn.textContent="Saving draft and seats…";
  try{
   const {data,error}=await state.db.from("scheduled_departures").insert(payload).select("id,seat_capacity,seat_layout").single();if(error)throw error;
-  form.reset();$("originState").value=payload.origin_state;$("destinationState").value=payload.destination_state;$("seatCapacity").value="18";$("bookingCutoff").value="30";$("departureDate").min=dateLagos();$("arrivalDate").min=dateLagos();
+  form.reset();$("companyId").value=payload.company_id||"";$("originState").value=payload.origin_state;$("destinationState").value=payload.destination_state;$("seatCapacity").value="18";$("bookingCutoff").value="30";$("departureDate").min=dateLagos();$("arrivalDate").min=dateLagos();
   message("Draft saved. "+data.seat_capacity+" numbered seat records were generated automatically. Check the seat layout, vehicle, route, terminal, date/time and real fare before publishing. The trip is not yet visible to passengers.");
   await loadDepartures();$("seatDepartureSelect").value=data.id;await loadSeats();
  }catch(e){console.error("Failed to save HanyaGo departure",e);message("Could not save this draft: "+(e.message||"database or permission error"),true)}
