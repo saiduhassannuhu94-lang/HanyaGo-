@@ -17,7 +17,7 @@ body{background:#f3f7f5;color:#102b46}.verify-wrap{max-width:1000px;margin:34px 
 <div class="verify-grid">
 <section class="verify-card"><h2>Upload identity proof</h2><p>Use a clear, genuine document. Only upload information needed for the verification purpose.</p>
 <form id="verifyForm">
-<label for="requestedRole">Account type you are applying for</label><select id="requestedRole" required><option value="passenger">Passenger</option><option value="driver">Driver</option><option value="operator">Transport operator</option></select>\n<label for="documentType">Document type</label><select id="documentType" required><option value="student_id">Student ID card</option><option value="national_id">National identity document</option><option value="drivers_license">Driver’s licence</option><option value="employee_id">Employee ID card</option><option value="business_proof">Business registration / business proof</option><option value="other_official_id">Other official ID</option></select>
+<label for="requestedRole">Account type you are applying for</label><select id="requestedRole" required><option value="passenger">Passenger</option><option value="driver">Driver</option><option value="operator">Transport operator</option></select>\n<label for="documentType">Document type</label><select id="documentType" required><option value="student_id">Student ID card</option><option value="national_id">National identity document</option><option value="drivers_license">Driver’s licence</option><option value="employee_id">Employee ID card</option><option value="business_proof">Business registration / business proof</option><option value="other_official_id">Other official ID</option></select><p id="roleProofHint" style="font-size:.8rem;line-height:1.6;color:#61736e;margin:7px 0 12px">Passengers: student ID or accepted identity document. Drivers and operators need role-specific proof plus official identity proof.</p>
 <label for="institutionName">School, employer or business name (if relevant)</label><input id="institutionName" maxlength="160" placeholder="School, company or registered business">
 <label for="identityFile">Document file (PDF, JPG, PNG or WEBP; max 10 MB)</label><input id="identityFile" type="file" accept=".pdf,.jpg,.jpeg,.png,.webp,application/pdf,image/jpeg,image/png,image/webp" required>
 <label class="verify-check"><input id="identityConsent" type="checkbox" required> I confirm that this is genuine evidence I am authorised to submit, and I consent to authorised HanyaGo reviewers assessing it for account or driver/operator verification.</label>
@@ -55,11 +55,15 @@ body{background:#f3f7f5;color:#102b46}.verify-wrap{max-width:1000px;margin:34px 
   if(!file||!allowed.has(file.type))throw new Error("Choose a PDF, JPG, PNG or WEBP file.");
   if(file.size<=0||file.size>maxBytes)throw new Error("The file must be smaller than 10 MB.");
   if(!$("identityConsent").checked)throw new Error("Please accept the document consent.");
+  const requestedRole=["passenger","driver","operator"].includes($("requestedRole").value)?$("requestedRole").value:"passenger";
+  const documentType=$("documentType").value;
+  if(requestedRole==="driver"&&!["drivers_license","national_id","other_official_id"].includes(documentType))throw new Error("For a driver account, submit a driver licence or an official identity document. Both approved documents are required.");
+  if(requestedRole==="operator"&&!["business_proof","national_id","other_official_id"].includes(documentType))throw new Error("For an operator account, submit business proof or an official identity document. Both approved documents are required.");
+  if(requestedRole==="passenger"&&!["student_id","national_id","drivers_license","employee_id","other_official_id"].includes(documentType))throw new Error("Choose a student ID or another accepted identity document.");
   const ext={"application/pdf":"pdf","image/jpeg":"jpg","image/png":"png","image/webp":"webp"}[file.type];
   const path=currentUser.id+"/"+crypto.randomUUID()+"."+ext;
   const {error:upErr}=await db.storage.from("hanyago-identity-documents").upload(path,file,{cacheControl:"0",contentType:file.type,upsert:false});
   if(upErr)throw upErr;
-  const requestedRole=["passenger","driver","operator"].includes($("requestedRole").value)?$("requestedRole").value:"passenger";
   const {error:rowErr}=await db.from("id_verification_submissions").insert({user_id:currentUser.id,requested_role:requestedRole,document_type:$("documentType").value,institution_name:$("institutionName").value.trim()||null,object_path:path,original_file_name:file.name.slice(0,240),mime_type:file.type,size_bytes:file.size,status:"pending"});
   if(rowErr){await db.storage.from("hanyago-identity-documents").remove([path]);throw rowErr}
  }
@@ -94,6 +98,10 @@ body{background:#f3f7f5;color:#102b46}.verify-wrap{max-width:1000px;margin:34px 
   message(status==="approved"?"Document approved. If this was a driver/operator request, the approved role has been activated.":"Document rejected. The user can review the note and submit acceptable proof.","success");
   await renderList();
  }
+ $("requestedRole").addEventListener("change",()=>{
+  const role=$("requestedRole").value;
+  $("roleProofHint").textContent=role==="driver"?"Drivers need two separately reviewed documents: a driver licence and an official identity document (national ID or other accepted official ID).":role==="operator"?"Transport operators need business proof and an official identity document (national ID or other accepted official ID).":"Passengers need a student ID or another accepted identity document.";
+ });
  $("verifyForm").addEventListener("submit",async event=>{
   event.preventDefault();$("uploadButton").disabled=true;$("uploadButton").textContent="Uploading securely…";
   try{if(!currentUser)throw new Error("Please sign in before uploading.");await upload($("identityFile").files[0]);$("verifyForm").reset();message("Document uploaded privately. Its status is now pending human review.","success");await renderList()}
