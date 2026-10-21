@@ -81,17 +81,18 @@
           </p>
 
           <div class="hero-actions">
-            <a href="booking.html" class="btn btn-primary">
-              Book Your Journey →
+            <a href="intercity.html" class="btn btn-primary">
+              Find Intercity Seats →
             </a>
 
-            <a href="how-it-works.html" class="btn btn-secondary">
-              How It Works
+            <a href="booking.html" class="btn btn-secondary">
+              Book a Local Ride
             </a>
           </div>
 
           <div class="hero-note">
-            Simple booking · Convenient travel · Clear journey details
+            Published bus departures · Numbered seat selection · Local ride requests
+            <br><a href="how-it-works.html">See how HanyaGo works →</a>
           </div>
         </div>
 
@@ -153,6 +154,19 @@
           <p>Open the dedicated journey planner to enter your pickup point, destination, travel date and preferred ride.</p>
           <a class="btn btn-primary" href="booking.html">Open journey planner →</a>
           <p class="booking-hint">A saved request is not a confirmed ticket. An operator must still confirm availability, driver or vehicle assignment, and the agreed fare.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Scheduled intercity coach trips are separate from local/on-demand ride requests. -->
+    <section class="booking-section" aria-labelledby="intercityBookingHeading">
+      <div class="container">
+        <div class="booking-box booking-teaser">
+          <span class="eyebrow">Scheduled intercity journeys</span>
+          <h2 id="intercityBookingHeading">Choose your route. Then choose your seat.</h2>
+          <p>Search an origin town, destination town and travel date. When a verified HanyaGo schedule is published, you can compare the operator, departure terminal, fare per seat and live numbered-seat availability.</p>
+          <a class="btn btn-primary" href="intercity.html">Search intercity departures →</a>
+          <p class="booking-hint">Gombe ↔ Biu and Biu → Yola are quick-search examples, not promises of a daily service. HanyaGo shows only departures actually published by operations.</p>
         </div>
       </div>
     </section>
@@ -353,10 +367,7 @@
             </button>
 
             <div class="faq-answer">
-              Online payment has not been connected yet.
-              A payment provider such as Paystack or Flutterwave
-              must be integrated securely before real payments
-              can be accepted.
+              Paystack checkout is available only when the booking has a valid fare confirmed by the operator. Intercity seats are confirmed only after payment has been verified against Paystack and the seat allocation is confirmed. Never treat a payment screenshot or redirect alone as proof.
             </div>
           </div>
 
