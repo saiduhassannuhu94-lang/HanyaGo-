@@ -183,3 +183,15 @@ header.is-scrolled { box-shadow: 0 8px 26px rgba(7,55,80,.09); }
   .hero .route-card { animation: none; }
   .scroll-progress { display: none; }
 }
+
+
+/* Premium branded loader, held until the document finishes loading (with a fail-safe). */
+.page-loader { background:radial-gradient(circle at 50% 40%,#ffffff 0%,#f2f7f5 52%,#e9f1f4 100%); }
+.page-loader-card { gap:15px; animation:loader-arrive .42s cubic-bezier(.2,.8,.2,1) both; }
+.page-loader-mark { display:grid; place-items:center; width:58px; height:58px; border-radius:19px 19px 19px 6px; color:#e9b949; background:linear-gradient(145deg,#102b46,#164765); box-shadow:0 12px 28px rgba(16,43,70,.2); font-size:1.8rem; font-weight:950; animation:loader-mark-pulse 1.5s ease-in-out infinite; }
+.page-loader-brand { font-size:1.85rem; }
+.loader-track { width:min(220px,64vw); height:5px; }
+.page-loader-caption { margin:0; }
+@keyframes loader-arrive { from { opacity:0; transform:translateY(8px) scale(.98); } to { opacity:1; transform:translateY(0) scale(1); } }
+@keyframes loader-mark-pulse { 0%,100% { box-shadow:0 12px 28px rgba(16,43,70,.2); } 50% { box-shadow:0 14px 34px rgba(8,124,82,.32); } }
+@media(prefers-reduced-motion:reduce) { .page-loader-card,.page-loader-mark { animation:none !important; } }
