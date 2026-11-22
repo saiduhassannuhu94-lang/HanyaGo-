@@ -78,3 +78,5 @@ body{background:var(--ic-paper);color:var(--ic-ink)}
 @media(max-width:520px){.ic-results-tools{align-items:stretch;gap:10px}.ic-results-sort{width:100%;justify-content:space-between}.ic-results-sort select{flex:1;max-width:none}.ic-results-reset{margin-left:0}}
 
 .ic-results-share{min-height:38px;padding:7px 11px;border:1px solid var(--ic-line);border-radius:9px;background:var(--ic-green);color:#fff;font:inherit;font-size:.76rem;font-weight:850;cursor:pointer}.ic-results-share:hover{filter:brightness(1.08)}
+/* Respect the hidden attribute even when the toolbar's flex styles are active. */
+.ic-results-tools[hidden]{display:none}
