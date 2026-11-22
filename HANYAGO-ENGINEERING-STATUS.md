@@ -14,6 +14,7 @@ Policy: Free infrastructure only unless owner explicitly approves a cost. Produc
 - [x] Payment recovery test matrix drafted; tests not run in isolated payment environment.
 - [x] Ticket-code generation confirmed: `public_ticket_code` is NOT NULL with a DB default derived from `gen_random_uuid()`; reservation RPC omits the field and database fills it. Ticket UI creates QR for paid/confirmed bookings. End-to-end QR validation remains untested.
 - [x] Corrected ticket-code audit; confirmed public verifier is directly callable by anon, and no HanyaGo-specific limiter was identified in the client/RPC path.
+- [x] Public ticket abuse/privacy review documented: RPC explicitly grants anon execute, is SECURITY DEFINER, response exposes unused vehicle registration and distinct invalid responses, no app-level throttle found in inspected sources; no exploit or live traffic testing.
 - [x] Retired the redundant reservation-RPC identity migration draft and its misleading static checker.
 - [x] Focused identity migration-history reconciliation audit documented: one tracked initial migration; live trigger/helper absent from migration history; relevant live trigger, helper, RLS checks, ownership/security settings and grants recorded. Full schema diff remains outstanding.
 
@@ -27,7 +28,7 @@ Policy: Free infrastructure only unless owner explicitly approves a cost. Produc
 
 ## Next work sequence (no cost)
 1. Collect a broader live schema snapshot and map live objects against tracked migrations; do not create a corrective migration until complete.
-2. Prepare a no-production-change Edge Function design and test plan for public ticket verification abuse controls; preserve existing verification until replacement is tested.
+2. Implement/review a no-production-change public verifier gateway design with throttling, uniform invalid responses, and minimal payload; preserve existing verification until replacement is tested. See [public ticket abuse/privacy review](HANYAGO-PUBLIC-TICKET-ABUSE-PRIVACY-REVIEW.md).
 3. Validate payment recovery path and design an admin recovery workflow; production remains unchanged.
 4. Test identity enforcement with role-specific cases in a safe environment, without creating paid staging.
 5. Review remaining security/performance advisor items.
