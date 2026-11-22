@@ -25,6 +25,8 @@ jobs:
           node-version: "24"
       - name: Check internal HTML references and inline scripts
         run: python3 scripts/quality-check.py
+      - name: Check booking identity-gate migration regression
+        run: python3 scripts/booking-security-check.py
       - name: Check JavaScript syntax
         shell: bash
         run: |
