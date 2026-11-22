@@ -53,9 +53,17 @@ At audit time, there were **no rows** in `scheduled_departures`, `scheduled_depa
 - Admin publish flow directly updates the table; database RLS restricts company managers to draft/unverified state, but the admin publishing/audit workflow needs further testing.
 - Staff seat blocking is through an RPC with server-side authorization and transition checks.
 
+## Corrective migration drafted (not applied)
+
+A proposed migration has been committed at `supabase/migrations/202611220001_enforce_identity_gate_in_scheduled_reservations.sql`. It copies the currently observed reservation RPC and adds an explicit call to `private.hanyago_identity_requirements_met(v_user_id)` before departure locking/booking creation. This directly addresses the confirmed SECURITY DEFINER/RLS bypass.
+
+A static regression guard was added at `scripts/booking-security-check.py` and wired into GitHub Actions. It verifies that the migration includes the expected helper call and that the check precedes the booking insert. This is a static check only; it does not simulate authenticated roles or execute the migration.
+
+No staging Supabase branch currently exists. A staging database is required for behavioral tests before applying the migration to production.
+
 ## Next actions (priority order)
 
-1. **Fix the identity gate bypass in `reserve_scheduled_seats` after staging validation.**
+1. **Validate the proposed migration in a staging Supabase branch.**
 2. Create disposable test coverage for approved/unapproved passengers, driver/operator roles, admin, concurrent same-seat reservations, expired holds, and checkout/webhook races.
 3. Inspect and test `confirm_paid_booking` and hold-release lifecycle, including late payment handling and idempotency.
 4. Enable leaked-password protection after owner approval of the Auth setting.
@@ -65,4 +73,4 @@ At audit time, there were **no rows** in `scheduled_departures`, `scheduled_depa
 
 ## Status
 
-Live backend access restored and read-only inspection completed. One high-priority identity-gate bypass is confirmed in the reservation RPC. No production changes have been made. The report identifies the confirmed behavior and the safest corrective path; production readiness remains unproven.
+Live backend access restored and read-only inspection completed. One high-priority identity-gate bypass is confirmed in the reservation RPC. A corrective migration and static regression check are committed to the repository but have **not** been applied to production. No live database changes have been made. Production readiness remains unproven.
