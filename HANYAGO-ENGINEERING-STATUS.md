@@ -29,9 +29,9 @@ Policy: Free infrastructure only unless owner explicitly approves a cost. Produc
 ## Next work sequence (no cost)
 1. Collect a broader live schema snapshot and map live objects against tracked migrations; do not create a corrective migration until complete.
 2. Implement/review a no-production-change public verifier gateway design with throttling, uniform invalid responses, and minimal payload; preserve existing verification until replacement is tested. See [public ticket abuse/privacy review](HANYAGO-PUBLIC-TICKET-ABUSE-PRIVACY-REVIEW.md).
-3. Validate payment recovery path and design an admin recovery workflow; production remains unchanged.
-4. Test identity enforcement with role-specific cases in a safe environment, without creating paid staging.
-5. Review remaining security/performance advisor items.
+4. Validate payment recovery path and design an admin recovery workflow; production remains unchanged.
+5. Test identity enforcement with role-specific cases in a safe environment, without creating paid staging.
+6. Review remaining security/performance advisor items.
 7. Consolidate evidence and prepare a release-readiness checklist.
 
 ## Change discipline
