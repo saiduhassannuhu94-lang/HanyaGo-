@@ -32,7 +32,7 @@ Policy: Free infrastructure only unless owner explicitly approves a cost. Produc
 3. Validate payment recovery path and design an admin recovery workflow; production remains unchanged.
 4. Test identity enforcement with role-specific cases in a safe environment, without creating paid staging.
 5. Review remaining security/performance advisor items.
-6. Consolidate evidence and prepare a release-readiness checklist.
+7. Consolidate evidence and prepare a release-readiness checklist.
 
 ## Change discipline
 - Read-only live inspection unless explicitly agreed.
