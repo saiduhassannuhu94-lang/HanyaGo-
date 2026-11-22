@@ -98,6 +98,7 @@ async function init(){
  const {data,error}=await db.auth.getSession();
  if(error||!data.session){location.replace("auth.html?redirect=dashboard");return}
  const user=data.session.user;
+$("refreshMyBookings").addEventListener("click",()=>loadMyBookings(user.id));
  const meta=user.user_metadata||{};
  let profile=null;
  const {data:p,error:profileError}=await db.from("profiles").select("id,full_name,phone,role,requested_role,avatar_url,profile_photo_path").eq("id",user.id).maybeSingle();
@@ -147,7 +148,6 @@ async function init(){
   showMessage("Your latest identity proof needs a new submission.","error");
  }
 }
-$("refreshMyBookings").addEventListener("click",()=>loadMyBookings(user.id));
 init().catch(e=>{console.error(e);showMessage(e.message||"Could not load your account.","error")});
 })();
 </script>
