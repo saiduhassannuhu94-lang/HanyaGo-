@@ -378,6 +378,7 @@ async function init() {
  $("availableOnly").addEventListener("change",e=>{state.availableOnly=e.target.checked;renderTrips();});
  $("departureResults").addEventListener("click",e=>{if(e.target.closest("[data-reset-result-filters]")){state.availableOnly=false;renderTrips();}});
  $("resetResultFilters").addEventListener("click",()=>{state.sortMode="departure";state.availableOnly=false;renderTrips();});
+ $("shareSearchButton").addEventListener("click",async()=>{const params=new URLSearchParams({originState:$("originState").value,origin:$("originCity").value.trim(),destinationState:$("destinationState").value,destination:$("destinationCity").value.trim(),date:$("departureDate").value});const url=location.origin+location.pathname+"?"+params.toString();try{if(navigator.share){await navigator.share({title:"HanyaGo intercity trip search",text:"Check this route and date on HanyaGo",url});}else if(navigator.clipboard&&navigator.clipboard.writeText){await navigator.clipboard.writeText(url);alertBox("searchAlert","Search link copied. Share it with your travel companion.","success");}else{window.prompt("Copy this HanyaGo search link:",url);}}catch(err){if(err.name!=="AbortError"){console.error("Share search failed",err);window.prompt("Copy this HanyaGo search link:",url);}}});
  $("seatRows").addEventListener("click",e=>{const b=e.target.closest("[data-seat-number]");if(b)toggleSeat(b);});
  $("refreshSeatMapButton").addEventListener("click",loadSeats);
  $("passengerDetailsForm").addEventListener("submit",reserveSeats);
