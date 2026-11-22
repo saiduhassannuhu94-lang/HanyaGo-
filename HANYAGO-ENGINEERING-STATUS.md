@@ -14,10 +14,11 @@ Policy: Free infrastructure only unless owner explicitly approves a cost. Produc
 - [x] Payment recovery test matrix drafted; tests not run in isolated payment environment.
 - [x] Ticket-code generation confirmed: `public_ticket_code` is NOT NULL with a DB default derived from `gen_random_uuid()`; reservation RPC omits the field and database fills it. Ticket UI creates QR for paid/confirmed bookings. End-to-end QR validation remains untested.
 - [x] Corrected ticket-code audit; confirmed public verifier is directly callable by anon, and no HanyaGo-specific limiter was identified in the client/RPC path.
-- [x] Retired the redundant reservation-RPC identity migration draft and its misleading static checker. CI no longer claims an untested migration itself proves the live identity gate.
+- [x] Retired the redundant reservation-RPC identity migration draft and its misleading static checker.
+- [x] Focused identity migration-history reconciliation audit documented: one tracked initial migration; live trigger/helper absent from migration history; relevant live trigger, helper, RLS checks, ownership/security settings and grants recorded. Full schema diff remains outstanding.
 
 ### Known findings, prioritized
-1. **P1 — Migration/live-schema drift.** Live identity trigger/helper exist but repository migrations do not contain their definitions. Reconcile the migration history with the observed live architecture; do not recreate/replace the reservation RPC casually.
+1. **P1 — Migration/live-schema drift.** Focused identity drift is confirmed and documented. Full live-schema/migration comparison is not complete; fresh environments may not reproduce current production behavior.
 2. **P1 — Paid-but-unconfirmed payment recovery.** Successful Paystack payment can be recorded even if seat confirmation fails; recovery/refund resolution not demonstrated.
 3. **P1/P2 — Public ticket verification abuse/privacy.** The verifier is directly callable by anon and no app-specific throttling was identified. Returned payload includes seat/route/fare/operator/vehicle/registration. Codes have ~80-bit entropy; guessing is unlikely, but rate limits and payload minimization still matter.
 4. **P2 — Admin payment visibility.** Conflict markers aren't loaded/displayed; payment list is capped at 100 without paging/filter; stale “Paystack integration pending” label needs readiness validation.
@@ -25,7 +26,7 @@ Policy: Free infrastructure only unless owner explicitly approves a cost. Produc
 6. **P2 — Advisor hygiene.** Review leaked-password protection, missing FK indexes, RLS auth-initplan and permissive-policy warnings. Avoid dropping unused indexes without evidence.
 
 ## Next work sequence (no cost)
-1. Reconcile repository migration history with the live identity trigger/helper.
+1. Collect a broader live schema snapshot and map live objects against tracked migrations; do not create a corrective migration until complete.
 2. Prepare a no-production-change Edge Function design and test plan for public ticket verification abuse controls; preserve existing verification until replacement is tested.
 3. Validate payment recovery path and design an admin recovery workflow; production remains unchanged.
 4. Test identity enforcement with role-specific cases in a safe environment, without creating paid staging.
