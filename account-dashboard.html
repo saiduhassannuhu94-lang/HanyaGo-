@@ -8,6 +8,9 @@
 <style>
 :root{--dash-navy:#102b46;--dash-green:#087c52;--dash-gold:#d4af37;--dash-muted:#627487}
 body{background:#f3f7f5;color:var(--dash-navy)}.account-wrap{max-width:1120px;margin:32px auto;padding:0 18px 60px}.account-top{display:flex;justify-content:space-between;align-items:center;gap:18px;flex-wrap:wrap;margin-bottom:22px}.account-top h1{font-size:clamp(1.8rem,4vw,2.5rem);margin:5px 0}.eyebrow{font-size:.75rem;font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:var(--dash-green)}.profile-menu{position:relative}.profile-trigger{display:flex;align-items:center;gap:11px;padding:8px 12px 8px 8px;border:1px solid #dce7e1;border-radius:999px;background:#fff;cursor:pointer;color:var(--dash-navy);font:inherit}.avatar{width:43px;height:43px;object-fit:cover;border-radius:50%;background:#e5f1eb;display:grid;place-items:center;font-weight:900;color:var(--dash-green);border:1px solid #d9e8df}.profile-name{font-size:.85rem;font-weight:900}.profile-email{font-size:.72rem;color:var(--dash-muted);margin-top:3px}.profile-role{display:inline-block;font-size:.66rem;font-weight:900;color:var(--dash-green);margin-top:4px}.profile-dropdown{position:absolute;right:0;top:calc(100% + 8px);z-index:10;width:220px;background:#fff;border:1px solid #dce7e1;border-radius:14px;padding:8px;box-shadow:0 15px 40px #102b4618}.profile-dropdown[hidden]{display:none}.profile-dropdown a,.profile-dropdown button{display:block;width:100%;text-align:left;padding:11px 12px;border:0;border-radius:9px;background:transparent;color:var(--dash-navy);text-decoration:none;font:inherit;font-size:.84rem;font-weight:750;cursor:pointer}.profile-dropdown a:hover,.profile-dropdown button:hover{background:#eef7f1}.account-card{background:#fff;border:1px solid #e0e9e4;border-radius:20px;padding:clamp(20px,4vw,32px);box-shadow:0 12px 32px #102b4608;margin-bottom:18px}.account-card h2{margin:0 0 8px;font-size:1.25rem}.account-card p{line-height:1.7;color:var(--dash-muted);font-size:.92rem}.status-pill{display:inline-flex;align-items:center;gap:7px;border-radius:99px;padding:7px 11px;font-size:.75rem;font-weight:900;background:#fff3d0;color:#795600}.status-pill.approved{background:#e2f7e9;color:#08633d}.status-pill.rejected{background:#fff0ed;color:#8c3327}.status-pill::before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor}.gate-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:17px}.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:12px 16px;border-radius:10px;text-decoration:none;font-size:.86rem;font-weight:900;border:1px solid #dce7e1;color:var(--dash-navy);background:#fff}.btn-primary{background:var(--dash-green);border-color:var(--dash-green);color:#fff}.tiles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:15px}.tile{display:block;text-decoration:none;color:inherit;background:#fff;border:1px solid #e0e9e4;border-radius:16px;padding:20px;transition:transform .2s,box-shadow .2s}.tile:hover{transform:translateY(-3px);box-shadow:0 12px 30px #102b4610}.tile-icon{width:43px;height:43px;display:grid;place-items:center;border-radius:13px;background:#e9f6ef;font-size:1.3rem;margin-bottom:14px}.tile h3{font-size:1rem;margin:0 0 7px}.tile p{font-size:.82rem;color:var(--dash-muted);line-height:1.6;margin:0}.account-message{padding:14px 16px;border-radius:12px;background:#eef5ff;color:#234f86;line-height:1.65;font-size:.88rem}.account-message.error{background:#fff0ed;color:#8c3327}.account-message.success{background:#e2f7e9;color:#08633d}.account-footer{font-size:.76rem;color:#7a8a96;line-height:1.7;margin-top:18px}@media(max-width:760px){.tiles{grid-template-columns:1fr 1fr}}@media(max-width:480px){.tiles{grid-template-columns:1fr}.profile-name{max-width:145px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}}
+
+/* Passenger booking history */
+.my-bookings-section{margin:22px 0}.booking-history-list{display:grid;gap:12px}.booking-history-card{border:1px solid #e0e9e4;border-radius:15px;padding:17px;background:#fff}.booking-history-top{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:center}.booking-history-route{font-size:1.05rem;font-weight:950;color:#102b46;margin:9px 0 5px}.booking-history-meta{display:flex;gap:8px;flex-wrap:wrap;color:#627487;font-size:.78rem;margin:8px 0}.booking-history-pill{display:inline-flex;padding:5px 8px;border-radius:999px;background:#edf4f7;color:#35566a;font-size:.7rem;font-weight:850}.booking-history-pill.paid{background:#e2f7e9;color:#08633d}.booking-history-pill.pending{background:#fff3d0;color:#795600}.booking-history-pill.failed{background:#fff0ed;color:#8c3327}.booking-history-link{display:inline-flex;margin-top:9px;padding:9px 12px;border-radius:9px;background:#087c52;color:#fff;text-decoration:none;font-size:.78rem;font-weight:900}.booking-history-empty{padding:20px;border:1px dashed #dce7e1;border-radius:14px;color:#627487;background:#fff;line-height:1.6}.booking-history-refresh{border:1px solid #dce7e1;border-radius:9px;padding:8px 11px;background:#fff;color:#102b46;font-weight:850;cursor:pointer}
 </style>
 <style id="hanyago-dashboard-premium">
 .hanyago-welcome-hero{display:grid;grid-template-columns:1.05fr .95fr;align-items:center;gap:26px;overflow:hidden;padding:clamp(22px,4vw,38px);background:radial-gradient(circle at 0 0,rgba(8,124,82,.09),transparent 38%),linear-gradient(135deg,#fff 0%,#f1f7f4 100%);border-color:#dce9e1}
@@ -54,6 +57,7 @@ body{background:#f3f7f5;color:var(--dash-navy)}.account-wrap{max-width:1120px;ma
 <a class="tile" href="nearby-drivers.html"><span class="tile-icon">🚘</span><h3>Nearby drivers</h3><p>View available drivers who have chosen to share their location.</p></a>
 <a class="tile" href="identity-verification.html"><span class="tile-icon">🛡️</span><h3>Verification status</h3><p>Review your submitted documents and any reviewer notes.</p></a>
 </div></section>
+<section class="account-card my-bookings-section" id="myBookingsSection"><div class="account-top" style="margin-bottom:12px"><div><span class="eyebrow">My journeys</span><h2>My bookings</h2><p style="margin:0;color:var(--dash-muted)">Booking and payment statuses are loaded from your HanyaGo account records.</p></div><button type="button" class="booking-history-refresh" id="refreshMyBookings">Refresh bookings</button></div><div id="myBookingsMessage" class="account-message" role="status">Loading your bookings…</div><div id="myBookingsList" class="booking-history-list"></div></section>
 <p class="account-footer">Identity documents are stored privately and reviewed by authorised HanyaGo admins. Approval confirms only the document review carried out by HanyaGo; it is not a criminal-background check. If you believe a decision is wrong, contact HanyaGo support for a review.</p>
 </main>
 <script>
@@ -62,6 +66,27 @@ body{background:#f3f7f5;color:var(--dash-navy)}.account-wrap{max-width:1120px;ma
 const $=id=>document.getElementById(id);
 const cfg=window.HANYAGO_CONFIG||{};
 const db=window.hanyagoIsConfigured&&window.hanyagoIsConfigured()&&window.supabase?window.supabase.createClient(cfg.supabaseUrl,cfg.supabasePublishableKey,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}}):null;
+function bookingEsc(v){return String(v==null?"":v).replace(/[&<>"']/g,ch=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[ch]))}
+function paymentClass(status){return status==="success"?"paid":status==="failed"||status==="abandoned"?"failed":"pending"}
+function paymentLabel(status){return status==="success"?"Paid":status==="failed"?"Failed":status==="abandoned"?"Abandoned":status==="refunded"?"Refunded":status==="pending"?"Payment pending":"No payment record"}
+async function loadMyBookings(userId){
+ const msg=$("myBookingsMessage"),list=$("myBookingsList");
+ msg.hidden=false;msg.className="account-message";msg.textContent="Loading bookings from your account…";list.innerHTML="";
+ try{
+  const {data:bookings,error}=await db.from("bookings").select("id,pickup_location,destination,travel_date,travel_time,ride_type,status,fare_kobo,passenger_count,created_at,scheduled_departure_id,ticket_passenger_name").eq("passenger_id",userId).order("created_at",{ascending:false}).limit(30);
+  if(error)throw error;
+  const rows=bookings||[];
+  if(!rows.length){msg.className="booking-history-empty";msg.textContent="No bookings found for this account yet. Your confirmed bookings will appear here after you make a reservation.";return}
+  const {data:payments,paymentError}=await db.from("payments").select("booking_id,status,amount_kobo,paid_at,created_at").eq("passenger_id",userId).order("created_at",{ascending:false}).limit(100);
+  if(paymentError)console.warn("Payment history unavailable:",paymentError.message);
+  const payByBooking=new Map();for(const p of payments||[])if(!payByBooking.has(p.booking_id))payByBooking.set(p.booking_id,p);
+  msg.hidden=true;
+  list.innerHTML=rows.map(b=>{
+   const p=payByBooking.get(b.id),payStatus=p?p.status:null,amount=Number(b.fare_kobo||p&&p.amount_kobo||0),date=b.travel_date?new Date(b.travel_date+"T12:00:00").toLocaleDateString("en-NG",{day:"numeric",month:"short",year:"numeric"}):"Date not set",time=b.travel_time?String(b.travel_time).slice(0,5):"Time not set",status=String(b.status||"pending"),statusClass=status==="completed"?"paid":status==="cancelled"?"failed":"pending",ticket=b.scheduled_departure_id&&!["cancelled"].includes(status)?'<a class="booking-history-link" href="travel-ticket.html?booking='+encodeURIComponent(b.id)+'">View intercity ticket →</a>':"";
+   return '<article class="booking-history-card"><div class="booking-history-top"><span class="booking-history-pill '+statusClass+'">'+bookingEsc(status.replace(/_/g," "))+'</span><span class="booking-history-pill '+paymentClass(payStatus)+'">'+bookingEsc(paymentLabel(payStatus))+'</span></div><h3 class="booking-history-route">'+bookingEsc(b.pickup_location||"Origin")+" → "+bookingEsc(b.destination||"Destination")+'</h3><div class="booking-history-meta"><span>'+bookingEsc(b.ride_type||"Ride")+'</span><span>· '+bookingEsc(date)+'</span><span>· '+bookingEsc(time)+'</span><span>· '+bookingEsc(b.passenger_count||1)+' passenger(s)</span></div><div class="booking-history-meta"><strong>Booking:</strong> '+bookingEsc(String(b.id).slice(-8).toUpperCase())+' <span>·</span> <strong>Fare:</strong> '+(amount? "₦"+(amount/100).toLocaleString("en-NG",{maximumFractionDigits:2}):"Awaiting fare")+'</div>'+ticket+'</article>';
+  }).join("");
+ }catch(err){console.error("Booking history load failed",err);msg.className="account-message error";msg.textContent="Could not load bookings: "+(err.message||"Please retry.");}
+}
 function showMessage(text,type=""){const el=$("accountMessage");el.textContent=text;el.className="account-message"+(type?" "+type:"");el.hidden=false}
 function initials(name){return String(name||"H").trim().split(/\s+/).slice(0,2).map(x=>x[0]||"").join("").toUpperCase()||"H"}
 function safe(value){return String(value||"").replace(/[&<>"']/g,ch=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[ch]))}
@@ -98,7 +123,7 @@ async function init(){
      : passengerProofApproved;
  $("profileRole").textContent=admin?"Administrator":effectiveRole==="driver"?(requirementsMet?"Verified driver":"Driver verification pending"):effectiveRole==="operator"?(requirementsMet?"Verified operator":"Operator verification pending"):(requirementsMet?"Verified passenger":"Passenger verification pending");
  if(admin||requirementsMet){
-   $("verificationGate").hidden=true;$("dashboardContent").hidden=false;$("welcomeName").textContent=name;
+   $("verificationGate").hidden=true;$("dashboardContent").hidden=false;$("welcomeName").textContent=name;await loadMyBookings(user.id);
    showMessage(admin?"Administrator account recognised. Admin tools are available from your profile menu.":"Your required identity proof has been approved. Dashboard access is unlocked.","success");
    if(admin){$("gateStatus").textContent="Administrator";$("gateStatus").className="status-pill approved"}
    return;
@@ -122,6 +147,7 @@ async function init(){
   showMessage("Your latest identity proof needs a new submission.","error");
  }
 }
+$("refreshMyBookings").addEventListener("click",()=>loadMyBookings(user.id));
 init().catch(e=>{console.error(e);showMessage(e.message||"Could not load your account.","error")});
 })();
 </script>
