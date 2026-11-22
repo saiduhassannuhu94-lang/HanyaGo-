@@ -53,6 +53,17 @@ At audit time, there were **no rows** in `scheduled_departures`, `scheduled_depa
 - Admin publish flow directly updates the table; database RLS restricts company managers to draft/unverified state, but the admin publishing/audit workflow needs further testing.
 - Staff seat blocking is through an RPC with server-side authorization and transition checks.
 
+
+## Expanded Supabase advisor snapshot (2026-11-22)
+
+- **SECURITY WARN:** 3 SECURITY DEFINER functions are callable by anon: `get_scheduled_departure_seats`, `search_scheduled_departures`, and `verify_public_scheduled_ticket`. Their public access appears intentional for trip discovery, seat map, and ticket verification, but each response shape must be reviewed for data minimization.
+- **SECURITY WARN:** 11 SECURITY DEFINER functions are callable by authenticated users. The advisor lists identity-review, driver discovery, ticket retrieval, trip-contact, company registration, seat reservation, public search, consent, seat management, and ticket verification RPCs. These grants are not automatically defects; their internal authorization checks must be reviewed function-by-function.
+- **AUTH WARN:** leaked-password protection is disabled. Enable after configuration owner review.
+- **PERFORMANCE INFO:** 3 foreign keys lack covering indexes (identity submission reviewer; scheduled departure creator and verifier).
+- **PERFORMANCE WARN:** 5 RLS policies re-evaluate auth calls per row; adviser recommends scalar subselects for init-plan caching.
+- **PERFORMANCE WARN:** 6 tables have multiple permissive SELECT policies.
+- **PERFORMANCE INFO:** 49 indexes are reported unused. Do not drop them solely from this snapshot; usage data may be reset or low-volume, and indexes can support rare critical queries.
+
 ## Corrective migration drafted (not applied)
 
 A proposed migration has been committed at `supabase/migrations/202611220001_enforce_identity_gate_in_scheduled_reservations.sql`. It copies the currently observed reservation RPC and adds an explicit call to `private.hanyago_identity_requirements_met(v_user_id)` before departure locking/booking creation. This directly addresses the confirmed SECURITY DEFINER/RLS bypass.
