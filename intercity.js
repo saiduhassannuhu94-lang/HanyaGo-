@@ -7,7 +7,7 @@ const STATE_LIST = [
 "Katsina","Kebbi","Kogi","Kwara","Lagos","Nasarawa","Niger","Ogun","Ondo","Osun","Oyo",
 "Plateau","Rivers","Sokoto","Taraba","Yobe","Zamfara"
 ];
-const state = { db:null, session:null, profile:null, trips:[], selectedTrip:null, seats:[], chosen:new Set(), booking:null, countdown:null, lastSearch:null };
+const state = { db:null, session:null, profile:null, trips:[], selectedTrip:null, seats:[], chosen:new Set(), booking:null, countdown:null, lastSearch:null, sortMode:"departure", availableOnly:false };
 const escapeHTML = v => String(v == null ? "" : v).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const naira = kobo => "₦" + (Number(kobo || 0) / 100).toLocaleString("en-NG",{minimumFractionDigits:0,maximumFractionDigits:2});
 function localDate() {
@@ -85,6 +85,26 @@ function drawTrip(trip) {
  operatorDetails+
  '</div><div class="ic-trip-action"><div class="ic-price">'+escapeHTML(fare)+'<small>per seat · NGN</small></div><div class="ic-availability '+(seats===0?'sold':'')+'">'+(seats>0?seats+' seat'+(seats===1?'':'s')+' available':'No seats available')+'</div><button class="ic-button" type="button" data-open-seats="'+escapeHTML(trip.id)+'" '+(seats===0?'disabled':'')+'>'+(seats>0?'Choose seat(s) →':'Sold out')+'</button><small class="ic-form-note">Vehicle and fare details are set by operations.</small></div></article>';
 }
+
+function renderTrips() {
+ const tools=$("departureResultsTools"), sort=$("departureSort"), available=$("availableOnly");
+ if(tools) tools.hidden=!state.trips.length;
+ if(sort) sort.value=state.sortMode;
+ if(available) available.checked=state.availableOnly;
+ let visible=state.trips.filter(t=>!state.availableOnly||Number(t.available_seats||0)>0);
+ visible=visible.slice().sort((a,b)=>{
+  if(state.sortMode==="fare-low") return Number(a.fare_kobo||0)-Number(b.fare_kobo||0)||new Date(a.departure_at)-new Date(b.departure_at);
+  if(state.sortMode==="fare-high") return Number(b.fare_kobo||0)-Number(a.fare_kobo||0)||new Date(a.departure_at)-new Date(b.departure_at);
+  if(state.sortMode==="seats") return Number(b.available_seats||0)-Number(a.available_seats||0)||new Date(a.departure_at)-new Date(b.departure_at);
+  return new Date(a.departure_at)-new Date(b.departure_at);
+ });
+ $("resultsCount").textContent=state.availableOnly?visible.length+" available of "+state.trips.length+" published departures":state.trips.length+" published departure"+(state.trips.length===1?"":"s");
+ if(!visible.length){
+  $("departureResults").innerHTML='<div class="ic-empty"><div class="ic-empty-icon">⌕</div><h3>No trips match this filter</h3><p>There are no seats currently available on the listed departures. Turn off the availability filter to review the full schedule.</p><button class="ic-button" type="button" data-reset-result-filters>Show all departures</button></div>';
+  return;
+ }
+ $("departureResults").innerHTML=visible.map(drawTrip).join("");
+}
 async function searchTrips(event) {
  if(event) event.preventDefault();
  clearAlert("searchAlert");
@@ -105,13 +125,14 @@ async function searchTrips(event) {
   const {data,error}=await state.db.rpc("search_scheduled_departures",q);
   if(error) throw error;
   state.trips=data||[];
-  $("resultsCount").textContent=state.trips.length+" published departure"+(state.trips.length===1?"":"s");
   if(!state.trips.length) {
+   $("departureResultsTools").hidden=true;
+   $("resultsCount").textContent="No matching published departures";
    $("departureResults").innerHTML='<div class="ic-empty"><div class="ic-empty-icon">⌕</div><h3>No HanyaGo departure is listed for this route and date</h3><p>This means no matching timetable has been published to HanyaGo. It does not prove buses do not operate on this road. Try another date, or contact support before making plans.</p><a class="ic-button" href="contact.html">Ask HanyaGo support</a></div>';
    $("seatSelectionSection").hidden=true; state.selectedTrip=null; state.chosen.clear();
    return;
   }
-  $("departureResults").innerHTML=state.trips.map(drawTrip).join("");
+  renderTrips();
  } catch(err) {
   console.error("HanyaGo intercity search failed",err);
   $("resultsCount").textContent="Schedule unavailable";
@@ -353,6 +374,10 @@ async function init() {
  state.db=makeClient();
  $("intercitySearchForm").addEventListener("submit",searchTrips);
  $("departureResults").addEventListener("click",e=>{const b=e.target.closest("[data-open-seats]");if(b)openSeatMap(b.dataset.openSeats);});
+ $("departureSort").addEventListener("change",e=>{state.sortMode=e.target.value;renderTrips();});
+ $("availableOnly").addEventListener("change",e=>{state.availableOnly=e.target.checked;renderTrips();});
+ $("departureResults").addEventListener("click",e=>{if(e.target.closest("[data-reset-result-filters]")){state.availableOnly=false;renderTrips();}});
+ $("resetResultFilters").addEventListener("click",()=>{state.sortMode="departure";state.availableOnly=false;renderTrips();});
  $("seatRows").addEventListener("click",e=>{const b=e.target.closest("[data-seat-number]");if(b)toggleSeat(b);});
  $("refreshSeatMapButton").addEventListener("click",loadSeats);
  $("passengerDetailsForm").addEventListener("submit",reserveSeats);
