@@ -6,34 +6,28 @@ Policy: Free infrastructure only unless owner explicitly approves a cost. Produc
 ## Current project status
 
 ### Completed investigations / artifacts
-- [x] Repository roadmap and audit documents.
-- [x] Static quality-check script and GitHub Actions workflow.
-- [x] Booking engine and security audit.
-- [x] Identity-verification gate bypass identified on scheduled seat reservation RPC.
-- [x] Corrective migration drafted, committed, but **not applied**. Reconstructed SQL requires exact validation before use.
+- [x] Repository roadmap, audit documents, static quality-check script, and GitHub Actions workflow.
+- [x] Booking engine and security review.
+- [x] Identity enforcement traced: scheduled booking RPC is SECURITY DEFINER, but BEFORE INSERT trigger calls `private.enforce_approved_identity_before_booking()`, which checks `private.hanyago_identity_requirements_met(auth.uid())` when a user is authenticated. This gate appears to be enforced by the trigger. Admin bypass is intentional in the helper. Trigger/function behavior has not been runtime-tested with user-role test accounts.
 - [x] Paystack active checkout/webhook source reviewed read-only.
-- [x] Payment-to-ticket integrity audit committed.
-- [x] Admin payment recovery workflow audit committed.
-- [x] Payment recovery test matrix drafted; tests **not run** in isolated payment environment.
-- [x] Public ticket verification audit committed; missing ticket-code generation suspected from live booking path.
+- [x] Payment-to-ticket integrity and admin payment recovery audits committed.
+- [x] Payment recovery test matrix drafted; tests not run in isolated payment environment.
+- [x] Ticket-code generator confirmed: `public_ticket_code` is NOT NULL with DB default derived from `gen_random_uuid()`; reservation RPC omits the column and relies on the default. Ticket UI creates QR for paid/confirmed bookings. End-to-end QR validation still untested.
 
 ### Known findings, prioritized
-1. **P0/P1 review gate — Identity gate bypass.** SECURITY DEFINER reservation RPC lacks explicit identity helper check. Validate corrective migration exact diff, then test before production apply.
-2. **P1 — Public ticket-code issuance.** Live reservation RPC omits ticket code, no column default or trigger found, but public verifier depends on ticket code. Trace any other code paths; likely missing generator.
-3. **P1 — Paid-but-unconfirmed recovery.** Successful Paystack payment can be recorded even if seat confirmation fails; recovery queue/refund resolution not demonstrated.
-4. **P1/P2 — Public ticket verification protection.** Review rate limiting/brute-force risk; public verifier returns operator and vehicle registration details.
-5. **P2 — Admin payment visibility.** Payment conflict markers aren't loaded/displayed; fixed 100-payment cap without paging/filter; stale “Paystack integration pending” label needs configuration/readiness validation.
-6. **P2 — Payment/seat race tests.** Webhook/callback duplication, late payments after seat release, hold expiry, confirmation retries.
-7. **P2 — Advisor hygiene.** Review auth leaked-password protection, missing FK indexes, RLS auth-initplan and permissive-policy warnings. Avoid dropping unused indexes without evidence.
+1. **P1 — Paid-but-unconfirmed payment recovery.** Successful Paystack payment can be recorded even if seat confirmation fails; recovery/refund resolution not demonstrated.
+2. **P1/P2 — Public ticket verification protection.** Public verifier is an unauthenticated lookup by ticket code; inspect rate limiting/enumeration defenses. Ticket codes currently have about 80-bit entropy (20 hex characters); consider strengthening to 128 bits.
+3. **P2 — Admin payment visibility.** Conflict markers aren't loaded/displayed; payment list is capped at 100 without paging/filter; stale “Paystack integration pending” label needs readiness validation.
+4. **P2 — Payment/seat race tests.** Webhook/callback duplication, late payment after seat release, hold expiry, confirmation retries.
+5. **P2 — Advisor hygiene.** Review leaked-password protection, missing FK indexes, RLS auth-initplan and permissive-policy warnings. Avoid dropping unused indexes without evidence.
 
 ## Next work sequence (no cost)
-1. Confirm the ticket-code issue by tracing every code generation path and app ticket rendering.
-2. Design the secure ticket-code generation fix and tests; do not apply.
-3. Validate identity-gate migration against the exact live RPC definition (diff, signature, behavior), then add/test fixtures. No staging branch because it is billable.
-4. Design payment-recovery case model and admin workflow; document actions, permissions, audit log and idempotency.
-5. Review public ticket-verification brute-force mitigation and privacy/data minimization.
-6. Review remaining security/performance advisor items.
-7. Consolidate all test evidence and prepare a release-readiness checklist.
+1. Review and document the ticket-code entropy/uniqueness and public verification rate-limit posture.
+2. Validate the payment recovery path and design an admin recovery workflow; keep production unchanged.
+3. Test identity enforcement via trigger/helper logic with role-specific cases; no paid staging branch.
+4. Review public verification privacy and authorization.
+5. Review remaining security/performance advisor items.
+6. Consolidate evidence and prepare a release-readiness checklist.
 
 ## Change discipline
 - Read-only live inspection unless explicitly agreed.
