@@ -47,7 +47,7 @@ CREATE POLICY "Passengers and authorized staff read cancellation requests"
   );
 
 -- No direct insert/update/delete for authenticated clients. Mutations occur through RPCs.
-REVOKE INSERT, UPDATE, DELETE ON public.booking_cancellation_requests FROM anon, authenticated;
+REVOKE ALL ON public.booking_cancellation_requests FROM PUBLIC, anon, authenticated;
 GRANT SELECT ON public.booking_cancellation_requests TO authenticated;
 
 CREATE OR REPLACE FUNCTION public.request_booking_cancellation(p_booking_id uuid, p_reason text)
