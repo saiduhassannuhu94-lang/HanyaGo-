@@ -32,11 +32,12 @@
 | C-18 | Approved cancellation with successful payment | Payment remains success; refund is not falsely marked complete |
 | C-19 | Approved cancellation with no payment | No payment rows created or changed |
 | C-20 | Withdrawal races with review | One terminal state wins; no inconsistent state |
+| C-21 | Review RPC receives NULL decision | Rejected; request, booking, seats remain unchanged |
 
 ## SQL review items before applying
 - Verify helpers `private.is_hanyago_staff()`, `private.is_company_manager(uuid)`, and `private.is_company_member(uuid)` exist and are callable in SECURITY DEFINER context.
 - Confirm the function owner has the required table rights and is subject to intended RLS bypass behavior.
-- Confirm authenticated role cannot directly INSERT/UPDATE/DELETE cancellation requests.
+- Confirm authenticated role and PUBLIC cannot directly INSERT/UPDATE/DELETE cancellation requests; authenticated can SELECT only through RLS.
 - Confirm all three RPC signatures have EXECUTE denied to PUBLIC/anon and granted to authenticated.
 - Verify schema migration uses the project's existing migration conventions and timestamps.
 - Confirm company managers can review only company-linked bookings, and staff can review all intended bookings.
