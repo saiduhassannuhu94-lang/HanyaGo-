@@ -103,7 +103,7 @@ BEGIN
   IF v_reviewer IS NULL THEN
     RAISE EXCEPTION 'Sign in to review cancellation requests.' USING ERRCODE = '28000';
   END IF;
-  IF p_decision NOT IN ('approve','reject') THEN
+  IF p_decision IS NULL OR p_decision NOT IN ('approve','reject') THEN
     RAISE EXCEPTION 'Decision must be approve or reject.' USING ERRCODE = '22023';
   END IF;
   IF p_review_note IS NOT NULL AND char_length(p_review_note) > 1000 THEN
