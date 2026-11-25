@@ -110,15 +110,21 @@ BEGIN
     RAISE EXCEPTION 'Review note is too long.' USING ERRCODE = '22023';
   END IF;
 
+  -- Lock booking first, matching passenger-request RPC order to reduce deadlocks.
+  SELECT b.* INTO v_booking FROM public.bookings b
+    JOIN public.booking_cancellation_requests r ON r.booking_id=b.id
+    WHERE r.id=p_request_id;
+  IF NOT FOUND THEN
+    RAISE EXCEPTION 'Booking/request not found.' USING ERRCODE = 'P0002';
+  END IF;
+  PERFORM 1 FROM public.bookings WHERE id=v_booking.id FOR UPDATE;
   SELECT * INTO v_request FROM public.booking_cancellation_requests
-    WHERE id = p_request_id FOR UPDATE;
+    WHERE id=p_request_id FOR UPDATE;
   IF NOT FOUND OR v_request.status <> 'pending' THEN
     RAISE EXCEPTION 'Pending cancellation request not found.' USING ERRCODE = 'P0002';
   END IF;
-
-  SELECT * INTO v_booking FROM public.bookings WHERE id = v_request.booking_id FOR UPDATE;
-  IF NOT FOUND THEN
-    RAISE EXCEPTION 'Booking not found.' USING ERRCODE = 'P0002';
+  IF v_reviewer = v_request.passenger_id THEN
+    RAISE EXCEPTION 'A passenger cannot review their own cancellation request.' USING ERRCODE = '42501';
   END IF;
 
   IF NOT private.is_hanyago_staff()
